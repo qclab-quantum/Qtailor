@@ -125,5 +125,5 @@ def test_sac(args=args.get_args()):
 
 
 if __name__ == "__main__":
-    #test_sac()
-    print(ROOT_DIR)
+    test_sac()
+    #print(ROOT_DIR)
