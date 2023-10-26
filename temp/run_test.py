@@ -86,12 +86,12 @@ def test_sac(args=args.get_args()):
     test_collector = Collector(policy, test_envs)
     # train_collector.collect(n_step=args.buffer_size)
     # log
-    log_path = os.path.join(ROOT_DIR, args.task, "sac")
+    log_path = os.path.join(ROOT_DIR+"\\log", args.task, "sac")
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
     def save_best_fn(policy):
-        torch.save(policy.state_dict(), os.path.join(log_path, "log/test/policy.pth"))
+        torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
 
     def stop_fn(mean_rewards):
         return mean_rewards >= env.spec.reward_threshold
