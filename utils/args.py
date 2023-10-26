@@ -8,7 +8,7 @@ class args:
     @staticmethod
     def get_args():
         parser = argparse.ArgumentParser()
-        parser.add_argument("--task", type=str, default="qcc")
+        parser.add_argument("--task", type=str, default="CartPole-v0")
         parser.add_argument("--seed", type=int, default=1626)
         parser.add_argument("--buffer-size", type=int, default=50000)
         parser.add_argument("--actor-lr", type=float, default=3e-4)
