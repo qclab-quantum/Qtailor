@@ -16,11 +16,11 @@ from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import ActorProb, Critic
 
 #配置
-from utils.args import get_args
+from utils.args import args
 
 from definitions import ROOT_DIR
 
-def test_sac(args=get_args()):
+def test_sac(args=args.get_args()):
     env = gym.make(args.task)
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -87,7 +87,7 @@ def test_sac(args=get_args()):
     test_collector = Collector(policy, test_envs)
     # train_collector.collect(n_step=args.buffer_size)
     # log
-    log_path = os.path.join(args.logdir, args.task, "sac")
+    log_path = os.path.join(ROOT_DIR, args.task, "sac")
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
