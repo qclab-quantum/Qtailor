@@ -2,9 +2,11 @@ import torch
 import argparse
 
 class args:
-    def __init__(self):
-        pass
-    def get_args(self):
+    def __init__(self)-> None:
+        super().__init__()
+
+    @staticmethod
+    def get_args():
         parser = argparse.ArgumentParser()
         parser.add_argument("--task", type=str, default="qcc")
         parser.add_argument("--seed", type=int, default=1626)
