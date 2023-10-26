@@ -7,4 +7,12 @@
     <orderEntry type="jdk" jdkName="qcrl" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PyNamespacePackagesService">
+    <option name="namespacePackageFolders">
+      <list>
+        <option value="$MODULE_DIR$/log" />
+        <option value="$MODULE_DIR$/core" />
+      </list>
+    </option>
+  </component>
 </module>
