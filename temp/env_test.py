@@ -2,7 +2,6 @@ import argparse
 import datetime
 import os
 import pprint
-import core
 import gymnasium as gym
 import numpy as np
 import torch
@@ -17,6 +16,7 @@ from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import Actor, Critic
 from torch.utils.tensorboard import SummaryWriter
 import loguru
+import core
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--task", type=str, default='MysqlDB-v0')

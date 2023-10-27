@@ -3,3 +3,5 @@ loguru
 gymnasium
 qiskit
 qiskit-aer
+matplotlib
+pylatexenc
