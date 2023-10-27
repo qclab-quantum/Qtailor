@@ -1,8 +1,8 @@
 from typing import Optional
 
+import gymnasium
 import numpy as np
 import tianshou
-import  gymnasium as gym
 from gymnasium.spaces import MultiBinary
 from loguru import logger
 
@@ -66,7 +66,7 @@ def adjacency2matrix(adj_list):
 
     return matrix
 #
-class CircuitEnv(gym.Env):
+class CircuitEnv(gymnasium.Env):
     metadata = {"render_modes": ["human"],"render_fps": 1}
     @logger.catch()
     def __init__(self, render_mode: Optional[str] = None):

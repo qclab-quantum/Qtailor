@@ -2,7 +2,6 @@ import argparse
 import datetime
 import os
 import pprint
-
 import gymnasium as gym
 import numpy as np
 import torch
@@ -16,24 +15,22 @@ from tianshou.utils import TensorboardLogger, WandbLogger
 from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import Actor, Critic
 from torch.utils.tensorboard import SummaryWriter
-
-
-# !/usr/bin/envs python3
-
-
+import loguru
+import core
+from gymnasium.wrappers import FlattenObservation
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task", type=str, default='MysqlDB-v0')
+    parser.add_argument("--task", type=str, default='')
     parser.add_argument("--seed", type=int, default=12345)
-    parser.add_argument("--buffer-size", type=int, default=1000000)
+    parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[256, 256])
     parser.add_argument("--actor-lr", type=float, default=1e-3)
     parser.add_argument("--critic-lr", type=float, default=1e-3)
     parser.add_argument("--gamma", type=float, default=0.99)
     parser.add_argument("--tau", type=float, default=0.005)
     parser.add_argument("--exploration-noise", type=float, default=0.1)
-    parser.add_argument("--start-timesteps", type=int, default=25000)
-    parser.add_argument("--epoch", type=int, default=200)
+    parser.add_argument("--start-timesteps", type=int, default=1234)
+    parser.add_argument("--epoch", type=int, default=2500)
     parser.add_argument("--step-per-epoch", type=int, default=500)
     parser.add_argument("--step-per-collect", type=int, default=1)
     parser.add_argument("--update-per-step", type=int, default=1)
@@ -66,22 +63,22 @@ def get_args():
     return parser.parse_args()
 
 def make_env(task,seed,training_num,test_num):
-    env = gym.make(task)
+    env = FlattenObservation(gym.make(task))
     train_envs = DummyVectorEnv(
-            [lambda: gym.make(task) for _ in range(training_num)]
+            [lambda: FlattenObservation(gym.make(task)) for _ in range(training_num)]
     )
-    test_envs = DummyVectorEnv([lambda: gym.make(task) for _ in range(test_num)])
+    test_envs = DummyVectorEnv(
+            [lambda: FlattenObservation(gym.make(task)) for _ in range(test_num)]
+    )
     #envs.seed(seed)
     train_envs.seed(seed)
     test_envs.seed(seed)
+
     return env, train_envs, test_envs
 
 def test_ddpg(args=get_args()):
     print('training_num={},test_num={}'.format(args.training_num,args.test_num))
-    env, train_envs, test_envs = make_env(
-        'qcrlenv-v0', 12345, args.training_num, args.test_num
-
-    )
+    env, train_envs, test_envs = make_env('GridWorld-v0', 12345, args.training_num, args.test_num)
 
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -97,6 +94,7 @@ def test_ddpg(args=get_args()):
         net_a, args.action_shape, device=args.device
     ).to(args.device)
     actor_optim = torch.optim.Adam(actor.parameters(), lr=args.actor_lr)
+
     net_c = Net(
         args.state_shape,
         args.action_shape,
@@ -106,6 +104,7 @@ def test_ddpg(args=get_args()):
     )
     critic = Critic(net_c, device=args.device).to(args.device)
     critic_optim = torch.optim.Adam(critic.parameters(), lr=args.critic_lr)
+
     policy = DDPGPolicy(
         actor,
         actor_optim,
@@ -114,7 +113,7 @@ def test_ddpg(args=get_args()):
         tau=args.tau,
         gamma=args.gamma,
         exploration_noise=GaussianNoise(sigma=args.exploration_noise),
-        estimation_step=args.n_step,
+        #estimation_step=args.n_step,
         action_space=env.action_space,
     )
 
@@ -159,6 +158,7 @@ def test_ddpg(args=get_args()):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
 
     if not args.watch:
+        pass
         # trainer
         result = offpolicy_trainer(
             policy,
@@ -180,23 +180,29 @@ def test_ddpg(args=get_args()):
     policy.eval()
     test_envs.seed(args.seed)
     test_collector.reset()
-    result = test_collector.collect(n_episode=args.test_num, render=args.render)
+    result = test_collector.collect(n_step=args.start_timesteps,random=True,render=args.render)
+   # train_collector.reset()
+    #result=train_collector.collect(n_step=args.start_timesteps, random=True)
     print(f'Final reward: {result["rews"].mean()}, length: {result["lens"].mean()}')
-
 
 if __name__ == "__main__":
 
+    # register(
+    #     id='qcrlenv-v0',
+    #     entry_point='core.envs.circuit_env:CircuitEnv',
+    #     max_episode_steps=30000,
+    # )
+    # env = gym.make('qcrlenv-v0')
+    #
+    # obs = env.reset()
+    # print(obs)
+    # print(env.action_space)
+    # print(env.observation_space)
     register(
-        id='qcrlenv-v0',
-        entry_point='core.envs.circuit_env:CircuitEnv',
-        max_episode_steps=30000,
-    )
-    env = gym.make('qcrlenv-v0')
-
-    obs = env.reset()
-    print(obs)
-    print(env.action_space)
-    print(env.observation_space)
-    #wrapped_env = FlattenObservation(envs)
-    #envs.reset(seed=0, return_info=False, options=None)
+          id="GridWorld-v0",
+          entry_point="temp.grid_world:GridWorldEnv",
+          max_episode_steps=300,
+     )
+    env = FlattenObservation(gym.make('GridWorld-v0',size = 10))
+    print(env.reset())
     test_ddpg()
