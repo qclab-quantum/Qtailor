@@ -31,7 +31,6 @@ def make_obs_space():
     return space
 
 
-#
 # get adj table from coordinate
 def coordinate2adjacent(points):
     import math
@@ -74,15 +73,9 @@ class CircuitEnv(gymnasium.Env):
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode  # Define the attribute render_mode in your environment
 
-        # self.action_space  = spaces.Box(
-        #         #set bounds of knobs
-        #         low =  np.array([0, 0, 1]).astype(np.float32),
-        #         high = np.array([+100, +100, +100]).astype(np.float32),
-        #         dtype=np.float32
-        #     )  # knob1,knob2,knob3...
+
         self.points = [(1,0),(1,1),(1,2),(1,3),(1,4)]
         self.adj = coordinate2adjacent(self.points)
-
         self.step_cnt = 1
 
        # self.spec.reward_threshold = 20000

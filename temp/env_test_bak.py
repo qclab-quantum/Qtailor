@@ -29,13 +29,13 @@ def get_args():
     parser.add_argument("--gamma", type=float, default=0.99)
     parser.add_argument("--tau", type=float, default=0.005)
     parser.add_argument("--exploration-noise", type=float, default=0.1)
-    parser.add_argument("--start-timesteps", type=int, default=1234)
+    parser.add_argument("--start-timesteps", type=int, default=100)
     parser.add_argument("--epoch", type=int, default=2500)
-    parser.add_argument("--step-per-epoch", type=int, default=500)
-    parser.add_argument("--step-per-collect", type=int, default=1)
-    parser.add_argument("--update-per-step", type=int, default=1)
-    parser.add_argument("--n-step", type=int, default=1)
-    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--step-per-epoch", type=int, default=100)
+    parser.add_argument("--step-per-collect", type=int, default=200)
+    parser.add_argument("--update-per-step", type=int, default=10)
+    parser.add_argument("--n-step", type=int, default=10)
+    parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--training-num", type=int, default=1)
     parser.add_argument("--test-num", type=int, default=1)
     parser.add_argument("--logdir", type=str, default="log")
@@ -187,17 +187,6 @@ def test_ddpg(args=get_args()):
 
 if __name__ == "__main__":
 
-    # register(
-    #     id='qcrlenv-v0',
-    #     entry_point='core.envs.circuit_env:CircuitEnv',
-    #     max_episode_steps=30000,
-    # )
-    # env = gym.make('qcrlenv-v0')
-    #
-    # obs = env.reset()
-    # print(obs)
-    # print(env.action_space)
-    # print(env.observation_space)
     register(
           id="GridWorld-v0",
           entry_point="temp.grid_world:GridWorldEnv",

@@ -78,10 +78,7 @@ def make_env(task,seed,training_num,test_num):
 
 def test_ddpg(args=get_args()):
     print('training_num={},test_num={}'.format(args.training_num,args.test_num))
-    env, train_envs, test_envs = make_env(
-        'qcrlenv-v0', 12345, args.training_num, args.test_num
-
-    )
+    env, train_envs, test_envs = make_env('CircuitEnvTest', 12345, args.training_num, args.test_num )
 
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -167,7 +164,7 @@ def test_ddpg(args=get_args()):
             args.epoch,
             args.step_per_epoch,
             args.step_per_collect,
-            args.test_num,
+            100,#episode_per_test
             args.batch_size,
             save_best_fn=save_best_fn,
             logger=logger,
@@ -178,25 +175,25 @@ def test_ddpg(args=get_args()):
 
     # Let's watch its performance!
     policy.eval()
-    test_envs.seed(args.seed)
-    test_collector.reset()
-    result = test_collector.collect(n_episode=args.test_num, render=args.render)
+
+    #test_envs.seed(args.seed)
+    #test_collector.reset()
+    #result = test_collector.collect(n_episode=100, render=args.render)
+    result = test_collector.collect(n_step=args.start_timesteps, random=True, render=args.render)
     print(f'Final reward: {result["rews"].mean()}, length: {result["lens"].mean()}')
 
 
 if __name__ == "__main__":
 
     register(
-        id='qcrlenv-v0',
-        entry_point='core.envs.circuit_env:CircuitEnv',
+        id='CircuitEnvTest',
+       # entry_point='core.envs.circuit_env:CircuitEnv',
+         entry_point='temp.env.env_test:CircuitEnvTest',
         max_episode_steps=30000,
     )
-    env = gym.make('qcrlenv-v0')
-
-    obs = env.reset()
-    print(obs)
-    print(env.action_space)
-    print(env.observation_space)
+    # env = gym.make('CircuitEnvTest')
+    # obs = env.reset()
     #wrapped_env = FlattenObservation(envs)
     #envs.reset(seed=0, return_info=False, options=None)
+
     test_ddpg()
