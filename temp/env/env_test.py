@@ -1,7 +1,6 @@
 import gymnasium
 import numpy
 import numpy as np
-import pygame
 
 import gymnasium as gym
 from gymnasium import spaces
