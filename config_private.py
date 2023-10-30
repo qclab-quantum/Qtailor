@@ -5,6 +5,7 @@ import torch
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=12345)
+    parser.add_argument("--task", type=str, default='circuit')
     parser.add_argument("--buffer-size", type=int, default=10000)
     parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[256,256, 256])
     parser.add_argument("--actor-lr", type=float, default=1e-3)
