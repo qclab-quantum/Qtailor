@@ -60,7 +60,7 @@ class CircuitEnvTest(gymnasium.Env):
         # Observations are dictionaries with the agent's and the target's location.
         # Each location is encoded as an element of {0, ..., `size`}^2, i.e. MultiDiscrete([size, size]).
         # qpu Topology
-        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4)]
+        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
         self.adj = coordinate2adjacent(self.points)
         self.step_cnt = 1
 
@@ -74,7 +74,7 @@ class CircuitEnvTest(gymnasium.Env):
 
 
     def make_obs_space(self):
-        space = MultiBinary([5, 5])
+        space = MultiBinary([10, 10])
         return space
     def _get_info(self):
         return 'info'
@@ -172,7 +172,7 @@ class CircuitEnvTest(gymnasium.Env):
         return reward,obs
 
     def make_action_space(self):
-        space = MultiBinary(5)
+        space = MultiBinary(10)
         return space
         # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)
 
