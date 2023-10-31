@@ -52,13 +52,8 @@ def test_ddpg(args=get_args()):
         net_a, args.action_shape, device=args.device
     ).to(args.device)
     actor_optim = torch.optim.Adam(actor.parameters(), lr=args.actor_lr)
-    net_c = Net(
-        args.state_shape,
-        args.action_shape,
-        hidden_sizes=args.hidden_sizes,
-        concat=True,
-        device=args.device,
-    )
+
+    net_c = Net(args.state_shape,args.action_shape,hidden_sizes=args.hidden_sizes,concat=True,device=args.device,)
     critic = Critic(net_c, device=args.device).to(args.device)
     critic_optim = torch.optim.Adam(critic.parameters(), lr=args.critic_lr)
     policy = DDPGPolicy(

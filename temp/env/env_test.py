@@ -1,10 +1,8 @@
-import gymnasium
+import gymnasium as gym
 import numpy
 import numpy as np
 
-import gymnasium as gym
-from gymnasium import spaces
-from gymnasium.spaces import MultiBinary
+from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from loguru import logger
@@ -52,7 +50,7 @@ def adjacency2matrix(adj_list):
 
     return matrix
 
-class CircuitEnvTest(gymnasium.Env):
+class CircuitEnvTest(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):
@@ -65,7 +63,7 @@ class CircuitEnvTest(gymnasium.Env):
         self.step_cnt = 1
 
         self.observation_space = self.make_obs_space()
-        self.action_space = self.make_action_space()
+        self.action_space = MultiDiscrete([2,2,2,2,2,2,2,2,2,2])
         """
         The following dictionary maps abstract actions from `self.action_space` to
         the direction we will walk in if that action is taken.
@@ -75,6 +73,7 @@ class CircuitEnvTest(gymnasium.Env):
 
     def make_obs_space(self):
         space = MultiBinary([10, 10])
+
         return space
     def _get_info(self):
         return 'info'
@@ -112,6 +111,9 @@ class CircuitEnvTest(gymnasium.Env):
     '''
     def step(self, action):
         self.step_cnt = self.step_cnt+1
+        assert self.action_space.contains(
+            action
+        ), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
@@ -121,6 +123,7 @@ class CircuitEnvTest(gymnasium.Env):
         if reward ==7:
             terminated = True
             #print('action=',action)
+        print(reward)
         return observation, reward, terminated,False, info
 
     def render(self):
@@ -161,7 +164,7 @@ class CircuitEnvTest(gymnasium.Env):
         a = []
         count = 0
         for i in range(len(action)):
-            if action[i]:
+            if action[i]==1:
                 a.append(i)
                 count += 1
         if count !=3:
@@ -172,9 +175,6 @@ class CircuitEnvTest(gymnasium.Env):
               reward = 10 - res
         return reward,obs
 
-    def make_action_space(self):
-        space = MultiBinary(10)
-        return space
         # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)
 
     def _close_env(self):
