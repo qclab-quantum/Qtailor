@@ -31,6 +31,8 @@ def make_env(task,seed,training_num,test_num):
     train_envs.seed(seed)
     test_envs.seed(seed)
     return env, train_envs, test_envs
+def on_train_epoch(num_epoch: int, step_idx: int):
+    print('num_epoch:',num_epoch)
 
 def test_ddpg(args=get_args()):
     print('training_num={},test_num={}'.format(args.training_num,args.test_num))
@@ -126,6 +128,7 @@ def test_ddpg(args=get_args()):
             logger=logger,
             update_per_step=args.update_per_step,
             test_in_train=False,
+            train_fn = on_train_epoch,
         )
         pprint.pprint(result)
 

@@ -5,7 +5,7 @@ import torch
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=12345)
-    parser.add_argument("--task", type=str, default='circuit')
+    parser.add_argument("--task", type=str, default='CartPole-v0')
     parser.add_argument("--buffer-size", type=int, default=10000)
     parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[256,256, 256])
     parser.add_argument("--actor-lr", type=float, default=1e-3)
@@ -24,7 +24,7 @@ def get_args():
     parser.add_argument("--n-step", type=int, default=20000*10240)
     parser.add_argument("--batch-size", type=int, default=2048)
     parser.add_argument("--training-num", type=int, default=20)
-    parser.add_argument("--test-num", type=int, default=20)
+    parser.add_argument("--test-num", type=int, default=10)
     parser.add_argument("--logdir", type=str, default="log")
     parser.add_argument("--render", type=float, default=0.)
     parser.add_argument(
@@ -45,6 +45,18 @@ def get_args():
         action="store_true",
         help="watch the play of pre-trained policy only",
     )
+
+    # ppo special
+    parser.add_argument("--vf-coef", type=float, default=0.5)
+    parser.add_argument("--ent-coef", type=float, default=0.0)
+    parser.add_argument("--eps-clip", type=float, default=0.2)
+    parser.add_argument("--max-grad-norm", type=float, default=0.5)
+    parser.add_argument("--gae-lambda", type=float, default=0.95)
+    parser.add_argument("--rew-norm", type=int, default=0)
+    parser.add_argument("--norm-adv", type=int, default=0)
+    parser.add_argument("--recompute-adv", type=int, default=0)
+    parser.add_argument("--dual-clip", type=float, default=None)
+    parser.add_argument("--value-clip", type=int, default=0)
 
 
     return parser.parse_args()
