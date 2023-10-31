@@ -123,7 +123,7 @@ class CircuitEnvTest(gym.Env):
         if reward ==7:
             terminated = True
             #print('action=',action)
-        print(reward)
+        #print(reward)
         return observation, reward, terminated,False, info
 
     def render(self):
