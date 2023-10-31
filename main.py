@@ -117,10 +117,10 @@ def test_ddpg(args=get_args()):
             policy,
             train_collector,
             test_collector,
-            args.epoch,
-            args.step_per_epoch,
-            args.step_per_collect,
-            100,#episode_per_test
+            args.max_epoch,#每次训练的最大 epoch
+            args.step_per_epoch,#每个epoch中收集的总的 transitions
+            args.step_per_collect,#每次网络更新要收集的transitions
+            10000,#episode_per_test #在evaluation时，执行的episode的数量
             args.batch_size,
             save_best_fn=save_best_fn,
             logger=logger,

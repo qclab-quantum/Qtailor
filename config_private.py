@@ -13,13 +13,16 @@ def get_args():
     parser.add_argument("--gamma", type=float, default=0.99)
     parser.add_argument("--tau", type=float, default=0.005)
     parser.add_argument("--exploration-noise", type=float, default=0.1)
-    parser.add_argument("--start-timesteps", type=int, default=25000)
-    parser.add_argument("--epoch", type=int, default=20000)
-    parser.add_argument("--step-per-epoch", type=int, default=2000)
-    parser.add_argument("--step-per-collect", type=int, default=1)
+
+    #collect
+    parser.add_argument("--start-timesteps", type=int, default=25000)#collect 的 n_step 收集的step的数量
+    #OffpolicyTrainer
+    parser.add_argument("--max-epoch", type=int, default=20000) #最大
+    parser.add_argument("--step-per-epoch", type=int, default=10240)
+    parser.add_argument("--step-per-collect", type=int, default=10240)
     parser.add_argument("--update-per-step", type=int, default=1)
-    parser.add_argument("--n-step", type=int, default=1)
-    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--n-step", type=int, default=20000*10240)
+    parser.add_argument("--batch-size", type=int, default=2048)
     parser.add_argument("--training-num", type=int, default=20)
     parser.add_argument("--test-num", type=int, default=20)
     parser.add_argument("--logdir", type=str, default="log")
