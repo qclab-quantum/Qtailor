@@ -132,8 +132,8 @@ def test_ddpg(args=get_args()):
     # Let's watch its performance!
     policy.eval()
 
-    #test_envs.seed(args.seed)
-    #test_collector.reset()
+    test_envs.seed(args.seed)
+    test_collector.reset()
     #result = test_collector.collect(n_episode=100, render=args.render)
     result = test_collector.collect(n_step=args.start_timesteps, random=True, render=args.render)
     print(f'Final reward: {result["rews"].mean()}, length: {result["lens"].mean()}')
