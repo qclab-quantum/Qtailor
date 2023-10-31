@@ -17,7 +17,7 @@ from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import Actor, Critic
 from torch.utils.tensorboard import SummaryWriter
 from config_private import get_args
-
+import time
 # !/usr/bin/envs python3
 
 
@@ -140,7 +140,7 @@ def test_ddpg(args=get_args()):
 
 
 if __name__ == "__main__":
-
+    start_time = time.time()
     register(
         id='CircuitEnvTest',
        # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -153,3 +153,7 @@ if __name__ == "__main__":
     #envs.reset(seed=0, return_info=False, options=None)
 
     test_ddpg()
+    end_time = time.time()
+    execution_time = end_time - start_time
+
+    print(f"Execution time: {execution_time} seconds")

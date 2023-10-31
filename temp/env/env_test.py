@@ -116,10 +116,11 @@ class CircuitEnvTest(gymnasium.Env):
         info = self._get_info()
 
         terminated = False
-        if reward == -1:
+        if reward <= 0:
             terminated = True
         if reward ==7:
             terminated = True
+            print('action=',action)
         return observation, reward, terminated,False, info
 
     def render(self):
@@ -164,7 +165,7 @@ class CircuitEnvTest(gymnasium.Env):
                 a.append(i)
                 count += 1
         if count !=3:
-            reward =  -1
+            reward =  -abs(count-3)
         else:
           res = get_compiled_gate(circuit,self.adj, a)
           if res != -1:
