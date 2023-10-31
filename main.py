@@ -145,7 +145,7 @@ if __name__ == "__main__":
         id='CircuitEnvTest',
        # entry_point='core.envs.circuit_env:CircuitEnv',
          entry_point='temp.env.env_test:CircuitEnvTest',
-        max_episode_steps=30000,
+        max_episode_steps=200000000,
     )
     # env = gym.make('CircuitEnvTest')
     # obs = env.reset()

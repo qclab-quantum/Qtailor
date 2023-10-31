@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" deleteMissingItems="true" persistUploadOnCheckin="false">
     <serverData>
       <paths name="inspur@cn-gz-txy.starryfrp.com:53521 password">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/pycharm_project_224" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/inspur/lt" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
