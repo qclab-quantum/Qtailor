@@ -72,6 +72,7 @@ class CircuitEnvTest(gym.Env):
 
 
     def make_obs_space(self):
+       # space = MultiBinary([10, 10])
         space = MultiBinary([10, 10])
 
         return space
@@ -111,11 +112,15 @@ class CircuitEnvTest(gym.Env):
     '''
     def step(self, action):
         self.step_cnt = self.step_cnt+1
+
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
         info = self._get_info()
+
+        # if self.step_cnt % 100 == 0:
+        #     print('step = ',self.step_cnt)
 
         terminated = False
         if reward <= 0:
@@ -168,7 +173,7 @@ class CircuitEnvTest(gym.Env):
                 a.append(i)
                 count += 1
         if count !=3:
-            reward =  -abs(count-3)
+            reward =  -abs(abs(count)-3)
         else:
           res = get_compiled_gate(circuit,self.adj, a)
           if res != -1:
@@ -179,3 +184,7 @@ class CircuitEnvTest(gym.Env):
 
     def _close_env(self):
         logger.info('_close_env')
+
+
+if __name__ == '__main__':
+    print(MultiBinary([10, 10]).sample())

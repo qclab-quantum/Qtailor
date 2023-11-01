@@ -33,18 +33,18 @@ def get_args():
     #parser.add_argument("--task", type=str, default="CartPole-v0")
     #parser.add_argument("--task", type=str, default="MountainCar-v0")
     parser.add_argument("--task", type=str, default="CircuitEnvTest")
-    parser.add_argument("--reward-threshold", type=float, default=None)
-    parser.add_argument("--seed", type=int, default=1626)
-    parser.add_argument("--buffer-size", type=int, default=20000)
+    parser.add_argument("--reward-threshold", type=float, default=6)
+    parser.add_argument("--seed", type=int, default=1996)
+    parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--gamma", type=float, default=0.99)
-    parser.add_argument("--epoch", type=int, default=100000)
-    parser.add_argument("--step-per-epoch", type=int, default=50000)
+    parser.add_argument("--epoch", type=int, default=1000)
+    parser.add_argument("--step-per-epoch", type=int, default=2000)
     parser.add_argument("--step-per-collect", type=int, default=2000)
-    parser.add_argument("--repeat-per-collect", type=int, default=10)
+    parser.add_argument("--repeat-per-collect", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=64)
-    parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[64, 64])
-    parser.add_argument("--training-num", type=int, default=30)
+    parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[32,64,128,64,32])
+    parser.add_argument("--training-num", type=int, default=20)
     parser.add_argument("--test-num", type=int, default=10)
     parser.add_argument("--logdir", type=str, default="log")
     parser.add_argument("--render", type=float, default=0.0)
@@ -78,9 +78,6 @@ def test_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
-    if args.reward_threshold is None:
-        default_reward_threshold = {"CartPole-v0": 195}
-        args.reward_threshold = default_reward_threshold.get(args.task, env.spec.reward_threshold)
     # train_envs = gym.make(args.task)
     # you can also use tianshou.env.SubprocVectorEnv
     train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task) )for _ in range(args.training_num)])
