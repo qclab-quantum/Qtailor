@@ -112,9 +112,8 @@ class CircuitEnvTest(gym.Env):
     '''
     def step(self, action):
         self.step_cnt = self.step_cnt+1
-        assert self.action_space.contains(
-            action
-        ), f"{action!r} ({type(action)}) invalid"
+        assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
+
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
@@ -125,8 +124,8 @@ class CircuitEnvTest(gym.Env):
         truncated = False
         if reward <= 0:
             terminated = True
-        # if reward ==7:
-        #     terminated = True
+        if reward ==7:
+            truncated = True
             #print('action=',action)
         #print(reward)
         return observation, reward, terminated,truncated, info
