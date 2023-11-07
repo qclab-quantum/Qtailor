@@ -326,7 +326,7 @@ if __name__ == "__main__":
     for _ in range(args.stop_iters):
         result = algo.train()
         #print(pretty_print(result['episode_reward_mean']))
-        print(result['episode_reward_mean'])
+        print(result['episode_reward_mean'],'  ',result['timers'])
         # stop training of the target train steps or reward are reached
         if (
                 result["timesteps_total"] >= args.stop_timesteps
