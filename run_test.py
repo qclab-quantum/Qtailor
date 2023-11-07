@@ -9,7 +9,7 @@ from gymnasium.spaces import Box
 from tianshou.exploration import GaussianNoise
 from torch.utils.tensorboard import SummaryWriter
 
-from tianshou.data import Collector, VectorReplayBuffer
+from tianshou.data import Collector, VectorReplayBuffer, Batch
 from tianshou.env import DummyVectorEnv
 from tianshou.policy import PPOPolicy, DDPGPolicy
 from tianshou.trainer import OnpolicyTrainer
@@ -124,6 +124,13 @@ def test_ppo(args=get_args()):
         advantage_normalization=args.norm_adv,
         recompute_advantage=args.recompute_adv,
     )
+
+    # obs = env.reset()
+    # batch = Batch(obs=obs,info ='this is info')
+    # # action = policy(batch).act[0]
+    # action = policy.forward(batch = batch)
+    # print(action)
+
     # net_a = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
     # actor = Actor(
     #     net_a, args.action_shape, device=args.device
@@ -164,7 +171,6 @@ def test_ppo(args=get_args()):
         #return mean_rewards >= args.reward_threshold
         return mean_rewards >= 6
 
-    # trainer
     result = OnpolicyTrainer(
         policy=policy,
         train_collector=train_collector,
@@ -182,12 +188,13 @@ def test_ppo(args=get_args()):
     assert stop_fn(result["best_reward"])
 
     if __name__ == "__main__":
-        pprint.pprint(result)
+        #pprint.pprint(result)
         # Let's watch its performance!
         env = MultiDiscreteToDiscrete(gym.make(args.task))
         policy.eval()
         collector = Collector(policy, env)
-        result = collector.collect(n_episode=1, render=args.render)
+        result = collector.collect(n_episode=10, render=args.render)
+        print(result)
         rews, lens = result["rews"], result["lens"]
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
 
@@ -197,6 +204,7 @@ if __name__ == "__main__":
         id='CircuitEnvTest',
         # entry_point='core.envs.circuit_env:CircuitEnv',
         entry_point='temp.env.env_test:CircuitEnvTest',
-        max_episode_steps=200000000,
+        max_episode_steps=2000000,
     )
+
     test_ppo()

@@ -5,3 +5,4 @@ qiskit
 qiskit-aer
 matplotlib
 pylatexenc
+wandb

@@ -112,7 +112,6 @@ class CircuitEnvTest(gym.Env):
     '''
     def step(self, action):
         self.step_cnt = self.step_cnt+1
-
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
@@ -123,13 +122,14 @@ class CircuitEnvTest(gym.Env):
         #     print('step = ',self.step_cnt)
 
         terminated = False
+        truncated = False
         if reward <= 0:
             terminated = True
-        if reward ==7:
-            terminated = True
+        # if reward ==7:
+        #     terminated = True
             #print('action=',action)
         #print(reward)
-        return observation, reward, terminated,False, info
+        return observation, reward, terminated,truncated, info
 
     def render(self):
         print('render')
