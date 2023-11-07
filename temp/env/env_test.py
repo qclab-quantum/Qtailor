@@ -17,7 +17,7 @@ def get_compiled_gate(circuit:QuantumCircuit, adj:list,initial_layout: list) -> 
         return -1
 
 
-# get adj table from coordinate
+# get adj  from coordinate
 def coordinate2adjacent(points):
     import math
     point_dict = {i: points[i] for i in range(len(points))}
@@ -42,11 +42,11 @@ def coordinate2adjacent(points):
 
 def adjacency2matrix(adj_list):
     max_index = max(max(pair) for pair in adj_list)
-    matrix = [[False] * (max_index + 1) for _ in range(max_index + 1)]
+    matrix = [[0] * (max_index + 1) for _ in range(max_index + 1)]
 
     for pair in adj_list:
-        matrix[pair[0]][pair[1]] = True
-        matrix[pair[1]][pair[0]] = True
+        matrix[pair[0]][pair[1]] = 1
+        matrix[pair[1]][pair[0]] = 1
 
     return matrix
 
@@ -73,20 +73,20 @@ class CircuitEnvTest(gym.Env):
 
     def make_obs_space(self):
        # space = MultiBinary([10, 10])
-        space = MultiBinary([10, 10])
+        space = MultiDiscrete(np.array([2] * 100))
 
         return space
     def _get_info(self):
-        return 'info'
+        return {'info':'this is info'}
 
 
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-        observation = self._get_obs()
+        obs = self._get_obs()
         info = self._get_info()
-        return observation, info
+        return obs, info
 
     '''
     Returns:
@@ -125,7 +125,7 @@ class CircuitEnvTest(gym.Env):
         if reward <= 0:
             terminated = True
         if reward ==7:
-            truncated = True
+            terminated = True
             #print('action=',action)
         #print(reward)
         return observation, reward, terminated,truncated, info
@@ -145,7 +145,8 @@ class CircuitEnvTest(gym.Env):
         self._close_env()
 
     def _get_obs(self):
-        return adjacency2matrix(coordinate2adjacent(self.points))
+        obs = np.array(adjacency2matrix(coordinate2adjacent(self.points)))
+        return obs.flatten("C")
 
     def _get_info(self):
         return {"info":"this is info"}
@@ -154,15 +155,10 @@ class CircuitEnvTest(gym.Env):
 
         obs = self._get_obs()
         reward = -1
-
         circuit = QuantumCircuit(3, 2)
-        # Add a H gate on qubit 0
         circuit.h(0)
-
-        # Add a CX (CNOT) gate on control qubit 0 and target qubit 1
         circuit.cx(0, 1)
         circuit.cx(0, 2)
-        # Map the quantum measurement to the classical bits
         circuit.measure([0, 1], [0, 1])
 
         a = []
@@ -179,11 +175,21 @@ class CircuitEnvTest(gym.Env):
               reward = 10 - res
         return reward,obs
 
-        # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)
-
     def _close_env(self):
         logger.info('_close_env')
 
 
 if __name__ == '__main__':
-    print(MultiBinary([10, 10]).sample())
+    matrix = np.array([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                       [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                       [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+                       [31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+                       [41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+                       [51, 52, 53, 54, 55, 56, 57, 58, 59, 60],
+                       [61, 62, 63, 64, 65, 66, 67, 68, 69, 70],
+                       [71, 72, 73, 74, 75, 76, 77, 78, 79, 80],
+                       [81, 82, 83, 84, 85, 86, 87, 88, 89, 90],
+                       [91, 92, 93, 94, 95, 96, 97, 98, 99, 100]])
+
+    flattened_array = matrix.flatten("C")
+    print(flattened_array)
