@@ -302,7 +302,9 @@ if __name__ == "__main__":
         # or "corridor" if registered above
         .environment(CircuitEnvTest, env_config={})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=1)
+        .rollouts(num_rollout_workers=16,num_envs_per_worker=20)
+
+        .training(model={"fcnet_hiddens": [32,64, 128,64,32]},gamma =0.9 )
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
         #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
     )
