@@ -13,7 +13,7 @@ def get_compiled_gate(circuit:QuantumCircuit, adj:list,initial_layout: list) -> 
     try:
         compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout, backend=simulator)
         #return compiled_circuit.num_nonlocal_gates()
-        return compiled_circuit.decompose().depth()
+        return compiled_circuit.depth()
     except:
         return -1
 
@@ -116,7 +116,7 @@ class CircuitEnvTest(gym.Env):
         truncated = False
         if reward <= 0:
             terminated = True
-        if reward ==14:
+        if reward ==6:
             terminated = True
             #print('action=',action)
         #print(reward)
@@ -163,7 +163,7 @@ class CircuitEnvTest(gym.Env):
         else:
           res = get_compiled_gate(circuit,self.adj, a)
           if res != -1:
-              reward = 20 - res
+              reward = 10 - res
         return reward,obs
 
         # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)

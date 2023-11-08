@@ -1,4 +1,5 @@
-# get adj table from coordinate
+# 二维坐标->邻接表（qiskit 可识别的形式）
+# 坐标形式：  points=[(1,0),(1,1),(1,2),(1,3),(1,4)]
 def coordinate2adjacent(points):
     import math
     point_dict = {i: points[i] for i in range(len(points))}
@@ -21,7 +22,7 @@ def coordinate2adjacent(points):
     # return adjacency_dict
     return res
 
-
+# 二维坐标->邻接表
 def adjacency2matrix(adj_list):
     max_index = max(max(pair) for pair in adj_list)
     matrix = [[0] * (max_index + 1) for _ in range(max_index + 1)]
@@ -64,9 +65,6 @@ def plot_points(points):
     plt.show()
 
 if __name__ == '__main__':
-
-    # e.g.
-    #points = [(0,0),(0,1),(0,2),(1,1)]
     points = [(1,0),(1,1),(1,2),(1,3),(1,4)]
     print(coordinate2adjacent(points))
     print(adjacency2matrix(coordinate2adjacent(points)))

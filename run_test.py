@@ -32,19 +32,19 @@ def get_args():
     parser = argparse.ArgumentParser()
     #parser.add_argument("--task", type=str, default="CartPole-v0")
     #parser.add_argument("--task", type=str, default="MountainCar-v0")
-    parser.add_argument("--task", type=str, default="CircuitEnvTest")
-    parser.add_argument("--reward-threshold", type=float, default=16)
+    parser.add_argument("--task", type=str, default="CircuitEnvTest-v1")
+    parser.add_argument("--reward-threshold", type=float, default=6)
     parser.add_argument("--seed", type=int, default=1996)
     parser.add_argument("--buffer-size", type=int, default=2000)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--gamma", type=float, default=0.5)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--gamma", type=float, default=0.99)
     parser.add_argument("--epoch", type=int, default=1000)
     parser.add_argument("--step-per-epoch", type=int, default=2000)
     parser.add_argument("--step-per-collect", type=int, default=2000)
     parser.add_argument("--repeat-per-collect", type=int, default=20)
-    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[32,64,128,64,32])
-    parser.add_argument("--training-num", type=int, default=5)
+    parser.add_argument("--training-num", type=int, default=20)
     parser.add_argument("--test-num", type=int, default=5)
     parser.add_argument("--logdir", type=str, default="log")
     parser.add_argument("--render", type=float, default=0.0)
@@ -78,6 +78,7 @@ def test_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
+    print(args.reward_threshold)
 
     # train_envs = gym.make(args.task)
 
@@ -174,12 +175,22 @@ def test_ppo(args=get_args()):
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
 
 
-if __name__ == "__main__":
+def register_env():
+    # 最简单的环境
     register(
-        id='CircuitEnvTest',
+        id='CircuitEnvTest-v0',
+        # entry_point='core.envs.circuit_env:CircuitEnv',
+        entry_point='temp.env.env_test_0:CircuitEnvTest_v0',
+        max_episode_steps=2000000,
+    )
+
+    #田字格 5 比特
+    register(
+        id='CircuitEnvTest-v1',
         # entry_point='core.envs.circuit_env:CircuitEnv',
         entry_point='temp.env.env_test:CircuitEnvTest',
         max_episode_steps=2000000,
     )
-
+if __name__ == "__main__":
+    register_env()
     test_ppo()
