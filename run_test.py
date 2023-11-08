@@ -1,6 +1,7 @@
 import argparse
 import os
 import pprint
+import time
 
 import gymnasium as gym
 import numpy as np
@@ -193,4 +194,8 @@ def register_env():
     )
 if __name__ == "__main__":
     register_env()
+    # Start the timer
+    start_time = time.time()
     test_ppo()
+    end_time = time.time()
+    runtime = end_time - start_time
