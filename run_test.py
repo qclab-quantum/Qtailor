@@ -42,7 +42,7 @@ def get_args():
     parser.add_argument("--step-per-epoch", type=int, default=2000)
     parser.add_argument("--step-per-collect", type=int, default=2000)
     parser.add_argument("--repeat-per-collect", type=int, default=20)
-    parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[32,64,128,64,32])
     parser.add_argument("--training-num", type=int, default=20)
     parser.add_argument("--test-num", type=int, default=10)
@@ -76,13 +76,11 @@ def get_args():
 
 def test_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task))
-    print(env.action_space.sample())
-    print(env.reset())
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     # train_envs = gym.make(args.task)
     # you can also use tianshou.env.SubprocVectorEnv
-    train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.training_num)])
+    train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task) )for _ in range(args.training_num)])
     # test_envs = gym.make(args.task)
     test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.test_num)])
     # seed
@@ -127,6 +125,33 @@ def test_ppo(args=get_args()):
         recompute_advantage=args.recompute_adv,
     )
 
+    # obs = env.reset()
+    # batch = Batch(obs=obs,info ='this is info')
+    # # action = policy(batch).act[0]
+    # action = policy.forward(batch = batch)
+    # print(action)
+
+    # net_a = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
+    # actor = Actor(
+    #     net_a, args.action_shape, device=args.device
+    # ).to(args.device)
+    # actor_optim = torch.optim.Adam(actor.parameters(), lr=args.actor_lr)
+    #
+    # net_c = Net(args.state_shape, args.action_shape, hidden_sizes=args.hidden_sizes, concat=True, device=args.device, )
+    # critic = Critic(net_c, device=args.device).to(args.device)
+    # critic_optim = torch.optim.Adam(critic.parameters(), lr=args.critic_lr)
+    # policy = DDPGPolicy(
+    #     actor,
+    #     actor_optim,
+    #     critic,
+    #     critic_optim,
+    #     tau=args.tau,
+    #     gamma=args.gamma,
+    #     exploration_noise=GaussianNoise(sigma=args.exploration_noise),
+    #     estimation_step=args.n_step,
+    #     action_space=env.action_space,
+    # )
+
     # collector
     train_collector = Collector(
         policy,
@@ -167,64 +192,12 @@ def test_ppo(args=get_args()):
         # Let's watch its performance!
         env = MultiDiscreteToDiscrete(gym.make(args.task))
         policy.eval()
+
         collector = Collector(policy, env)
         result = collector.collect(n_episode=10, render=args.render)
-        print(result)
         rews, lens = result["rews"], result["lens"]
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
 
-
-def test_forward():
-    args = get_args()
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
-    env = gym.make(args.task)
-    args.state_shape = env.observation_space.shape or env.observation_space.n
-    args.action_shape = env.action_space.shape or env.action_space.n
-    # model
-    net = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
-    if torch.cuda.is_available():
-        actor = DataParallelNet(Actor(net, args.action_shape, device=None).to(args.device))
-        critic = DataParallelNet(Critic(net, device=None).to(args.device))
-    else:
-        actor = Actor(net, args.action_shape, device=args.device).to(args.device)
-        critic = Critic(net, device=args.device).to(args.device)
-    actor_critic = ActorCritic(actor, critic)
-    # orthogonal initialization
-    for m in actor_critic.modules():
-        if isinstance(m, torch.nn.Linear):
-            torch.nn.init.orthogonal_(m.weight)
-            torch.nn.init.zeros_(m.bias)
-    optim = torch.optim.Adam(actor_critic.parameters(), lr=args.lr)
-    dist = torch.distributions.Categorical
-    policy = PPOPolicy(
-        actor=actor,
-        critic=critic,
-        optim=optim,
-        dist_fn=dist,
-        action_scaling=isinstance(env.action_space, Box),
-        discount_factor=args.gamma,
-        max_grad_norm=args.max_grad_norm,
-        eps_clip=args.eps_clip,
-        vf_coef=args.vf_coef,
-        ent_coef=args.ent_coef,
-        gae_lambda=args.gae_lambda,
-        reward_normalization=args.rew_norm,
-        dual_clip=args.dual_clip,
-        value_clip=args.value_clip,
-        action_space=env.action_space,
-        deterministic_eval=True,
-        advantage_normalization=args.norm_adv,
-        recompute_advantage=args.recompute_adv,
-    )
-    #env = MultiDiscreteToDiscrete(gym.make(args.task))
-    env = gym.make('CartPole-v0')
-    obs, done = env.reset(), False
-    while not done:
-        batch = Batch(obs=[obs])  # the first dimension is batch-size
-        act = policy(batch).act[0]  # policy.forward return a batch, use ".act" to extract the action
-        print(act)
-        obs, rew, done, info = env.step(act)
 
 if __name__ == "__main__":
     register(
@@ -233,7 +206,5 @@ if __name__ == "__main__":
         entry_point='temp.env.env_test:CircuitEnvTest',
         max_episode_steps=2000000,
     )
-    test_forward()
 
-    #test_ppo()
-    #env = MultiDiscreteToDiscrete(gym.make(args.task))
+    test_ppo()

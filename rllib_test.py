@@ -1,3 +1,111 @@
+"""
+Example of a custom gym environment. Run this example for a demo.
+
+This example shows the usage of:
+  - a custom environment
+  - Ray Tune for grid search to try different learning rates
+
+You can visualize experiment results in ~/ray_results using TensorBoard.
+
+Run example with defaults:
+$ python custom_env.py
+For CLI options:
+$ python custom_env.py --help
+"""
+import argparse
+import gymnasium as gym
+from gymnasium.spaces import Discrete, Box
+import numpy as np
+import os
+import random
+
+import ray
+from ray import air, tune
+from ray.rllib.env.env_context import EnvContext
+from ray.rllib.utils.framework import try_import_tf, try_import_torch
+from ray.rllib.utils.test_utils import check_learning_achieved
+from ray.tune.logger import pretty_print
+from ray.tune.registry import get_trainable_cls
+
+tf1, tf, tfv = try_import_tf()
+torch, nn = try_import_torch()
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--run", type=str, default="PPO", help="The RLlib-registered algorithm to use."
+)
+parser.add_argument(
+    "--framework",
+    choices=["tf", "tf2", "torch"],
+    default="torch",
+    help="The DL framework specifier.",
+)
+parser.add_argument(
+    "--as-test",
+    action="store_true",
+    help="Whether this script should be run as a test: --stop-reward must "
+         "be achieved within --stop-timesteps AND --stop-iters.",
+)
+parser.add_argument(
+    "--stop-iters", type=int, default=2000, help="Number of iterations to train."
+)
+parser.add_argument(
+    "--stop-timesteps", type=int, default=10000, help="Number of timesteps to train."
+)
+parser.add_argument(
+    "--stop-reward", type=float, default=6.5, help="Reward at which we stop training."
+)
+parser.add_argument(
+    "--no-tune",
+    action="store_true",
+    help="Run without Tune using a manual train loop instead. In this case,"
+         "use PPO without grid search and no TensorBoard.",
+)
+parser.add_argument(
+    "--local-mode",
+    action="store_true",
+    help="Init Ray in local mode for easier debugging.",
+)
+
+
+
+class SimpleCorridor(gym.Env):
+    """Example of a custom env in which you have to walk down a corridor.
+
+    You can configure the length of the corridor via the env config."""
+
+    def __init__(self, config: EnvContext):
+        self.end_pos = config["corridor_length"]
+        self.cur_pos = 0
+        self.action_space = Discrete(2)
+        self.observation_space = Box(0.0, self.end_pos, shape=(1,), dtype=np.float32)
+        # Set the seed. This is only used for the final (reach goal) reward.
+        self.reset(seed=config.worker_index * config.num_workers)
+
+    def reset(self, *, seed=None, options=None):
+        random.seed(seed)
+        self.cur_pos = 0
+        return [self.cur_pos], {}
+
+    def step(self, action):
+        assert action in [0, 1], action
+        if action == 0 and self.cur_pos > 0:
+            self.cur_pos -= 1
+        elif action == 1:
+            self.cur_pos += 1
+        done = truncated = self.cur_pos >= self.end_pos
+        # Produce a random reward when we reach the goal.
+        return (
+            [self.cur_pos],
+            random.random() * 2 if done else -0.1,
+            done,
+            truncated,
+            {},
+        )
+
+
+
+
 import gymnasium as gym
 import numpy
 import numpy as np
@@ -73,7 +181,7 @@ class CircuitEnvTest(gym.Env):
 
     def make_obs_space(self):
        # space = MultiBinary([10, 10])
-        space = MultiDiscrete(np.array([[2] * 10] * 10))
+        space = MultiDiscrete(np.array([2] * 100))
 
         return space
     def _get_info(self):
@@ -145,7 +253,8 @@ class CircuitEnvTest(gym.Env):
         self._close_env()
 
     def _get_obs(self):
-        return np.array(adjacency2matrix(coordinate2adjacent(self.points)))
+        obs = np.array(adjacency2matrix(coordinate2adjacent(self.points)))
+        return obs.flatten("C")
 
     def _get_info(self):
         return {"info":"this is info"}
@@ -154,15 +263,10 @@ class CircuitEnvTest(gym.Env):
 
         obs = self._get_obs()
         reward = -1
-
         circuit = QuantumCircuit(3, 2)
-        # Add a H gate on qubit 0
         circuit.h(0)
-
-        # Add a CX (CNOT) gate on control qubit 0 and target qubit 1
         circuit.cx(0, 1)
         circuit.cx(0, 2)
-        # Map the quantum measurement to the classical bits
         circuit.measure([0, 1], [0, 1])
 
         a = []
@@ -179,19 +283,55 @@ class CircuitEnvTest(gym.Env):
               reward = 10 - res
         return reward,obs
 
-        # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)
-
     def _close_env(self):
         logger.info('_close_env')
 
 
-if __name__ == '__main__':
-    points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
-    print(np.array(adjacency2matrix(coordinate2adjacent(points))))
-    # print(np.array([[1, 0] ,[1,0],[1,0]]))
-    # arr = np.ones((3, 2), dtype = int)
-    # arr[:, 1] = 0  # 把第二列的值设为0
-    # print(arr)
+if __name__ == "__main__":
+    args = parser.parse_args()
+    print(f"Running with following CLI options: {args}")
 
-    observation_space = MultiDiscrete(np.array([[2] * 10] * 10))
-    print(observation_space.sample())
+    ray.init(local_mode=args.local_mode)
+
+    # Can also register the env creator function explicitly with:
+    # register_env("corridor", lambda config: SimpleCorridor(config))
+
+    config = (get_trainable_cls(args.run)
+        .get_default_config()
+        # or "corridor" if registered above
+        .environment(CircuitEnvTest, env_config={})
+        .framework(args.framework)
+        .rollouts(num_rollout_workers=16,num_envs_per_worker=20,rollout_fragment_length = 'auto')
+
+        .training(model={"fcnet_hiddens": [32,64, 128,64,32]},gamma =0.9 )
+        # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
+        #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+    )
+
+    stop = {
+        "training_iteration": args.stop_iters,
+        "timesteps_total": args.stop_timesteps,
+        "episode_reward_mean": args.stop_reward,
+    }
+
+    # manual training with train loop using PPO and fixed learning rate
+    if args.run != "PPO":
+        raise ValueError("Only support --run PPO with --no-tune.")
+    print("Running manual train loop without Ray Tune.")
+    # use fixed learning rate instead of grid search (needs tune)
+    config.lr = 1e-4
+    algo = config.build()
+    # run manual training loop and print results after each iteration
+    for _ in range(args.stop_iters):
+        result = algo.train()
+        #print(pretty_print(result['episode_reward_mean']))
+        print(result['episode_reward_mean'],'  ',result['timers'])
+        # stop training of the target train steps or reward are reached
+        if (
+                result["timesteps_total"] >= args.stop_timesteps
+                or result["episode_reward_mean"] >= args.stop_reward
+        ):
+            break
+
+    algo.stop()
+    ray.shutdown()
