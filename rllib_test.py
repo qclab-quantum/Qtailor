@@ -48,10 +48,10 @@ parser.add_argument(
          "be achieved within --stop-timesteps AND --stop-iters.",
 )
 parser.add_argument(
-    "--stop-iters", type=int, default=2000, help="Number of iterations to train."
+    "--stop-iters", type=int, default=20000, help="Number of iterations to train."
 )
 parser.add_argument(
-    "--stop-timesteps", type=int, default=10000, help="Number of timesteps to train."
+    "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
 parser.add_argument(
     "--stop-reward", type=float, default=8, help="Reward at which we stop training."
@@ -311,7 +311,7 @@ if __name__ == "__main__":
 
     config = (
         PPOConfig()
-        .rollouts(num_rollout_workers=40,
+        .rollouts(num_rollout_workers=5,
                   #num_envs_per_worker=20,
                   rollout_fragment_length = 'auto'
                   )
@@ -344,6 +344,8 @@ if __name__ == "__main__":
         print('===============iter %r end ====================='% _)
         #print(result['episode_reward_mean'],'  ',result['timers'])
         # stop training of the target train steps or reward are reached
+        if _ % 5==0:
+            checkpoint_dir = algo.save().checkpoint.path
         if (
                 result["timesteps_total"] >= args.stop_timesteps
                 or result["episode_reward_mean"] >= args.stop_reward

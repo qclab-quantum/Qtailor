@@ -13,22 +13,31 @@ def get_compiled_gate(circuit:QuantumCircuit, adj:list,initial_layout: list) -> 
     return compiled_circuit.num_nonlocal_gates()
 
 if __name__ == '__main__':
-    circuit = QuantumCircuit(3, 2)
+
     # Add a H gate on qubit 0
     #circuit.h(0)
     # Add a CX (CNOT) gate on control qubit 0 and target qubit 1
-    circuit.swap(1,0)
+    circuit = QuantumCircuit(5)
+    # Add a H gate on qubit 0
+    #circuit.h(0)
+
+    # Add a CX (CNOT) gate on control qubit 0 and target qubit 1
+    circuit.cx(0, 1)
+    circuit.cx(0, 2)
+    circuit.cx(0, 3)
+    circuit.cx(0, 4)
+
     # Map the quantum measurement to the classical bits
     #circuit.measure([0, 1], [0, 1])
-
-
-    adj = [
-        [0, 1],
-        [1, 0],
-        [2, 3]
-
-    ]
+    #adj = [[0, 1],[1, 2],[2, 3],[3, 4],]
+    adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1], [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5], [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4], [7, 6], [7, 8], [8, 5], [8, 7]]
     #circuit.decompose('CNOT').draw('mpl').show()
     #circuit.draw('mpl').show()
-    compiled_circuit = transpile(circuits=circuit, coupling_map=adj, backend=simulator)
+    compiled_circuit = transpile(circuits=circuit,
+                                coupling_map=adj,
+                                 backend=simulator)
+
     compiled_circuit.decompose().draw('mpl').show()
+    #compiled_circuit.draw('mpl').show()
+    print(compiled_circuit.decompose().count_ops())
+    print(compiled_circuit.decompose().depth())

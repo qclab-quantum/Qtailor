@@ -12,7 +12,8 @@ def get_compiled_gate(circuit:QuantumCircuit, adj:list,initial_layout: list) -> 
 
     try:
         compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout, backend=simulator)
-        return compiled_circuit.num_nonlocal_gates()
+        #return compiled_circuit.num_nonlocal_gates()
+        return compiled_circuit.decompose().depth()
     except:
         return -1
 
@@ -58,24 +59,15 @@ class CircuitEnvTest(gym.Env):
         # Observations are dictionaries with the agent's and the target's location.
         # Each location is encoded as an element of {0, ..., `size`}^2, i.e. MultiDiscrete([size, size]).
         # qpu Topology
-        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
+        #self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
+        #三个点全连接
+        self.points = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)]
         self.adj = coordinate2adjacent(self.points)
         self.step_cnt = 1
 
-        self.observation_space = self.make_obs_space()
-        self.action_space = MultiDiscrete([2,2,2,2,2,2,2,2,2,2])
-        """
-        The following dictionary maps abstract actions from `self.action_space` to
-        the direction we will walk in if that action is taken.
-        I.e. 0 corresponds to "right", 1 to "up" etc.
-        """
+        self.observation_space = MultiDiscrete(np.array([[2] * 9] * 9))
+        self.action_space = MultiDiscrete([2,2,2,2,2,2,2,2,2])
 
-
-    def make_obs_space(self):
-       # space = MultiBinary([10, 10])
-        space = MultiDiscrete(np.array([[2] * 10] * 10))
-
-        return space
     def _get_info(self):
         return {'info':'this is info'}
 
@@ -124,7 +116,7 @@ class CircuitEnvTest(gym.Env):
         truncated = False
         if reward <= 0:
             terminated = True
-        if reward ==7:
+        if reward ==14:
             terminated = True
             #print('action=',action)
         #print(reward)
@@ -132,14 +124,7 @@ class CircuitEnvTest(gym.Env):
 
     def render(self):
         print('render')
-    # %%
-    # Close
-    # ~~~~~
-    #
-    # The ``close`` method should close any open resources that were used by
-    # the environment. In many cases, you don’t actually have to bother to
-    # implement this method. However, in our example ``render_mode`` may be
-    # ``"human"`` and we might need to close the window that has been opened:
+
 
     def close(self):
         self._close_env()
@@ -154,29 +139,31 @@ class CircuitEnvTest(gym.Env):
 
         obs = self._get_obs()
         reward = -1
-
-        circuit = QuantumCircuit(3, 2)
+       # circuit start
+        circuit = QuantumCircuit(5)
         # Add a H gate on qubit 0
         circuit.h(0)
 
         # Add a CX (CNOT) gate on control qubit 0 and target qubit 1
         circuit.cx(0, 1)
         circuit.cx(0, 2)
+        circuit.cx(0, 3)
+        circuit.cx(0, 4)
         # Map the quantum measurement to the classical bits
-        circuit.measure([0, 1], [0, 1])
-
+        #circuit.measure([0, 1], [0, 1])
+        # circuit end
         a = []
         count = 0
         for i in range(len(action)):
             if action[i]==1:
                 a.append(i)
                 count += 1
-        if count !=3:
-            reward =  -abs(abs(count)-3)
+        if count !=5:
+            reward =  -abs(abs(count)-5)
         else:
           res = get_compiled_gate(circuit,self.adj, a)
           if res != -1:
-              reward = 10 - res
+              reward = 20 - res
         return reward,obs
 
         # return gym.spaces.Box(low=0, high=1,shape=(1,4), dtype=np.int)
@@ -186,12 +173,8 @@ class CircuitEnvTest(gym.Env):
 
 
 if __name__ == '__main__':
-    points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
+    points = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)]
     print(np.array(adjacency2matrix(coordinate2adjacent(points))))
-    # print(np.array([[1, 0] ,[1,0],[1,0]]))
-    # arr = np.ones((3, 2), dtype = int)
-    # arr[:, 1] = 0  # 把第二列的值设为0
-    # print(arr)
 
-    observation_space = MultiDiscrete(np.array([[2] * 10] * 10))
-    print(observation_space.sample())
+    # observation_space = MultiDiscrete(np.array([[2] * 3] * 3))
+    # print(observation_space.sample())
