@@ -68,6 +68,8 @@ class CircuitEnvTest(gym.Env):
         self.observation_space = MultiDiscrete(np.array([[2] * 9] * 9))
         self.action_space = MultiDiscrete([2,2,2,2,2,2,2,2,2])
 
+        self.obs = np.array(adjacency2matrix(coordinate2adjacent(self.points)))
+
     def _get_info(self):
         return {'info':'this is info'}
 
@@ -130,7 +132,7 @@ class CircuitEnvTest(gym.Env):
         self._close_env()
 
     def _get_obs(self):
-        return np.array(adjacency2matrix(coordinate2adjacent(self.points)))
+        return self.obs
 
     def _get_info(self):
         return {"info":"this is info"}
