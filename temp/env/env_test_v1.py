@@ -51,7 +51,7 @@ def adjacency2matrix(adj_list):
 
     return matrix
 
-class CircuitEnvTest(gym.Env):
+class CircuitEnvTest_v1(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):

@@ -33,8 +33,8 @@ def get_args():
     parser = argparse.ArgumentParser()
     #parser.add_argument("--task", type=str, default="CartPole-v0")
     #parser.add_argument("--task", type=str, default="MountainCar-v0")
-    parser.add_argument("--task", type=str, default="CircuitEnvTest-v1")
-    parser.add_argument("--reward-threshold", type=float, default=6)
+    parser.add_argument("--task", type=str, default="CircuitEnvTest-v2")
+    parser.add_argument("--reward-threshold", type=float, default=5)
     parser.add_argument("--seed", type=int, default=1996)
     parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=3e-4)
@@ -163,7 +163,8 @@ def test_ppo(args=get_args()):
         logger=logger,
     ).run()
 
-    assert stop_fn(result["best_reward"])
+    #assert stop_fn(result["best_reward"])
+    assert stop_fn(result["rews"].mean())
 
     if __name__ == "__main__":
         #pprint.pprint(result)
@@ -181,7 +182,7 @@ def register_env():
     register(
         id='CircuitEnvTest-v0',
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_0:CircuitEnvTest_v0',
+        entry_point='temp.env.env_test_v0:CircuitEnvTest_v0',
         max_episode_steps=2000000,
     )
 
@@ -189,7 +190,15 @@ def register_env():
     register(
         id='CircuitEnvTest-v1',
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test:CircuitEnvTest',
+        entry_point='temp.env.env_test_v1:CircuitEnvTest_v1',
+        max_episode_steps=2000000,
+    )
+
+    #代码精简，action space 和 obs space 重构
+    register(
+        id='CircuitEnvTest-v2',
+        # entry_point='core.envs.circuit_env:CircuitEnv',
+        entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
         max_episode_steps=2000000,
     )
 if __name__ == "__main__":
