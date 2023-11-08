@@ -196,6 +196,13 @@ if __name__ == "__main__":
     register_env()
     # Start the timer
     start_time = time.time()
+
+
     test_ppo()
+
+
+
+    #获取执行时间
     end_time = time.time()
-    runtime = end_time - start_time
+    runtime = round(end_time - start_time, 3)
+    print("Function runtime:", runtime, "seconds")
