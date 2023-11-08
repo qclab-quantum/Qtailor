@@ -21,6 +21,7 @@ import random
 
 import ray
 from ray import air, tune
+from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.rllib.utils.test_utils import check_learning_achieved
@@ -53,7 +54,7 @@ parser.add_argument(
     "--stop-timesteps", type=int, default=10000, help="Number of timesteps to train."
 )
 parser.add_argument(
-    "--stop-reward", type=float, default=6.5, help="Reward at which we stop training."
+    "--stop-reward", type=float, default=8, help="Reward at which we stop training."
 )
 parser.add_argument(
     "--no-tune",
@@ -296,17 +297,32 @@ if __name__ == "__main__":
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
 
-    config = (get_trainable_cls(args.run)
-        .get_default_config()
-        # or "corridor" if registered above
-        .environment(CircuitEnvTest, env_config={})
-        .framework(args.framework)
-        .rollouts(num_rollout_workers=16,num_envs_per_worker=20,rollout_fragment_length = 'auto')
+    # config = (get_trainable_cls(args.run)
+    #     .get_default_config()
+    #     # or "corridor" if registered above
+    #     .environment(CircuitEnvTest, env_config={})
+    #     .framework(args.framework)
+    #     .rollouts(num_rollout_workers=16,num_envs_per_worker=20,rollout_fragment_length = 'auto')
+    #
+    #     .training(model={"fcnet_hiddens": [32,64, 128,64,32]},gamma =0.9 )
+    #     # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
+    #     #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+    # )
 
-        .training(model={"fcnet_hiddens": [32,64, 128,64,32]},gamma =0.9 )
-        # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-        #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+    config = (
+        PPOConfig()
+        .rollouts(num_rollout_workers=40,
+                  #num_envs_per_worker=20,
+                  rollout_fragment_length = 'auto'
+                  )
+        .resources(num_gpus=0)
+        .framework(args.framework)
+        .environment(CircuitEnvTest, env_config={})
+        .training(model={"fcnet_hiddens": [32, 64, 128, 64, 32]}, gamma=0.9)
+
     )
+    # use fixed learning rate instead of grid search (needs tune)
+    config.lr = 1e-4
 
     stop = {
         "training_iteration": args.stop_iters,
@@ -318,14 +334,15 @@ if __name__ == "__main__":
     if args.run != "PPO":
         raise ValueError("Only support --run PPO with --no-tune.")
     print("Running manual train loop without Ray Tune.")
-    # use fixed learning rate instead of grid search (needs tune)
-    config.lr = 1e-4
+
     algo = config.build()
     # run manual training loop and print results after each iteration
     for _ in range(args.stop_iters):
         result = algo.train()
-        #print(pretty_print(result['episode_reward_mean']))
-        print(result['episode_reward_mean'],'  ',result['timers'])
+        print('===============iter %r start ====================='% _)
+        print(pretty_print(result))
+        print('===============iter %r end ====================='% _)
+        #print(result['episode_reward_mean'],'  ',result['timers'])
         # stop training of the target train steps or reward are reached
         if (
                 result["timesteps_total"] >= args.stop_timesteps
