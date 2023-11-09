@@ -23,6 +23,8 @@ class CircuitEnvTest_v2(gym.Env):
         # obs[i] == qubit_nums 说明该位置为空，
         self.qubit_nums = 5
         self.flag = self.qubit_nums
+        #上个动作获取到的score
+        self.last_score = None
 
     def make_obs_space(self):
         space = MultiDiscrete(np.array([[6] * 9] ))
@@ -82,7 +84,7 @@ class CircuitEnvTest_v2(gym.Env):
         position_1 = action[0]
         position_2 = action[1]
 
-        reward = -1
+        reward = -10
         #try switch the positon
         if self.can_switch(position_1,position_2):
            # 位置 2 的值设置为1
@@ -111,8 +113,19 @@ class CircuitEnvTest_v2(gym.Env):
 
            # score 越低越好
            score = cu.get_circuit_score(circuit, adj, layout)
-           if score != -1:
-               reward = 15 - score
+           if self.last_score is None:
+               reward = 0
+           elif score > 0:
+               if score > self.last_score:
+                   reward = 1
+               elif score < self.last_score:
+                   reward = -1.5
+               else:
+                   reward = -1.1
+           else:
+               reward = -10
+
+           self.last_score = score
 
         return reward,self.obs
 

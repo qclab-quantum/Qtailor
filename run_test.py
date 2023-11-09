@@ -34,11 +34,11 @@ def get_args():
     #parser.add_argument("--task", type=str, default="CartPole-v0")
     #parser.add_argument("--task", type=str, default="MountainCar-v0")
     parser.add_argument("--task", type=str, default="CircuitEnvTest-v2")
-    parser.add_argument("--reward-threshold", type=float, default=9)
+    parser.add_argument("--reward-threshold", type=float, default=2)
     parser.add_argument("--seed", type=int, default=1996)
     parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=3e-4)
-    parser.add_argument("--gamma", type=float, default=0.99)
+    parser.add_argument("--gamma", type=float, default=0.1)
     parser.add_argument("--epoch", type=int, default=1000)
     parser.add_argument("--step-per-epoch", type=int, default=2000)
     parser.add_argument("--step-per-collect", type=int, default=2000)
@@ -172,7 +172,7 @@ def test_ppo(args=get_args()):
         env = MultiDiscreteToDiscrete(gym.make(args.task))
         policy.eval()
         collector = Collector(policy, env)
-        result = collector.collect(n_episode=10, render=args.render)
+        result = collector.collect(n_episode=3, render=args.render)
         rews, lens = result["rews"], result["lens"]
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
 
