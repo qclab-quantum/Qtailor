@@ -84,7 +84,7 @@ class CircuitEnvTest_v2(gym.Env):
         position_1 = action[0]
         position_2 = action[1]
 
-        reward = -10
+        reward = -2
         #try switch the positon
         if self.can_switch(position_1,position_2):
            # 位置 2 的值设置为1
@@ -123,7 +123,7 @@ class CircuitEnvTest_v2(gym.Env):
                else:
                    reward = -1.1
            else:
-               reward = -10
+               reward = -2
 
            self.last_score = score
 
