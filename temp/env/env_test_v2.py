@@ -49,9 +49,9 @@ class CircuitEnvTest_v2(gym.Env):
 
         terminated = False
         truncated = False
-        if reward <= 0:
+        if reward <= -20:
             terminated = True
-        if reward ==6:
+        if reward ==2:
             terminated = True
         return observation, reward, terminated,truncated, info
 
