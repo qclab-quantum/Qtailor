@@ -6,10 +6,11 @@ from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from loguru import logger
+import warnings
 simulator = AerSimulator()
 
 from utils.circuit_util import CircutUtil as cu
-
+warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
     def __init__(self, render_mode=None, size=5):
         self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
@@ -77,12 +78,12 @@ class CircuitEnvTest_v2(gym.Env):
         return True
     def _get_rewards(self,action):
 
-        reward = -1
+
         position_1 = action[0]
         position_2 = action[1]
 
+        reward = -1
         #try switch the positon
-
         if self.can_switch(position_1,position_2):
            # 位置 2 的值设置为1
            self.obs[position_2]=self.obs[position_1]
@@ -110,7 +111,7 @@ class CircuitEnvTest_v2(gym.Env):
 
            # score 越低越好
            score = cu.get_circuit_score(circuit, adj, layout)
-           if reward != -1:
+           if score != -1:
                reward = 15 - score
 
         return reward,self.obs
