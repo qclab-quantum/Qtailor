@@ -110,8 +110,8 @@ class CircuitEnvTest_v2(gym.Env):
 
            # score 越低越好
            score = cu.get_circuit_score(circuit, adj, layout)
-
-           reward = 10 - score
+           if reward != -1:
+               reward = 15 - score
 
         return reward,self.obs
 
