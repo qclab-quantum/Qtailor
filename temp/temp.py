@@ -1,3 +1,5 @@
 
-arr = [1,2,4,7]
-print(arr[0] == arr[1])
+a = 1
+a*=0.9
+a+=1
+print(a)

@@ -13,12 +13,16 @@ from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
     def __init__(self, render_mode=None, size=5):
-        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
-        self.adj = cu.coordinate2adjacent(self.points)
-        self.step_cnt = 1
 
         self.observation_space = self.make_obs_space()
-        self.action_space = MultiDiscrete([9,9])
+        self.action_space = MultiDiscrete([9, 9])
+
+        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
+        self.adj = cu.coordinate2adjacent(self.points)
+        self.step_cnt = 0
+        self.total_reward = 0
+
+        self.circuit = self.get_criruit()
         self.obs = [0,1,2,3,4,5,5,5,5]
         # obs[i] == qubit_nums 说明该位置为空，
         self.qubit_nums = 5
@@ -30,19 +34,12 @@ class CircuitEnvTest_v2(gym.Env):
                [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
                [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
                [7, 6], [7, 8], [8, 5], [8, 7]]
-        self.circuit =  QuantumCircuit(5)
-
-        self.circuit.cx(0, 1)
-        self.circuit.cx(0, 2)
-        self.circuit.cx(0, 3)
-        self.circuit.cx(0, 4)
-
-        qr = self.circuit.qubits
+        self.qr =self.circuit.qubits
         layout = [None] * len(self.obs)
         for i in range(len(self.obs)):
             v = self.obs[i]
             if v != self.flag:
-                layout[i] = qr[v]
+                layout[i] = self.qr[v]
         #上个动作获取到的score
         self.last_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
@@ -58,21 +55,34 @@ class CircuitEnvTest_v2(gym.Env):
         super().reset(seed=seed)
 
         self.obs = [0,1,2,3,4,5,5,5,5]
+        self.step_cnt = 0
+        self.total_reward = 0
+
+        layout = [None] * len(self.obs)
+        for i in range(len(self.obs)):
+            v = self.obs[i]
+            if v != self.flag:
+                layout[i] = self.qr[v]
+        # 上个动作获取到的score
+        self.last_score = cu.get_circuit_score(self.circuit, self.adj, layout)
+
         info = self._get_info()
         return self.obs, info
 
     def step(self, action):
-        self.step_cnt = self.step_cnt+1
+        self.step_cnt+=1
         assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
         terminated = False
         truncated = False
-        if reward <= -5:
+        if self.total_reward <= -3:
             terminated = True
-        if reward ==2:
+            #print('step_cnt = %r cut'%self.step_cnt)
+        if self.total_reward ==2:
             terminated = True
+
         return observation, reward, terminated,truncated, info
 
     def render(self):
@@ -87,6 +97,15 @@ class CircuitEnvTest_v2(gym.Env):
 
     def _get_info(self):
         return {"info":"this is info"}
+
+    def get_criruit(self):
+        circuit = QuantumCircuit(5)
+
+        circuit.cx(0, 1)
+        circuit.cx(0, 2)
+        circuit.cx(0, 3)
+        circuit.cx(0, 4)
+        return  circuit
 
     #交互两个 points的位置，points 可以是空的
     def switch(self,position_1,position_2):
@@ -107,35 +126,36 @@ class CircuitEnvTest_v2(gym.Env):
         #     return False
         return True
     def _get_rewards(self,action):
-
-        reward = -5
-
-        self.switch(action[0],action[1])
-
+        #print(action)
+        reward = -3
         if action[0] == action[1]:
             return -1.1, self.obs
-
+        #交换位置
+        self.switch(action[0],action[1])
+        #计算score
         qr = self.circuit.qubits
         layout = [None] * len(self.obs)
         for i in range(len(self.obs)):
             v = self.obs[i]
             if v != self.flag:
                 layout[i] = qr[v]
-
         # score 越低越好
         score = cu.get_circuit_score(self.circuit, self.adj, layout)
+
         if score > 0:
-            if score > self.last_score:
+            if score < self.last_score:
                 reward = 1
-            elif score < self.last_score:
+            elif score > self.last_score:
                 reward = -1.5
             else:
                 reward = -1.1
         else:
-            reward = -5
+            reward = -3
 
         self.last_score = score
 
+        self.total_reward*=0.9
+        self.total_reward+=reward
         return reward,self.obs
 
     def _close_env(self):
