@@ -49,7 +49,7 @@ class CircuitEnvTest_v2(gym.Env):
 
         terminated = False
         truncated = False
-        if reward <= -20:
+        if reward <= -5:
             terminated = True
         if reward ==2:
             terminated = True
@@ -68,64 +68,63 @@ class CircuitEnvTest_v2(gym.Env):
     def _get_info(self):
         return {"info":"this is info"}
 
-    def can_switch(self,position_1,position_2):
-        if position_1 == position_2:
-            return False
+    #交互两个 points的位置，points 可以是空的
+    def switch(self,position_1,position_2):
+
+        temp = self.obs[position_2]
+        # 位置 2 的值设置为1
+        self.obs[position_2] = self.obs[position_1]
+        # 源位置设置为空 (flag)
+        self.obs[position_1] = temp
+        # if position_1 == position_2:
+        #     return False
         #源位置为空
-        if self.obs[position_1] == self.flag:
-            return False
-        #目标位置已有
-        elif self.obs[position_2] != self.flag:
-            return False
+        # if self.obs[position_1] == self.flag \
+        #         and self.obs[position_2] == self.flag:
+        #     return False
+        # #目标位置已有
+        # elif self.obs[position_2] != self.flag:
+        #     return False
         return True
     def _get_rewards(self,action):
 
+        reward = -5
 
-        position_1 = action[0]
-        position_2 = action[1]
+        self.switch(action[0],action[1])
+        circuit = QuantumCircuit(5)
 
-        reward = -2
-        #try switch the positon
-        if self.can_switch(position_1,position_2):
-           # 位置 2 的值设置为1
-           self.obs[position_2]=self.obs[position_1]
-           #源位置设置为空 (flag)
-           self.obs[position_1]=self.flag
+        circuit.cx(0, 1)
+        circuit.cx(0, 2)
+        circuit.cx(0, 3)
+        circuit.cx(0, 4)
+        qr = circuit.qubits
+        # 全连接
+        adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
+               [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
+               [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
+               [7, 6], [7, 8], [8, 5], [8, 7]]
 
-           circuit = QuantumCircuit(5)
+        layout = [None] * len(self.obs)
+        for i in range(len(self.obs)):
+            v = self.obs[i]
+            if v != self.flag:
+                layout[i] = qr[v]
 
-           circuit.cx(0, 1)
-           circuit.cx(0, 2)
-           circuit.cx(0, 3)
-           circuit.cx(0, 4)
-           qr = circuit.qubits
-           # 全连接
-           adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-                  [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-                  [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-                  [7, 6], [7, 8], [8, 5], [8, 7]]
+        # score 越低越好
+        score = cu.get_circuit_score(circuit, adj, layout)
+        if self.last_score is None:
+            reward = 0
+        elif score > 0:
+            if score > self.last_score:
+                reward = 1
+            elif score < self.last_score:
+                reward = -1.5
+            else:
+                reward = -1.1
+        else:
+            reward = -5
 
-           layout = [None] * len(self.obs)
-           for i in range(len(self.obs)):
-               v = self.obs[i]
-               if  v != self.flag:
-                   layout[i] = qr[v]
-
-           # score 越低越好
-           score = cu.get_circuit_score(circuit, adj, layout)
-           if self.last_score is None:
-               reward = 0
-           elif score > 0:
-               if score > self.last_score:
-                   reward = 1
-               elif score < self.last_score:
-                   reward = -1.5
-               else:
-                   reward = -1.1
-           else:
-               reward = -2
-
-           self.last_score = score
+        self.last_score = score
 
         return reward,self.obs
 
