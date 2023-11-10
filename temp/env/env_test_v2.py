@@ -23,8 +23,28 @@ class CircuitEnvTest_v2(gym.Env):
         # obs[i] == qubit_nums 说明该位置为空，
         self.qubit_nums = 5
         self.flag = self.qubit_nums
+
+        #circuit 相关变量
+        #全连接
+        self.adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
+               [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
+               [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
+               [7, 6], [7, 8], [8, 5], [8, 7]]
+        self.circuit =  QuantumCircuit(5)
+
+        self.circuit.cx(0, 1)
+        self.circuit.cx(0, 2)
+        self.circuit.cx(0, 3)
+        self.circuit.cx(0, 4)
+
+        qr = self.circuit.qubits
+        layout = [None] * len(self.obs)
+        for i in range(len(self.obs)):
+            v = self.obs[i]
+            if v != self.flag:
+                layout[i] = qr[v]
         #上个动作获取到的score
-        self.last_score = None
+        self.last_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
     def make_obs_space(self):
         space = MultiDiscrete(np.array([[6] * 9] ))
@@ -91,19 +111,11 @@ class CircuitEnvTest_v2(gym.Env):
         reward = -5
 
         self.switch(action[0],action[1])
-        circuit = QuantumCircuit(5)
 
-        circuit.cx(0, 1)
-        circuit.cx(0, 2)
-        circuit.cx(0, 3)
-        circuit.cx(0, 4)
-        qr = circuit.qubits
-        # 全连接
-        adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-               [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-               [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-               [7, 6], [7, 8], [8, 5], [8, 7]]
+        if action[0] == action[1]:
+            return -1.1, self.obs
 
+        qr = self.circuit.qubits
         layout = [None] * len(self.obs)
         for i in range(len(self.obs)):
             v = self.obs[i]
@@ -111,10 +123,8 @@ class CircuitEnvTest_v2(gym.Env):
                 layout[i] = qr[v]
 
         # score 越低越好
-        score = cu.get_circuit_score(circuit, adj, layout)
-        if self.last_score is None:
-            reward = 0
-        elif score > 0:
+        score = cu.get_circuit_score(self.circuit, self.adj, layout)
+        if score > 0:
             if score > self.last_score:
                 reward = 1
             elif score < self.last_score:
