@@ -25,6 +25,11 @@ adj = [
     [2, 3],
     [3, 4]
 ]
+
+adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
+       [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
+       [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
+       [7, 6], [7, 8], [8, 5], [8, 7]]
 compiled_circuit = transpile(circuits=circuit, coupling_map=adj,initial_layout=[0, 1,2],backend =simulator)
 
 

@@ -34,7 +34,7 @@ def get_args():
     #parser.add_argument("--task", type=str, default="CartPole-v0")
     #parser.add_argument("--task", type=str, default="MountainCar-v0")
     parser.add_argument("--task", type=str, default="CircuitEnvTest-v2")
-    parser.add_argument("--reward-threshold", type=float, default=3)
+    parser.add_argument("--reward-threshold", type=float, default=0.5)
     parser.add_argument("--seed", type=int, default=1996)
     parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=3e-4)

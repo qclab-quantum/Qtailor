@@ -80,7 +80,8 @@ if __name__ == '__main__':
     [7, 6], [7, 8], [8, 5], [8, 7]]
     qr = circuit.qubits
     compiled_circuit = transpile(circuits=circuit,
-                                 initial_layout=[qr[0],qr[1],qr[2],None,qr[4],None,None,None,qr[3]]  ,
+                                 #initial_layout=[qr[0],qr[1],qr[2],qr[3],qr[4],None,None,None,None] ,
+                                 initial_layout=[qr[0],qr[2],None,qr[3],qr[4],None,None,None,qr[1]] ,
                                 coupling_map=adj,
                                  backend=simulator)
 

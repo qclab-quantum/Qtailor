@@ -22,11 +22,12 @@ class CircuitEnvTest_v2(gym.Env):
         self.step_cnt = 0
         self.total_reward = 0
 
-        self.circuit = self.get_criruit()
-        self.obs = [0,1,2,3,4,5,5,5,5]
         # obs[i] == qubit_nums 说明该位置为空，
         self.qubit_nums = 5
         self.flag = self.qubit_nums
+        self.obs = [0,1,2,3,4,5,5,5,5]
+
+        self.circuit = self.get_criruit()
 
         #circuit 相关变量
         #全连接
@@ -40,8 +41,8 @@ class CircuitEnvTest_v2(gym.Env):
             v = self.obs[i]
             if v != self.flag:
                 layout[i] = self.qr[v]
-        #上个动作获取到的score
-        self.last_score = cu.get_circuit_score(self.circuit, self.adj, layout)
+        #默认score
+        self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
     def make_obs_space(self):
         space = MultiDiscrete(np.array([[6] * 9] ))
@@ -64,7 +65,7 @@ class CircuitEnvTest_v2(gym.Env):
             if v != self.flag:
                 layout[i] = self.qr[v]
         # 上个动作获取到的score
-        self.last_score = cu.get_circuit_score(self.circuit, self.adj, layout)
+        self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
         info = self._get_info()
         return self.obs, info
@@ -77,10 +78,10 @@ class CircuitEnvTest_v2(gym.Env):
 
         terminated = False
         truncated = False
-        if self.total_reward <= -3:
+        if self.total_reward <= -2:
             terminated = True
             #print('step_cnt = %r cut'%self.step_cnt)
-        if self.total_reward ==2:
+        if self.total_reward == 10 or self.step_cnt==20:
             terminated = True
 
         return observation, reward, terminated,truncated, info
@@ -100,7 +101,6 @@ class CircuitEnvTest_v2(gym.Env):
 
     def get_criruit(self):
         circuit = QuantumCircuit(5)
-
         circuit.cx(0, 1)
         circuit.cx(0, 2)
         circuit.cx(0, 3)
@@ -127,30 +127,27 @@ class CircuitEnvTest_v2(gym.Env):
         return True
     def _get_rewards(self,action):
         #print(action)
-        reward = -3
+        reward = -2
         if action[0] == action[1]:
             return -1.1, self.obs
         #交换位置
         self.switch(action[0],action[1])
+
         #计算score
-        qr = self.circuit.qubits
         layout = [None] * len(self.obs)
         for i in range(len(self.obs)):
             v = self.obs[i]
             if v != self.flag:
-                layout[i] = qr[v]
+                layout[i] = self.qr[v]
         # score 越低越好
         score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
         if score > 0:
-            if score < self.last_score:
-                reward = 1
-            elif score > self.last_score:
-                reward = -1.5
-            else:
-                reward = -1.1
+                reward = (self.default_score-score)/self.default_score
+                if reward ==0:
+                    reward = -0.5
         else:
-            reward = -3
+            reward = -2
 
         self.last_score = score
 
