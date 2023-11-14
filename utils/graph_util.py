@@ -151,5 +151,32 @@ def test1():
   #  nt.show_buttons()
 
     nt.show('nx.html',notebook=False)
+
+def sub_graph():
+    # 创建一个有向图
+    G1 = nx.Graph()
+
+    # 添加一些节点和边
+    G1.add_nodes_from([1, 2, 3, 4, 5])
+    G1.add_edges_from([(1, 2), (2, 3), (3, 1), (3, 4), (4, 5)])
+
+    # 提取子图
+    sub_graph1 = G1.subgraph([1, 2, 3])
+
+    # 创建一个有向图
+    G2 = nx.Graph()
+
+    # 添加一些节点和边
+    G2.add_nodes_from([1, 2, 3, 4, 5])
+    G2.add_edges_from([(1, 2),  (3, 1), (3, 4), (4, 5)])
+
+    # 提取子图
+    sub_graph2 = G2.subgraph([1, 2, 3])
+
+    #nx.draw(G, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+
+    #nx.draw(sub_graph2, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+    #plt.show()
+    print(nx.vf2pp_is_isomorphic(sub_graph1, sub_graph2, node_label=None))
 if __name__ == '__main__':
-    test1()
+    sub_graph()
