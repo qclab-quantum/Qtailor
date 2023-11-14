@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from networkx.algorithms import isomorphism
 from pyvis.network import Network
 
 # 根据点的二维坐标生成邻接表
@@ -81,7 +82,6 @@ def draw_dag(adj_matrix):
 def test():
     # 创建一个空的无向图
     G = nx.Graph()
-
     # 添加节点
     num_nodes = 5  # 这里可以根据你的需求指定节点数量
     nodes = range(num_nodes)
@@ -97,9 +97,10 @@ def test():
     # print("边数量:", G.number_of_edges())
     # nx.draw(G, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
     # plt.show()
-    nt = Network('500px', '500px')
+    nt = Network('1000px', '1000px')
+    setOption(nt)
     nt.from_nx(G)
-    nt.show('nx.html')
+    nt.show('nx.html',notebook=False)
 def demo():
     G = nx.Graph()
     G.add_nodes_from([1, 2, 3, 4])
@@ -109,29 +110,16 @@ def demo():
 
 def setOption(nt:Network):
     nt.set_options("""
-        var options = {
-        "nodes": {
-        "borderWidth": null,
-        "borderWidthSelected": null,
-        "opacity": null,
-        "size": null
-      },
-      "edges": {
-        "color": {
-          "inherit": true
-        },
-        "selfReferenceSize": null,
-        "selfReference": {
-          "angle": 0.7853981633974483
-        },
-        "smooth": false
-      },
-      "physics": {
-        "enabled": false,
-        "minVelocity": 0.75
-      }
-    }
-        """)
+           var options = {
+         "edges": {
+           "smooth": false
+         },
+         "physics": {
+           "enabled": false,
+           "minVelocity": 0.75
+         }
+       }
+           """)
 def test1():
     from pyvis.network import Network
     import networkx as nx
@@ -178,5 +166,57 @@ def sub_graph():
     #nx.draw(sub_graph2, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
     #plt.show()
     print(nx.vf2pp_is_isomorphic(sub_graph1, sub_graph2, node_label=None))
+
+
+def add_edge(source_data:str):
+    # 将源格式数据拆分成列表
+    source_list = source_data.split()
+
+    # 创建目标格式字符串
+    target_data = ""
+
+    # 遍历源格式列表，生成目标格式字符串
+    for i in range(0, len(source_list), 2):
+        target_data += f"G2.add_edge({source_list[i]},{source_list[i + 1]})\n"
+
+    print(target_data)
+
+
 if __name__ == '__main__':
-    sub_graph()
+    #add_edge('0 2 0 3 1 2 1 3 2 4 3 5 4 6 5 6 4 7 5 7 6 7 ')
+    add_edge('0 3 0 1 0 5 1 2 1 4 2 3 2 4 3 6 4 5 5 6 5 7 6 7 ')
+    G1 = nx.Graph()
+    G1.add_nodes_from(range(7))
+    G1.add_edge(0, 2)
+    G1.add_edge(0, 1)
+    G1.add_edge(0, 3)
+    G1.add_edge(1, 2)
+    G1.add_edge(1, 3)
+    G1.add_edge(2, 4)
+    G1.add_edge(3, 5)
+    G1.add_edge(4, 6)
+    G1.add_edge(5, 6)
+    G1.add_edge(4, 7)
+    G1.add_edge(5, 7)
+    G1.add_edge(6, 7)
+
+    G2 = nx.Graph()
+    G2.add_nodes_from(range(7))
+    G2.add_edge(0, 3)
+    G2.add_edge(0, 1)
+    G2.add_edge(0, 5)
+    G2.add_edge(1, 2)
+    G2.add_edge(1, 4)
+    G2.add_edge(2, 3)
+    G2.add_edge(2, 4)
+    G2.add_edge(3, 6)
+    G2.add_edge(4, 5)
+    G2.add_edge(5, 6)
+    G2.add_edge(5, 7)
+    G2.add_edge(6, 7)
+
+    #print(isomorphism.GraphMatcher(G1, G2).is_isomorphic())
+    nt = Network('1000px', '1000px')
+    setOption(nt)
+    nt.from_nx(G2)
+    nt.show('nx.html', notebook=False)
