@@ -44,6 +44,10 @@ class CircuitEnvTest_v2(gym.Env):
         #默认score
         self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
+        #last record
+        self.last_score = self.default_score
+        self.last_action = np.array(0)
+
     def make_obs_space(self):
         space = MultiDiscrete(np.array([[6] * 9] ))
 
@@ -66,6 +70,9 @@ class CircuitEnvTest_v2(gym.Env):
                 layout[i] = self.qr[v]
         # 上个动作获取到的score
         self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
+
+        self.last_score = self.default_score
+        self.last_action = np.array(0)
 
         info = self._get_info()
         return self.obs, info
@@ -130,6 +137,10 @@ class CircuitEnvTest_v2(gym.Env):
         reward = -2
         if action[0] == action[1]:
             return -1.1, self.obs
+        if  np.array_equal(action, self.last_action):
+            return -1.1, self.obs
+
+        self.last_action = action
         #交换位置
         self.switch(action[0],action[1])
 
@@ -143,7 +154,10 @@ class CircuitEnvTest_v2(gym.Env):
         score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
         if score > 0:
-                reward = (self.default_score-score)/self.default_score
+                if score == self.last_score:
+                    reward =0
+                else:
+                    reward = (self.default_score-score)/self.default_score
                 if reward ==0:
                     reward = -0.5
         else:
@@ -151,7 +165,7 @@ class CircuitEnvTest_v2(gym.Env):
 
         self.last_score = score
 
-        self.total_reward*=0.9
+        self.total_reward*=0.95
         self.total_reward+=reward
         return reward,self.obs
 

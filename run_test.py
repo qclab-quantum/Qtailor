@@ -172,7 +172,7 @@ def test_ppo(args=get_args()):
         env = MultiDiscreteToDiscrete(gym.make(args.task))
         policy.eval()
         collector = Collector(policy, env)
-        result = collector.collect(n_episode=3, render=args.render)
+        result = collector.collect(n_episode=5, render=args.render)
         rews, lens = result["rews"], result["lens"]
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
         pprint.pprint(result)
