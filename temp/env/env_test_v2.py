@@ -88,7 +88,7 @@ class CircuitEnvTest_v2(gym.Env):
         if self.total_reward <= -2:
             terminated = True
             #print('step_cnt = %r cut'%self.step_cnt)
-        if self.total_reward == 10 or self.step_cnt==20:
+        if self.total_reward == 5 or self.step_cnt==20:
             terminated = True
 
         return observation, reward, terminated,truncated, info
@@ -132,12 +132,17 @@ class CircuitEnvTest_v2(gym.Env):
         # elif self.obs[position_2] != self.flag:
         #     return False
         return True
+
     def _get_rewards(self,action):
         #print(action)
         reward = -2
         if action[0] == action[1]:
             return -1.1, self.obs
-        if  np.array_equal(action, self.last_action):
+
+        #防止出现相同的动作（原地摇摆）
+        if  np.array_equal(action, self.last_action) \
+            or np.array_equal(np.flip(action), self.last_action):
+
             return -1.1, self.obs
 
         self.last_action = action
@@ -153,13 +158,14 @@ class CircuitEnvTest_v2(gym.Env):
         # score 越低越好
         score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
-        if score > 0:
-                if score == self.last_score:
-                    reward =0
+        if score is not None :
+                #和上一次的比较
+                if score >= self.last_score:
+                    reward = -0.1
+                #和默认分数比较
                 else:
                     reward = (self.default_score-score)/self.default_score
-                if reward ==0:
-                    reward = -0.5
+
         else:
             reward = -2
 

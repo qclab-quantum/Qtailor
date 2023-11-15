@@ -21,7 +21,7 @@ class CircutUtil:
             compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout, backend=simulator)
             return compiled_circuit.depth()
         except:
-            return -1
+            return None
 
     # get adj  from coordinate
     @staticmethod
