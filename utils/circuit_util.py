@@ -81,11 +81,11 @@ if __name__ == '__main__':
     qr = circuit.qubits
     compiled_circuit = transpile(circuits=circuit,
                                  #initial_layout=[qr[0],qr[1],qr[2],qr[3],qr[4],None,None,None,None] ,
-                                 initial_layout=[qr[0],qr[2],None,qr[3],qr[4],None,None,None,qr[1]] ,
+                                 initial_layout=[qr[1],qr[0],qr[2],qr[3],qr[4],None,None,None,None] ,
                                 coupling_map=adj,
                                  backend=simulator)
 
     #compiled_circuit.decompose().draw('mpl').show()
-    compiled_circuit.decompose().draw('mpl').show()
+    compiled_circuit.draw('mpl').show()
     print(compiled_circuit.depth())
     print(compiled_circuit.decompose().depth())

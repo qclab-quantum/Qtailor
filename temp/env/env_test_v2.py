@@ -161,7 +161,7 @@ class CircuitEnvTest_v2(gym.Env):
         if score is not None :
                 #和上一次的比较
                 if score >= self.last_score:
-                    reward = -0.1
+                    reward = -1
                 #和默认分数比较
                 else:
                     reward = (self.default_score-score)/self.default_score
