@@ -1,7 +1,7 @@
 import gymnasium as gym
 import numpy
 import numpy as np
-
+import copy
 from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
@@ -22,11 +22,12 @@ class CircuitEnvTest_v2(gym.Env):
         self.step_cnt = 0
         self.total_reward = 0
 
+        self.max_step = 10
+
         # obs[i] == qubit_nums 说明该位置为空，
         self.qubit_nums = 5
         self.flag = self.qubit_nums
         self.obs = [0,1,2,3,4,5,5,5,5]
-
         self.circuit = self.get_criruit()
 
         #circuit 相关变量
@@ -75,7 +76,7 @@ class CircuitEnvTest_v2(gym.Env):
         self.last_action = np.array(0)
 
         info = self._get_info()
-        return self.obs, info
+        return self._get_obs(), info
 
     def step(self, action):
         self.step_cnt+=1
@@ -88,7 +89,7 @@ class CircuitEnvTest_v2(gym.Env):
         if self.total_reward <= -2:
             terminated = True
             #print('step_cnt = %r cut'%self.step_cnt)
-        if self.total_reward == 1 or self.step_cnt==40:
+        if self.total_reward == 2 or self.step_cnt==self.max_step:
             terminated = True
 
         return observation, reward, terminated,truncated, info
@@ -101,7 +102,7 @@ class CircuitEnvTest_v2(gym.Env):
 
     def _get_obs(self):
         #obs = np.array(cu.adjacency2matrix(cu.coordinate2adjacent(self.points)))
-        return self.obs
+        return copy.deepcopy(self.obs)
 
     def _get_info(self):
         return {"info":"this is info"}
@@ -128,13 +129,13 @@ class CircuitEnvTest_v2(gym.Env):
         #print(action)
         reward = -2
         if action[0] == action[1]:
-            return -1.1, self.obs
+            return -1.1, self._get_obs()
 
         #防止出现相同的动作（原地摇摆）
         if  np.array_equal(action, self.last_action) \
             or np.array_equal(np.flip(action), self.last_action):
 
-            return -1, self.obs
+            return -1, self._get_obs()
 
         self.last_action = action
         #交换位置
@@ -152,10 +153,10 @@ class CircuitEnvTest_v2(gym.Env):
         if score is not None :
                 #和上一次的比较
                 if score >= self.last_score:
-                    reward = -1.5*((score - self.last_score)/self.default_score)
+                    reward = -1.5*((score - self.last_score)/self.default_score)-0.5
                 #和默认分数比较
                 else:
-                    reward = (self.default_score-score)/self.default_score
+                    reward = (self.default_score-score)/self.default_score-(0.1*self.step_cnt)
 
         else:
             reward = -2
@@ -164,7 +165,8 @@ class CircuitEnvTest_v2(gym.Env):
 
         self.total_reward*=0.95
         self.total_reward+=reward
-        return reward,self.obs
+        print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
+        return reward,self._get_obs()
 
     def _close_env(self):
         logger.info('_close_env')

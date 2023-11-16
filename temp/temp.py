@@ -1,5 +1,3 @@
-
-a = 1
-a*=0.9
-a+=1
-print(a)
+a ='1'
+b ='2'
+print(str(a+b))

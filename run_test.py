@@ -29,51 +29,72 @@ from tianshou.env import (
     VectorEnvNormObs,
 )
 
-def get_args():
-    parser = argparse.ArgumentParser()
-    #parser.add_argument("--task", type=str, default="CartPole-v0")
-    #parser.add_argument("--task", type=str, default="MountainCar-v0")
-    parser.add_argument("--task", type=str, default="CircuitEnvTest-v2")
-    parser.add_argument("--reward-threshold", type=float, default=1)
-    parser.add_argument("--seed", type=int, default=1996)
-    parser.add_argument("--buffer-size", type=int, default=2000)
-    parser.add_argument("--lr", type=float, default=2e-4)
-    parser.add_argument("--gamma", type=float, default=0.9)
-    parser.add_argument("--epoch", type=int, default=1000)
-    parser.add_argument("--step-per-epoch", type=int, default=2000)
-    parser.add_argument("--step-per-collect", type=int, default=2000)
-    parser.add_argument("--repeat-per-collect", type=int, default=20)
-    parser.add_argument("--batch-size", type=int, default=64)
-    parser.add_argument("--hidden-sizes", type=int, nargs="*", default=[32,64,128,128,64,32,16])
-    parser.add_argument("--training-num", type=int, default=20)
-    parser.add_argument("--test-num", type=int, default=5)
-    parser.add_argument("--logdir", type=str, default="log")
-    parser.add_argument("--render", type=float, default=0.0)
-    parser.add_argument(
-        "--device",
-        type=str,
-        default="cuda" if torch.cuda.is_available() else "cpu",
+from config_private import get_args
+
+def test_policy():
+    args = get_args()
+    env = MultiDiscreteToDiscrete(gym.make(args.task))
+    args.state_shape = env.observation_space.shape or env.observation_space.n
+    args.action_shape = env.action_space.shape or env.action_space.n
+    print(args.reward_threshold)
+
+    # train_envs = gym.make(args.task)
+
+    # you can also use tianshou.env.SubprocVectorEnv
+    train_envs = DummyVectorEnv(
+        [lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.training_num)])
+    # test_envs = gym.make(args.task)
+    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.test_num)])
+    # seed
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    train_envs.seed(args.seed)
+    test_envs.seed(args.seed)
+    # model
+    net = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
+    if torch.cuda.is_available():
+        actor = DataParallelNet(Actor(net, args.action_shape, device=None).to(args.device))
+        critic = DataParallelNet(Critic(net, device=None).to(args.device))
+    else:
+        actor = Actor(net, args.action_shape, device=args.device).to(args.device)
+        critic = Critic(net, device=args.device).to(args.device)
+    actor_critic = ActorCritic(actor, critic)
+    # orthogonal initialization
+    for m in actor_critic.modules():
+        if isinstance(m, torch.nn.Linear):
+            torch.nn.init.orthogonal_(m.weight)
+            torch.nn.init.zeros_(m.bias)
+    optim = torch.optim.Adam(actor_critic.parameters(), lr=args.lr)
+    dist = torch.distributions.Categorical
+    policy = PPOPolicy(
+        actor=actor,
+        critic=critic,
+        optim=optim,
+        dist_fn=dist,
+        action_scaling=isinstance(env.action_space, Box),
+        discount_factor=args.gamma,
+        max_grad_norm=args.max_grad_norm,
+        eps_clip=args.eps_clip,
+        vf_coef=args.vf_coef,
+        ent_coef=args.ent_coef,
+        gae_lambda=args.gae_lambda,
+        reward_normalization=args.rew_norm,
+        dual_clip=args.dual_clip,
+        value_clip=args.value_clip,
+        action_space=env.action_space,
+        deterministic_eval=True,
+        advantage_normalization=args.norm_adv,
+        recompute_advantage=args.recompute_adv,
+
     )
-    # ppo special
-    parser.add_argument("--vf-coef", type=float, default=0.5)
-    parser.add_argument("--ent-coef", type=float, default=0.0)
-    parser.add_argument("--eps-clip", type=float, default=0.2)
-    parser.add_argument("--max-grad-norm", type=float, default=0.5)
-    parser.add_argument("--gae-lambda", type=float, default=0.95)
-    parser.add_argument("--rew-norm", type=int, default=0)
-    parser.add_argument("--norm-adv", type=int, default=0)
-    parser.add_argument("--recompute-adv", type=int, default=0)
-    parser.add_argument("--dual-clip", type=float, default=None)
-    parser.add_argument("--value-clip", type=int, default=0)
-
-    parser.add_argument("--actor-lr", type=float, default=1e-4)
-    parser.add_argument("--critic-lr", type=float, default=1e-4)
-    parser.add_argument("--tau", type=float, default=0.005)
-    parser.add_argument("--exploration-noise", type=float, default=0.4)
-    parser.add_argument("--max-epoch", type=int, default=2000000)  # 最大
-    parser.add_argument("--n-step", type=int, default=1024)
-    return parser.parse_known_args()[0]
-
+    # log
+    log_path = os.path.join(args.logdir, args.task, "ppo")
+    policy.load_state_dict(torch.load(log_path+"\\policy.pth"))
+    env = MultiDiscreteToDiscrete(gym.make(args.task))
+    policy.eval()
+    collector = Collector(policy, env)
+    result = collector.collect(n_episode=1, render=args.render)
+    print(result)
 
 def test_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task))
@@ -162,8 +183,7 @@ def test_ppo(args=get_args()):
         save_best_fn=save_best_fn,
         logger=logger,
     ).run()
-
-    assert stop_fn(result["best_reward"])
+    print('train result = \n',result)
    #assert stop_fn(result["rews"].mean())
 
     if __name__ == "__main__":
@@ -201,17 +221,17 @@ def register_env():
         entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
         max_episode_steps=2000000,
     )
-if __name__ == "__main__":
-    register_env()
+def train():
     # Start the timer
     start_time = time.time()
 
-
     test_ppo()
-
-
 
     #获取执行时间
     end_time = time.time()
     runtime = round(end_time - start_time, 3)
     print("Function runtime:", runtime, "seconds")
+if __name__ == "__main__":
+    register_env()
+    #test_policy()
+    train()
