@@ -165,7 +165,7 @@ class CircuitEnvTest_v2(gym.Env):
 
         self.total_reward*=0.95
         self.total_reward+=reward
-        print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
+        #print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
         return reward,self._get_obs()
 
     def _close_env(self):
