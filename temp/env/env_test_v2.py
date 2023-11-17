@@ -86,7 +86,7 @@ class CircuitEnvTest_v2(gym.Env):
 
         terminated = False
         truncated = False
-        if self.total_reward <= -2:
+        if self.total_reward <= -4:
             terminated = True
             #print('step_cnt = %r cut'%self.step_cnt)
         if self.total_reward == 2 or self.step_cnt==self.max_step:
@@ -156,14 +156,14 @@ class CircuitEnvTest_v2(gym.Env):
                     reward = -1.5*((score - self.last_score)/self.default_score)-0.5
                 #和默认分数比较
                 else:
-                    reward = (self.default_score-score)/self.default_score-(0.1*self.step_cnt)
+                    reward = (self.default_score-score)/self.default_score-(0.05*self.step_cnt)
 
         else:
             reward = -2
 
         self.last_score = score
 
-        self.total_reward*=0.95
+        self.total_reward*=0.9
         self.total_reward+=reward
         #print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
         return reward,self._get_obs()

@@ -1,3 +1,5 @@
-a ='1'
-b ='2'
-print(str(a+b))
+import numpy as np
+
+arr = [1,2]
+
+print(np.flip(arr))
