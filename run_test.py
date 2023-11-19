@@ -116,6 +116,7 @@ def test_ppo(args=get_args()):
     # model
     net = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
     if torch.cuda.is_available():
+        print('cuda is available \n')
         actor = DataParallelNet(Actor(net, args.action_shape, device=None).to(args.device))
         critic = DataParallelNet(Critic(net, device=None).to(args.device))
     else:
