@@ -96,7 +96,7 @@ def test_policy():
     result = collector.collect(n_episode=1, render=args.render)
     print(result)
 
-def test_ppo(args=get_args()):
+def train_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -226,7 +226,7 @@ def train():
     # Start the timer
     start_time = time.time()
 
-    test_ppo()
+    train_ppo()
 
     #获取执行时间
     end_time = time.time()
