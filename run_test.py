@@ -220,7 +220,7 @@ def register_env():
         id='CircuitEnvTest-v2',
         # entry_point='core.envs.circuit_env:CircuitEnv',
         entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
-        max_episode_steps=2000000,
+        max_episode_steps=4000000,
     )
 def train():
     # Start the timer
