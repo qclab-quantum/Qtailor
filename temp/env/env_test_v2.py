@@ -129,7 +129,7 @@ class CircuitEnvTest_v2(gym.Env):
         #print(action)
         reward = -2
         if action[0] == action[1]:
-            return -1.1, self._get_obs()
+            return -1, self._get_obs()
 
         #防止出现相同的动作（原地摇摆）
         if  np.array_equal(action, self.last_action) \
@@ -156,13 +156,15 @@ class CircuitEnvTest_v2(gym.Env):
                     reward = -1.5*((score - self.last_score)/self.default_score)-0.5
                 #和默认分数比较
                 else:
-                    reward = (self.default_score-score)/self.default_score-(0.05*self.step_cnt)
+                    reward = (self.default_score-score)/self.default_score
 
         else:
             reward = -2
 
         self.last_score = score
 
+        #每多走一步惩罚一次
+        reward = reward-(0.02 * self.step_cnt)
         self.total_reward*=0.9
         self.total_reward+=reward
         #print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
