@@ -19,7 +19,8 @@ class CircutUtil:
     def get_circuit_score(circuit:QuantumCircuit, adj:list,initial_layout: list) -> int:
         try:
             compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout, backend=simulator)
-            return compiled_circuit.depth()
+            #return compiled_circuit.depth()
+            return compiled_circuit.decompose().depth()
         except:
             return None
 
@@ -80,12 +81,29 @@ if __name__ == '__main__':
     [7, 6], [7, 8], [8, 5], [8, 7]]
     qr = circuit.qubits
     compiled_circuit = transpile(circuits=circuit,
-                                 initial_layout=[qr[0],qr[1],qr[2],qr[3],qr[4],None,None,None,None] ,
+                                initial_layout=[qr[0],qr[1],qr[2],qr[3],qr[4],None,None,None,None] ,
                                  #initial_layout=[None,qr[1],None,qr[2],qr[0],qr[3],None,qr[4],None] ,
                                 coupling_map=adj,
                                  backend=simulator)
 
     #compiled_circuit.decompose().draw('mpl').show()
-    compiled_circuit.draw('mpl').show()
+    #compiled_circuit.draw('mpl').show()
     print(compiled_circuit.depth())
     print(compiled_circuit.decompose().depth())
+
+    import time
+
+
+    start_time = time.time()
+    # for i in range(100000):
+    #     compiled_circuit.decompose().depth()
+    # end_time = time.time()
+
+    for i in range(100000):
+        compiled_circuit.count_ops()
+    end_time = time.time()
+
+    print(compiled_circuit.count_ops())
+
+    runtime = end_time - start_time
+    print("Runtime:", runtime, "seconds")
