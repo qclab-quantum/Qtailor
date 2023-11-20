@@ -15,6 +15,7 @@ class CircutUtil:
             return -1
         return compiled_circuit.decompose().depth()
 
+    #10W 次compiled_circuit.decompose().depth() 在 笔记本上大概需要30s
     @staticmethod
     def get_circuit_score(circuit:QuantumCircuit, adj:list,initial_layout: list) -> int:
         try:
@@ -23,6 +24,21 @@ class CircutUtil:
             return compiled_circuit.decompose().depth()
         except:
             return None
+
+
+    @staticmethod
+    #获取操作数量之和（包括所有类型） #1W 次compiled_circuit.decompose().depth() 在 笔记本上大概需要 50s
+    def ops_cnt(circuit:QuantumCircuit,adj:list,initial_layout: list):
+        try:
+            compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
+                                         backend=simulator)
+            ops = compiled_circuit.count_ops()
+            return  sum(ops.values())
+        except:
+            return None
+        return compiled_circuit.decompose().depth()
+
+
 
     # get adj  from coordinate
     @staticmethod
@@ -58,11 +74,9 @@ class CircutUtil:
             matrix[pair[1]][pair[0]] = 1
 
         return matrix
-
-if __name__ == '__main__':
-
+def main():
     # Add a H gate on qubit 0
-    #circuit.h(0)
+    # circuit.h(0)
     circuit = QuantumCircuit(5)
     circuit.cx(0, 1)
     circuit.cx(0, 2)
@@ -70,40 +84,37 @@ if __name__ == '__main__':
     circuit.cx(0, 4)
 
     # Map the quantum measurement to the classical bits
-    #circuit.measure([0, 1], [0, 1])
+    # circuit.measure([0, 1], [0, 1])
 
-    #adj = [[0, 1],[1, 2],[2, 3],[3, 4],]
+    # adj = [[0, 1],[1, 2],[2, 3],[3, 4],]
 
-    #全连接
+    # 全连接
     adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-    [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-    [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-    [7, 6], [7, 8], [8, 5], [8, 7]]
+           [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
+           [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
+           [7, 6], [7, 8], [8, 5], [8, 7]]
     qr = circuit.qubits
+    #initial_layout = [qr[0], qr[1], qr[2], qr[3], qr[4], None, None, None, None]
+    initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
     compiled_circuit = transpile(circuits=circuit,
-                                initial_layout=[qr[0],qr[1],qr[2],qr[3],qr[4],None,None,None,None] ,
-                                 #initial_layout=[None,qr[1],None,qr[2],qr[0],qr[3],None,qr[4],None] ,
-                                coupling_map=adj,
+                                 initial_layout=initial_layout,
+                                 coupling_map=adj,
                                  backend=simulator)
 
-    #compiled_circuit.decompose().draw('mpl').show()
-    #compiled_circuit.draw('mpl').show()
-    print(compiled_circuit.depth())
-    print(compiled_circuit.decompose().depth())
+    # compiled_circuit.decompose().draw('mpl').show()
+    # compiled_circuit.draw('mpl').show()
 
-    import time
+    cu = CircutUtil('')
+    #print(cu.ops_cnt(circuit, initial_layout=initial_layout, adj=adj))
+    import  time
+    stat = time.time()
+    for i in range(10000):
+        cu.ops_cnt(circuit, initial_layout=initial_layout, adj=adj)
+    end = time.time()
+    print(end - stat)
+if __name__ == '__main__':
+
+    main()
 
 
-    start_time = time.time()
-    # for i in range(100000):
-    #     compiled_circuit.decompose().depth()
-    # end_time = time.time()
 
-    for i in range(100000):
-        compiled_circuit.count_ops()
-    end_time = time.time()
-
-    print(compiled_circuit.count_ops())
-
-    runtime = end_time - start_time
-    print("Runtime:", runtime, "seconds")

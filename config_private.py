@@ -13,7 +13,7 @@ def get_args():
     parser.add_argument("--buffer-size", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--gamma", type=float, default=0.9)
-    parser.add_argument("--epoch", type=int, default=1000)
+    parser.add_argument("--epoch", type=int, default=2000)
     parser.add_argument("--step-per-epoch", type=int, default=2000)
     parser.add_argument("--step-per-collect", type=int, default=2000)
     parser.add_argument("--repeat-per-collect", type=int, default=20)
