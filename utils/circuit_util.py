@@ -94,24 +94,18 @@ def main():
            [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
            [7, 6], [7, 8], [8, 5], [8, 7]]
     qr = circuit.qubits
-    #initial_layout = [qr[0], qr[1], qr[2], qr[3], qr[4], None, None, None, None]
-    initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
+    initial_layout = [qr[4], qr[1], qr[3], qr[2], qr[0], None, None, None, None]
+    #initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
     compiled_circuit = transpile(circuits=circuit,
                                  initial_layout=initial_layout,
                                  coupling_map=adj,
                                  backend=simulator)
 
-    # compiled_circuit.decompose().draw('mpl').show()
-    # compiled_circuit.draw('mpl').show()
-
+    compiled_circuit.draw('mpl').show()
+    #print(compiled_circuit.decompose().depth())
     cu = CircutUtil('')
     #print(cu.ops_cnt(circuit, initial_layout=initial_layout, adj=adj))
-    import  time
-    stat = time.time()
-    for i in range(10000):
-        cu.ops_cnt(circuit, initial_layout=initial_layout, adj=adj)
-    end = time.time()
-    print(end - stat)
+
 if __name__ == '__main__':
 
     main()

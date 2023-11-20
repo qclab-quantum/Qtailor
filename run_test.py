@@ -88,8 +88,9 @@ def test_policy():
 
     )
     # log
-    log_path = os.path.join(args.logdir, args.task, "ppo")
-    policy.load_state_dict(torch.load(log_path+"\\policy.pth"))
+    #log_path = os.path.join(args.logdir, args.task, "ppo")
+    log_path = 'D:\workspace\data\max_step=10\CircuitEnvTest-v2\ppo'
+    policy.load_state_dict(torch.load(log_path+"\\policy.pth",map_location=torch.device('cpu')))
     env = MultiDiscreteToDiscrete(gym.make(args.task))
     policy.eval()
     collector = Collector(policy, env)

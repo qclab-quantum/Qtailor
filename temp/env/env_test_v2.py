@@ -15,7 +15,7 @@ class CircuitEnvTest_v2(gym.Env):
     def __init__(self, render_mode=None, size=5):
 
         self.observation_space = self.make_obs_space()
-        self.action_space = MultiDiscrete([9, 9])
+        self.action_space = MultiDiscrete([9, 9, 2])
 
         self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
         self.adj = cu.coordinate2adjacent(self.points)
@@ -92,6 +92,9 @@ class CircuitEnvTest_v2(gym.Env):
         if self.total_reward == 2 or self.step_cnt==self.max_step:
             terminated = True
 
+        if action[2] == 1:
+            terminated = True
+
         return observation, reward, terminated,truncated, info
 
     def render(self):
@@ -125,7 +128,10 @@ class CircuitEnvTest_v2(gym.Env):
         self.obs[position_1] = temp
         return True
 
-    def _get_rewards(self,action):
+    def _get_rewards(self,act):
+        action = np.array([0, 0])
+        action[0] = act[0]
+        action[1] = act[1]
         #print(action)
         reward = -2
         if action[0] == action[1]:
@@ -157,7 +163,6 @@ class CircuitEnvTest_v2(gym.Env):
                 #和默认分数比较
                 else:
                     reward = (self.default_score-score)/self.default_score
-
         else:
             reward = -2
 
