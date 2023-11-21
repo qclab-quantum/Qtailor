@@ -12,7 +12,9 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
-    def __init__(self, render_mode=None, size=5):
+    def __init__(self, render_mode=None,is_debug = False):
+
+        self.is_debug = is_debug
 
         self.observation_space = self.make_obs_space()
         self.action_space = MultiDiscrete([9, 9, 2])
@@ -31,20 +33,10 @@ class CircuitEnvTest_v2(gym.Env):
         self.circuit = self.get_criruit()
 
         #circuit 相关变量
-        #全连接
-        self.adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-               [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-               [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-               [7, 6], [7, 8], [8, 5], [8, 7]]
         self.qr =self.circuit.qubits
-        layout = [None] * len(self.obs)
-        for i in range(len(self.obs)):
-            v = self.obs[i]
-            if v != self.flag:
-                layout[i] = self.qr[v]
         #默认score
-        self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
-
+        self.default_score = None
+        self.best_score = None
         #last record
         self.last_score = self.default_score
         self.last_action = np.array(0)
@@ -73,6 +65,7 @@ class CircuitEnvTest_v2(gym.Env):
         self.default_score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
         self.last_score = self.default_score
+        self.best_score = self.default_score
         self.last_action = np.array(0)
 
         info = self._get_info()
@@ -80,19 +73,18 @@ class CircuitEnvTest_v2(gym.Env):
 
     def step(self, action):
         self.step_cnt+=1
-        assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
+
+        #assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
         terminated = False
         truncated = False
-        if self.total_reward <= -4:
-            terminated = True
-            #print('step_cnt = %r cut'%self.step_cnt)
-        if self.total_reward == 2 or self.step_cnt==self.max_step:
+        if self.total_reward <= -4 or self.step_cnt==self.max_step :
             terminated = True
 
         if action[2] == 1:
+            if self.is_debug: print('early stop at %r'% self.step_cnt)
             terminated = True
 
         return observation, reward, terminated,truncated, info
@@ -157,16 +149,18 @@ class CircuitEnvTest_v2(gym.Env):
         score = cu.get_circuit_score(self.circuit, self.adj, layout)
 
         if score is not None :
+
                 #和上一次的比较
-                if score >= self.last_score:
-                    reward = -1.5*((score - self.last_score)/self.default_score)-0.5
+                if score >= self.best_score:
+                    reward = -1.1*((score - self.best_score)/self.default_score)-0.1
                 #和默认分数比较
                 else:
+                    self.best_score = score
                     reward = (self.default_score-score)/self.default_score
         else:
             reward = -2
 
-        self.last_score = score
+        #self.last_score = score
 
         #每多走一步惩罚一次
         reward = reward-(0.02 * self.step_cnt)

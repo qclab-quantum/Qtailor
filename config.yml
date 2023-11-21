@@ -1,0 +1,35 @@
+task: CircuitEnvTest-v2
+reward_threshold: 0.5
+seed: 1996
+buffer_size: 2000
+lr: 0.0001
+gamma: 0.9
+epoch: 2000
+step_per_epoch: 2000
+step_per_collect: 2000
+repeat_per_collect: 20
+batch_size: 64
+hidden_sizes: [16, 32, 64, 128, 256, 170]
+training_num: 20
+test_num: 5
+logdir: log
+render: 0.0
+device: cuda
+
+# ppo special
+vf_coef: 0.5
+ent_coef: 0.0
+eps_clip: 0.2
+max_grad_norm: 0.5
+gae_lambda: 0.95
+rew_norm: 0
+norm_adv: 0
+recompute_adv: 0
+dual_clip: null
+value_clip: 0
+actor_lr: 0.0001
+critic_lr: 0.0001
+tau: 0.005
+exploration_noise: 0.4
+max_epoch: 500000
+n_step: 1024

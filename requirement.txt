@@ -6,3 +6,6 @@ qiskit-aer
 matplotlib
 pylatexenc
 wandb
+pyyaml
+munch
+wandb
