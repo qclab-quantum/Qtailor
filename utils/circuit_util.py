@@ -106,21 +106,16 @@ def main():
     #print(compiled_circuit.decompose().depth())
     cu = CircutUtil('')
     s = set()
-    for i in range(100):
-        compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
-                                     backend=simulator,seed_transpiler=1234)
-        d_circuit = compiled_circuit.decompose()
-        depth = d_circuit.depth()
-        if not depth in s:
-            s.add(depth)
-            compiled_circuit.draw('mpl').show()
-            print('depth = ',depth)
 
+    compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
+                                 backend=simulator, seed_transpiler=1234)
+    d_circuit = compiled_circuit.decompose()
+    d_circuit.draw('mpl').show()
+    print(d_circuit.depth())
 
 
 if __name__ == '__main__':
-    for i in range(1):
-        main()
+    main()
 
 
 

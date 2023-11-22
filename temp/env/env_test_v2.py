@@ -19,7 +19,7 @@ class CircuitEnvTest_v2(gym.Env):
         self.observation_space = self.make_obs_space()
         self.action_space = MultiDiscrete([9, 9, 2])
 
-        self.points = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4),(1, 5),(1, 6),(1, 7),(1, 9),(1, 10)]
+        self.points  = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2) ,(2,0),(2,1),(2,2)]
         self.adj = cu.coordinate2adjacent(self.points)
         self.step_cnt = 0
         self.total_reward = 0
@@ -152,7 +152,7 @@ class CircuitEnvTest_v2(gym.Env):
 
                 #和上一次的比较
                 if score >= self.best_score:
-                    reward = ((self.best_score-score)/self.default_score)-0.02
+                    reward = ((self.best_score-score)/self.default_score)-0.05
                 #和默认分数比较
                 else:
 
@@ -163,7 +163,7 @@ class CircuitEnvTest_v2(gym.Env):
 
 
         #每多走一步惩罚一次
-        reward = reward-(0.02 * self.step_cnt)
+        reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.9
         self.total_reward+=reward
         if self.debug:

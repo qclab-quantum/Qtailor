@@ -218,5 +218,5 @@ if __name__ == '__main__':
     #print(isomorphism.GraphMatcher(G1, G2).is_isomorphic())
     nt = Network('1000px', '1000px')
     setOption(nt)
-    nt.from_nx(G2)
+    nt.from_nx(G1)
     nt.show('nx.html', notebook=False)

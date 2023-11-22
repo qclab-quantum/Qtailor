@@ -65,7 +65,10 @@ def plot_points(points):
     plt.show()
 
 if __name__ == '__main__':
-    points = [(1,0),(1,1),(1,2),(1,3),(1,4)]
+   # points = [(1,0),(1,1),(1,2),(1,3),(1,4)]
+    points = [(0,0),(0,1),(0,2),
+              (1,0),(1,1),(1,2)
+              ,(2,0),(2,1),(2,2)]
     print(coordinate2adjacent(points))
     print(adjacency2matrix(coordinate2adjacent(points)))
     plot_points(points)
