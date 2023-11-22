@@ -1,5 +1,5 @@
 task: CircuitEnvTest-v2
-reward_threshold: 0.5
+reward_threshold: 1.5
 seed: 1996
 buffer_size: 2000
 lr: 0.0001

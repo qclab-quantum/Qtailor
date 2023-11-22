@@ -12,9 +12,9 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
-    def __init__(self, render_mode=None,is_debug = False):
+    def __init__(self, render_mode=None,debug = False):
 
-        self.is_debug = is_debug
+        self.debug = debug
 
         self.observation_space = self.make_obs_space()
         self.action_space = MultiDiscrete([9, 9, 2])
@@ -84,7 +84,7 @@ class CircuitEnvTest_v2(gym.Env):
             terminated = True
 
         if action[2] == 1:
-            if self.is_debug: print('early stop at %r'% self.step_cnt)
+            if self.debug: print('early stop at %r'% self.step_cnt)
             terminated = True
 
         return observation, reward, terminated,truncated, info
@@ -152,21 +152,22 @@ class CircuitEnvTest_v2(gym.Env):
 
                 #和上一次的比较
                 if score >= self.best_score:
-                    reward = -1.1*((score - self.best_score)/self.default_score)-0.1
+                    reward = ((self.best_score-score)/self.default_score)-0.02
                 #和默认分数比较
                 else:
-                    self.best_score = score
+
                     reward = (self.default_score-score)/self.default_score
+                    self.best_score = score
         else:
             reward = -2
 
-        #self.last_score = score
 
         #每多走一步惩罚一次
         reward = reward-(0.02 * self.step_cnt)
         self.total_reward*=0.9
         self.total_reward+=reward
-        #print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
+        if self.debug:
+            print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
         return reward,self._get_obs()
 
     def _close_env(self):
