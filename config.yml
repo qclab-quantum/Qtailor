@@ -2,14 +2,14 @@ task: CircuitEnvTest-v3
 reward_threshold: 100
 seed: 1996
 buffer_size: 2000
-lr: 0.0001
+lr: 0.00001
 gamma: 0.99
 epoch: 400
 step_per_epoch: 2000
 step_per_collect: 2000
 repeat_per_collect: 20
 batch_size: 64
-hidden_sizes: [16, 32, 64, 128, 256, 170]
+hidden_sizes: [ 32, 64, 128, 256, 128]
 training_num: 20
 test_num: 5
 logdir: log
@@ -27,8 +27,8 @@ norm_adv: 0
 recompute_adv: 0
 dual_clip: null
 value_clip: 0
-actor_lr: 0.0001
-critic_lr: 0.0001
+actor_lr: 0.00001
+critic_lr: 0.00001
 tau: 0.005
 exploration_noise: 0.4
 max_epoch: 10000

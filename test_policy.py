@@ -29,10 +29,13 @@ from tianshou.env import (
 )
 
 from config import get_args
+kwargs = {
+    'debug': True
+}
 
 def test_policy():
     args = get_args()
-    env = MultiDiscreteToDiscrete(gym.make(args.task))
+    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     print(args.reward_threshold)
@@ -41,9 +44,9 @@ def test_policy():
 
     # you can also use tianshou.env.SubprocVectorEnv
     train_envs = DummyVectorEnv(
-        [lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.training_num)])
+        [lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
     # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.test_num)])
+    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -88,9 +91,9 @@ def test_policy():
     )
     # log
     #log_path = os.path.join(args.logdir, args.task, "ppo")
-    log_path = 'D:\workspace\data\early_stop\CircuitEnvTest-v2\ppo'
+    log_path = 'D:\workspace\data\CircuitEnvTest-v3\ppo'
     policy.load_state_dict(torch.load(log_path+"\\policy.pth",map_location=torch.device('cpu')))
-    env = MultiDiscreteToDiscrete(gym.make(args.task))
+    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     policy.eval()
     collector = Collector(policy, env)
     result = collector.collect(n_episode=10, render=args.render)
@@ -99,9 +102,9 @@ def test_policy():
 if __name__ == '__main__':
     # 代码精简，action space 和 obs space 重构
     register(
-        id='CircuitEnvTest-v2',
+        id='CircuitEnvTest-v3',
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
+        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
         max_episode_steps=4000000,
     )
     args = get_args()
@@ -109,5 +112,5 @@ if __name__ == '__main__':
         'debug':True
     }
 
-    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
-    #test_policy()
+    #env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    test_policy()
