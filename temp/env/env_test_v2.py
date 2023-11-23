@@ -162,7 +162,7 @@ class CircuitEnvTest_v2(gym.Env):
 
 
         #每多走一步惩罚一次
-        #reward = reward-(0.01 * self.step_cnt)
+        reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.9
         self.total_reward+=reward
         if self.debug:
