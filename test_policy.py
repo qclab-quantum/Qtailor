@@ -28,7 +28,7 @@ from tianshou.env import (
     VectorEnvNormObs,
 )
 
-from config_private import get_args
+from config import get_args
 
 def test_policy():
     args = get_args()

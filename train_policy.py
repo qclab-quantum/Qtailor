@@ -29,7 +29,7 @@ from tianshou.env import (
     VectorEnvNormObs,
 )
 
-from config_private import get_args
+from config import get_args
 
 kwargs = {
     'debug': False

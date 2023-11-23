@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 from math import sqrt
+'''
+输入点的二维坐标，在二维坐标系中画出点的布局
+'''
 
 def plot_points(points):
     point_dict = {i: points[i] for i in range(len(points))}
