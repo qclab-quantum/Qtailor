@@ -104,8 +104,8 @@ def train_ppo(args=get_args()):
     logger = TensorboardLogger(writer)
 
     #wandb logger
-    logger = WandbLogger(project = 'CircuitEnvTest_v2',name  = '2023.11.22_test', run_id = '11221')
-    logger.load(SummaryWriter(log_path))
+    #logger = WandbLogger(project = 'CircuitEnvTest_v2',name  = '2023.11.22_test', run_id = '11221')
+    #logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
@@ -164,6 +164,12 @@ def register_env():
         id='CircuitEnvTest-v2',
         # entry_point='core.envs.circuit_env:CircuitEnv',
         entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
+        max_episode_steps=4000000,
+    )
+    register(
+        id='CircuitEnvTest-v3',
+        # entry_point='core.envs.circuit_env:CircuitEnv',
+        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
         max_episode_steps=4000000,
     )
 def train():

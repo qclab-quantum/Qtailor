@@ -28,6 +28,16 @@ class CircutUtil:
 
 
     @staticmethod
+    def get_circuit_score1(circuit:QuantumCircuit, adj:list) -> int:
+        try:
+            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj, backend=simulator)
+            #return compiled_circuit.depth()
+            d_circuit = compiled_circuit.decompose()
+            return d_circuit.depth()
+        except:
+            return None
+
+    @staticmethod
     #获取操作数量之和（包括所有类型） #1W 次compiled_circuit.decompose().depth() 在 笔记本上大概需要 50s
     def ops_cnt(circuit:QuantumCircuit,adj:list,initial_layout: list):
         try:
