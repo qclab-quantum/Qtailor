@@ -104,4 +104,10 @@ if __name__ == '__main__':
         entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
         max_episode_steps=4000000,
     )
-    test_policy()
+    args = get_args()
+    kwargs = {
+        'debug':True
+    }
+
+    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    #test_policy()

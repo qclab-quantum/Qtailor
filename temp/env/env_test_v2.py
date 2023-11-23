@@ -12,9 +12,9 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
-    def __init__(self, render_mode=None,debug = False):
+    def __init__(self, render_mode=None,**kwargs):
 
-        self.debug = debug
+        self.debug = kwargs.get('debug')
 
         self.observation_space = self.make_obs_space()
         self.action_space = MultiDiscrete([9, 9, 2])

@@ -31,19 +31,23 @@ from tianshou.env import (
 
 from config_private import get_args
 
+kwargs = {
+    'debug': False
+}
+
 
 def train_ppo(args=get_args()):
-    env = MultiDiscreteToDiscrete(gym.make(args.task))
+    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
-    print(args.reward_threshold)
+
 
     # train_envs = gym.make(args.task)
 
     # you can also use tianshou.env.SubprocVectorEnv
-    train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task) )for _ in range(args.training_num)])
+    train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs) )for _ in range(args.training_num)])
     # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.test_num)])
+    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -130,7 +134,7 @@ def train_ppo(args=get_args()):
     if __name__ == "__main__":
         #pprint.pprint(result)
         # Let's watch its performance!
-        env = MultiDiscreteToDiscrete(gym.make(args.task))
+        env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
         policy.eval()
         collector = Collector(policy, env)
         result = collector.collect(n_episode=5, render=args.render)
