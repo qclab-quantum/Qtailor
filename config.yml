@@ -1,10 +1,10 @@
 task: CircuitEnvTest-v2
-reward_threshold: 1.5
+reward_threshold: 100
 seed: 1996
 buffer_size: 2000
 lr: 0.00002
 gamma: 0.99
-epoch: 40
+epoch: 400
 step_per_epoch: 2000
 step_per_collect: 2000
 repeat_per_collect: 20
@@ -31,5 +31,5 @@ actor_lr: 0.00002
 critic_lr: 0.00002
 tau: 0.005
 exploration_noise: 0.4
-max_epoch: 80
+max_epoch: 800
 n_step: 1024
