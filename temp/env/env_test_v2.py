@@ -155,14 +155,14 @@ class CircuitEnvTest_v2(gym.Env):
                     reward = 0.5*((self.best_score-score)/self.default_score)-0.01
                 #和默认分数比较
                 else:
-                    reward = 4*(self.default_score-score)/self.default_score
+                    reward = 10*(self.default_score-score)/self.default_score
                     self.best_score = score
         else:
             reward = -2
 
 
         #每多走一步惩罚一次
-        reward = reward-(0.01 * self.step_cnt)
+        #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.9
         self.total_reward+=reward
         if self.debug:

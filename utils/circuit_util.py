@@ -97,7 +97,7 @@ def main():
     cu = CircutUtil('')
     adj = cu.coordinate2adjacent([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)])
     qr = circuit.qubits
-    initial_layout = [qr[0], qr[1], qr[2], qr[3], qr[4], None, None, None, None]
+    initial_layout = [None,qr[1],  None,qr[2], qr[0], qr[3],None, qr[4],   None]
     #initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
     compiled_circuit = transpile(circuits=circuit,
                                  initial_layout=initial_layout,
