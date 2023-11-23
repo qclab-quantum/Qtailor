@@ -104,8 +104,8 @@ def train_ppo(args=get_args()):
     logger = TensorboardLogger(writer)
 
     #wandb logger
-   # logger = WandbLogger(project = 'CircuitEnvTest_v2',name  = '2023.11.22_test', run_id = '11221')
-   # logger.load(SummaryWriter(log_path))
+    logger = WandbLogger(project = 'CircuitEnvTest_v2',name  = '2023.11.22_test', run_id = '11221')
+    logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
