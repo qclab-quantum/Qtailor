@@ -4,7 +4,7 @@ seed: 1996
 buffer_size: 2000
 lr: 0.00002
 gamma: 0.9
-epoch: 2000
+epoch: 40
 step_per_epoch: 2000
 step_per_collect: 2000
 repeat_per_collect: 20
