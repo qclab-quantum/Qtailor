@@ -152,11 +152,10 @@ class CircuitEnvTest_v2(gym.Env):
 
                 #和上一次的比较
                 if score >= self.best_score:
-                    reward = ((self.best_score-score)/self.default_score)-0.05
+                    reward = ((self.best_score-score)/self.default_score)-0.01
                 #和默认分数比较
                 else:
-
-                    reward = (self.default_score-score)/self.default_score
+                    reward = 2*(self.default_score-score)/self.default_score
                     self.best_score = score
         else:
             reward = -2

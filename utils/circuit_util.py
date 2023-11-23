@@ -90,12 +90,14 @@ def main():
     # adj = [[0, 1],[1, 2],[2, 3],[3, 4],]
 
     # 全连接
-    adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-           [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-           [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-           [7, 6], [7, 8], [8, 5], [8, 7]]
+    # adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
+    #        [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
+    #        [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
+    #        [7, 6], [7, 8], [8, 5], [8, 7]]
+    cu = CircutUtil('')
+    adj = cu.coordinate2adjacent([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)])
     qr = circuit.qubits
-    initial_layout = [qr[3], qr[1], qr[2], qr[0], qr[4], None, None, None, None]
+    initial_layout = [qr[0], qr[1], qr[2], qr[3], qr[4], None, None, None, None]
     #initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
     compiled_circuit = transpile(circuits=circuit,
                                  initial_layout=initial_layout,
@@ -104,8 +106,9 @@ def main():
 
     #compiled_circuit.draw('mpl').show()
     #print(compiled_circuit.decompose().depth())
-    cu = CircutUtil('')
-    s = set()
+
+
+    cu.get_circuit_score(circuit,adj =adj,initial_layout=initial_layout )
 
     compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
                                  backend=simulator, seed_transpiler=1234)
