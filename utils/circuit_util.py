@@ -1,6 +1,6 @@
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
-
+import traceback
 simulator = AerSimulator()
 
 class CircutUtil:
@@ -34,7 +34,8 @@ class CircutUtil:
             #return compiled_circuit.depth()
             d_circuit = compiled_circuit.decompose()
             return d_circuit.depth()
-        except:
+        except Exception as e:
+            traceback.print_exc()
             return None
 
     @staticmethod
@@ -110,15 +111,15 @@ def main():
     initial_layout = [None,qr[1],  None,qr[2], qr[0], qr[3],None, qr[4],   None]
     #initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
     compiled_circuit = transpile(circuits=circuit,
-                                 initial_layout=initial_layout,
+                                # initial_layout=initial_layout,
                                  coupling_map=adj,
                                  backend=simulator)
 
     #compiled_circuit.draw('mpl').show()
     #print(compiled_circuit.decompose().depth())
 
-
-    cu.get_circuit_score(circuit,adj =adj,initial_layout=initial_layout )
+    print(adj)
+    cu.get_circuit_score1(circuit,adj =adj )
 
     compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
                                  backend=simulator, seed_transpiler=1234)

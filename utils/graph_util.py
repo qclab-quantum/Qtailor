@@ -1,9 +1,11 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import numpy as np
+from qiskit import QuantumCircuit, transpile
 from networkx.algorithms import isomorphism
 from pyvis.network import Network
 
+from utils.circuit_util import CircutUtil
 from utils.points_util import PointsUtil
 
 
@@ -102,7 +104,7 @@ class GraphUtil():
 
     @staticmethod
     #获取 qiskit 识别的邻接表
-    def get_adj(graph:nx.Graph):
+    def get_adj_list(graph:nx.Graph):
         adj = []
         for node, nbrdict in graph.adjacency():
             #print(node, '   ', nbrdict)
@@ -110,17 +112,30 @@ class GraphUtil():
                 adj.append([node, key])
         return adj
 
+    @staticmethod
+    # 获取 graph 的邻接矩阵
+    def get_adj_matrix(graph:nx.Graph):
+        return np.array(nx.adjacency_matrix(graph).todense())
 
+def test_adj(adj):
+    g = GraphUtil.get_new_graph(5)
+    #[[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]]
+    g.add_edges_from(adj)
+    nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
 
-if __name__ == '__main__':
-    G = nx.Graph()
-    G.add_nodes_from([0,1, 2, 3, 4])
-    G.add_edges_from([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)])
-
-    nx.draw(G, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+    circuit = QuantumCircuit(5)
+    circuit.cx(0, 1)
+    circuit.cx(0, 2)
+    circuit.cx(0, 3)
+    circuit.cx(0, 4)
+    print(CircutUtil.get_circuit_score1(circuit,adj=adj))
     plt.show()
+if __name__ == '__main__':
 
-    adj = GraphUtil.get_adj(G)
-    #print(adj)
-    #print(PointsUtil.adjacency2matrix(adj))
-    print(len(G.edges(1)))
+    # g = GraphUtil.get_new_graph(5)
+    # g.add_edges_from([[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]])
+    # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+    # print(GraphUtil.get_adj_list(g))
+    # plt.show()
+    adj= [[0, 1], [0, 4], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3], [4, 0]]
+    test_adj(adj)
