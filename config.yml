@@ -35,4 +35,5 @@ max_epoch: 10000
 n_step: 1024
 
 #cricuit special
-circuit_name: simple_demo.qasm
+#circuit_name: simple_demo.qasm
+circuit_name: qftentangled_indep_qiskit_10.qasm

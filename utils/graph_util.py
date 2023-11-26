@@ -8,12 +8,23 @@ from pyvis.network import Network
 from utils.circuit_util import CircutUtil
 from utils.points_util import PointsUtil
 
+from qiskit_aer import AerSimulator
+
+simulator = AerSimulator()
 
 class GraphUtil():
 
+    @staticmethod
+    def draw_adj_list(adj_list:list,node_number):
+        g = nx.Graph()
+        g.add_nodes_from(list(range(node_number)))
+        g.add_edges_from(adj_list)
+        nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+        plt.show()
+
     #根据邻接矩阵绘制DAG
     @staticmethod
-    def draw_dag(adj_matrix):
+    def draw_adj_matrix(adj_matrix):
         # 创建有向无环图对象
         G = nx.DiGraph()
 
@@ -75,11 +86,6 @@ class GraphUtil():
         nt.show('nx.html',notebook=False)
 
 
-
-
-
-
-
     def generate_html(self):
 
         #add_edge('0 2 0 3 1 2 1 3 2 4 3 5 4 6 5 6 4 7 5 7 6 7 ')
@@ -139,13 +145,30 @@ if __name__ == '__main__':
     # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
     # print(GraphUtil.get_adj_list(g))
     # plt.show()
-    #
+
     # data = [[0, 1, 1, 0, 1],
-    #    [1, 0, 1, 1, 0],
+    #    [1, 0, 1, 0, 0],
     #    [1, 1, 0, 1, 0],
-    #    [0, 1, 1, 0, 1],
+    #    [0, 0, 1, 0, 1],
     #    [1, 0, 0, 1, 0]]
     #
-    # GraphUtil.draw_dag(data)
-    adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
-    test_adj(adj)
+    # GraphUtil.draw_adj_matrix(data)
+    # adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
+    # test_adj(adj)
+
+    c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+
+    c.draw('mpl').show()
+    graph = GraphUtil.get_new_graph(len(c.qubits))
+    # graph.add_edge(3,0)
+    # graph.add_edge(3,1)
+    # graph.add_edge(2,0)
+    # graph.add_edge(2,4)
+    # graph.add_edge(4,1)
+    adj = GraphUtil.get_adj_list(graph)
+    print(adj)
+    GraphUtil.draw_adj_list(adj,10)
+    # print(CircutUtil.get_circuit_score1(circuit=c,adj=adj))
+    ct =transpile(circuits=c, seed_transpiler=1234, coupling_map=adj,initial_layout=[0,1,2,3,4,5,6,7,8,9],optimization_level=2,
+              backend=simulator)
+    print(ct.depth())

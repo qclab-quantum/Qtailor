@@ -34,8 +34,10 @@ class CircutUtil:
 
     @staticmethod
     def get_circuit_score1(circuit:QuantumCircuit, adj:list) -> int:
+        #[0,1,2,....,qubits的个数-1]
+        layout = list(range(len(circuit.qubits)))
         try:
-            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=[0,1,2,3,4], optimization_level=0,backend=simulator)
+            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=layout, optimization_level=1,backend=simulator)
             #return compiled_circuit.depth()
             d_circuit = compiled_circuit.decompose()
             return d_circuit.depth()
@@ -145,8 +147,6 @@ def main():
 
 if __name__ == '__main__':
     #main()
-    root_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = root_dir[:-6]
-    print(root_dir)
 
 
+    pass

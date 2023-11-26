@@ -25,24 +25,20 @@ class CircuitEnvTest_v3(gym.Env):
         args = get_args()
         self.debug = kwargs.get('debug')
 
-        self.observation_space = self.make_obs_space()
-        self.action_space = self.make_action_space()
+        # obs[i] == qubit_nums 说明该位置为空，
+        # circuit 相关变量
+        self.circuit = self.get_criruit(args.circuit_name)
+        self.qubit_nums = len(self.circuit.qubits)
+        # self.qr =self.circuit.qubits
+
+        self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
+        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
 
         self.max_step = 30
         self.max_edges=4
         self.stop_thresh = -5
 
-        # obs[i] == qubit_nums 说明该位置为空，
-        # circuit 相关变量
-        self.circuit = self.get_criruit(args.circuit_name)
-        self.qubit_nums =len(self.circuit.qubits)
-        #self.qr =self.circuit.qubits
 
-    def make_obs_space(self):
-        return spaces.Box(0,1,(5, 5),dtype=np.uint8,)
-
-    def make_action_space(self):
-        return MultiDiscrete([5, 5,2, 2])
 
     def _get_info(self):
         return {'info':'this is info'}
