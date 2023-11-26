@@ -1,6 +1,11 @@
+import os
+
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 import traceback
+
+from utils.file_util import FileUtil
+
 simulator = AerSimulator()
 
 class CircutUtil:
@@ -30,13 +35,13 @@ class CircutUtil:
     @staticmethod
     def get_circuit_score1(circuit:QuantumCircuit, adj:list) -> int:
         try:
-            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=[0,1,2,3,4], backend=simulator)
+            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=[0,1,2], backend=simulator)
             #return compiled_circuit.depth()
             d_circuit = compiled_circuit.decompose()
             return d_circuit.depth()
         except Exception as e:
             #print(adj)
-            #traceback.print_exc()
+            traceback.print_exc()
             return None
 
     @staticmethod
@@ -87,6 +92,15 @@ class CircutUtil:
             matrix[pair[1]][pair[0]] = 1
 
         return matrix
+
+    @staticmethod
+    #从 qasm 文件中读取 代码并转为 qiskit circuit 对象
+    def get_from_qasm(name:str):
+        qasm_str = FileUtil.read_all('benchmark'+ os.path.sep+name)
+        circuit = QuantumCircuit.from_qasm_str(qasm_str=qasm_str)
+        return circuit
+
+
 def main():
     # Add a H gate on qubit 0
     # circuit.h(0)
@@ -130,7 +144,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-
+    #main()
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = root_dir[:-6]
+    print(root_dir)
 
 

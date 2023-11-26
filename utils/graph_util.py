@@ -27,9 +27,9 @@ class GraphUtil():
                 if adj_matrix[i][j] == 1:
                     G.add_edge(i, j)
 
-        node_labels = {0: 'Q0', 1: 'B', 2: 'C', 3: 'D'}
+        node_labels = {0: 'Q0',}
 
-        for i in range(9):
+        for i in range(5):
             node_labels[i] = 'Q' + str(i)
         # 绘制有向无环图
         pos = nx.spring_layout(G)
@@ -39,7 +39,7 @@ class GraphUtil():
         nx.draw_networkx_labels(G, pos, labels=node_labels)
         plt.show()
 
-
+    #设置 graph 样式
     def setOption(self,nt:Network):
         nt.set_options("""
                var options = {
@@ -123,6 +123,7 @@ def test_adj(adj):
     #[[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]]
     g.add_edges_from(adj)
     nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+    plt.show()
 
     circuit = QuantumCircuit(5)
     circuit.cx(0, 1)
@@ -130,7 +131,7 @@ def test_adj(adj):
     circuit.cx(0, 3)
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
-    plt.show()
+
 if __name__ == '__main__':
 
     # g = GraphUtil.get_new_graph(5)
@@ -138,5 +139,13 @@ if __name__ == '__main__':
     # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
     # print(GraphUtil.get_adj_list(g))
     # plt.show()
-    adj= [[0, 4], [1, 2], [2, 1], [3, 4], [4, 3], [4, 0]]
+    #
+    # data = [[0, 1, 1, 0, 1],
+    #    [1, 0, 1, 1, 0],
+    #    [1, 1, 0, 1, 0],
+    #    [0, 1, 1, 0, 1],
+    #    [1, 0, 0, 1, 0]]
+    #
+    # GraphUtil.draw_dag(data)
+    adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
     test_adj(adj)

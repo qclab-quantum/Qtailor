@@ -3,6 +3,7 @@ import numpy
 import numpy as np
 import copy
 
+import qiskit
 from gymnasium import spaces
 from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from qiskit import QuantumCircuit, transpile
@@ -12,7 +13,7 @@ import warnings
 
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
-
+from config import get_args
 simulator = AerSimulator()
 '''
 不给定硬件拓扑，让智能体自己寻找最佳连接
@@ -21,7 +22,7 @@ from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
     def __init__(self, render_mode=None,**kwargs):
-
+        args = get_args()
         self.debug = kwargs.get('debug')
 
         self.observation_space = self.make_obs_space()
@@ -34,7 +35,7 @@ class CircuitEnvTest_v3(gym.Env):
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         self.qubit_nums = 5
-        self.circuit = self.get_criruit()
+        self.circuit = self.get_criruit(args.circuit_name)
         #self.qr =self.circuit.qubits
 
     def make_obs_space(self):
@@ -98,13 +99,15 @@ class CircuitEnvTest_v3(gym.Env):
     def _get_info(self):
         return {"info":"this is info"}
 
-    def get_criruit(self):
-        circuit = QuantumCircuit(5)
-        circuit.cx(0, 1)
-        circuit.cx(0, 2)
-        circuit.cx(0, 3)
-        circuit.cx(0, 4)
-        return  circuit
+
+    def get_criruit(self,name:str):
+        # circuit = QuantumCircuit(5)
+        # circuit.cx(0, 1)
+        # circuit.cx(0, 2)
+        # circuit.cx(0, 3)
+        # circuit.cx(0, 4)
+        circuit = cu.get_from_qasm(name)
+        return circuit
 
     def _get_rewards(self,act):
         action = np.array([0, 0])

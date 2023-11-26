@@ -1,5 +1,3 @@
-import numpy as np
+from utils.file_util import FileUtil
 
-arr = [1,2]
-
-print(np.flip(arr))
+print(FileUtil.get_root_dir())

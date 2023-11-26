@@ -1,4 +1,3 @@
-import argparse
 import os
 import pprint
 import time
@@ -7,7 +6,6 @@ import gymnasium as gym
 import numpy as np
 import torch
 from gymnasium.spaces import Box
-from tianshou.exploration import GaussianNoise
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, VectorReplayBuffer, Batch
@@ -40,7 +38,6 @@ def train_ppo(args=get_args()):
     env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
-
 
     # train_envs = gym.make(args.task)
 
