@@ -34,8 +34,8 @@ class CircuitEnvTest_v3(gym.Env):
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
-        self.qubit_nums = 5
         self.circuit = self.get_criruit(args.circuit_name)
+        self.qubit_nums =len(self.circuit.qubits)
         #self.qr =self.circuit.qubits
 
     def make_obs_space(self):
@@ -130,9 +130,13 @@ class CircuitEnvTest_v3(gym.Env):
         #执行动作
         if opt==1:
                 #执行删除边的操作
-                self.graph.remove_edge(action[0],action[1])
-                self.adj = gu.get_adj_list(self.graph)
-                score = cu.get_circuit_score1(self.circuit, self.adj)
+                if self.graph.has_edge(action[0],action[1]):
+
+                    self.graph.remove_edge(action[0],action[1])
+                    self.adj = gu.get_adj_list(self.graph)
+                    score = cu.get_circuit_score1(self.circuit, self.adj)
+                else :
+                    reward = self.stop_thresh
         else:
             #超出最大连通分量
             if len(self.graph.edges(action[0]))>self.max_edges or \
