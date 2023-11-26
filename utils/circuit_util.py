@@ -35,13 +35,13 @@ class CircutUtil:
     @staticmethod
     def get_circuit_score1(circuit:QuantumCircuit, adj:list) -> int:
         try:
-            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=[0,1,2,3,4], backend=simulator)
+            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=[0,1,2,3,4], optimization_level=0,backend=simulator)
             #return compiled_circuit.depth()
             d_circuit = compiled_circuit.decompose()
             return d_circuit.depth()
         except Exception as e:
             #print(adj)
-            traceback.print_exc()
+            #traceback.print_exc()
             return None
 
     @staticmethod

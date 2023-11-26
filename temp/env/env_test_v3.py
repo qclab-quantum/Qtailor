@@ -129,11 +129,6 @@ class CircuitEnvTest_v3(gym.Env):
         score = None
         #执行动作
         if opt==1:
-            if len(self.graph.edges(action[0])) <= 1 or \
-                    len(self.graph.edges(action[1])) <= 1 or \
-                    not self.graph.has_edge(action[0],action[1]):
-                reward = self.stop_thresh
-            else:
                 #执行删除边的操作
                 self.graph.remove_edge(action[0],action[1])
                 self.adj = gu.get_adj_list(self.graph)
