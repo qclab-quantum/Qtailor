@@ -23,7 +23,7 @@ kwargs = {
     'debug': False
 }
 
-def test_rainbow(args=get_args()):
+def test_rainbow(args=get_args(), kwargs=kwargs):
     env =  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
