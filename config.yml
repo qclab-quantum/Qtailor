@@ -37,3 +37,19 @@ n_step: 1024
 #cricuit special
 #circuit_name: simple_demo.qasm
 circuit_name: qftentangled_indep_qiskit_10.qasm
+
+
+#rainbowDQN
+num_atoms : 51
+v_min: -10.0
+v_max: 10.0
+noisy_std: 0.1
+target_update_freq: 32
+prioritized_replay: True
+beta_final: 1.0
+beta: 0.4
+resume: true
+alpha: 0.6
+update_per_step: 0.125
+eps_test: 0.05
+eps_train: 0.1

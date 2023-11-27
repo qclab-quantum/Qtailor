@@ -147,11 +147,15 @@ class CircuitEnvTest_v3(gym.Env):
         if score is not None :
                 #和上一次的比较
                 if score >= self.best_score:
-                    reward = -0.5*((self.best_score-score)/self.default_score)-0.02
+                    reward = 0.5*((self.best_score-score)/self.default_score)-0.02
+
                 #和默认分数比较
                 else:
                     reward = 2*(self.default_score-score)/self.default_score
                     self.best_score = score
+
+                # 删除边的奖励
+                if opt == 1: score += 0.025
         else:
             reward = self.stop_thresh
 

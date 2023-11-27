@@ -90,9 +90,9 @@ if __name__ == '__main__':
     adj_list = pu.coordinate2adjacent(points)
     c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
     simulator = AerSimulator()
-    print(simulator.coupling_map)
     ct = transpile(circuits=c, seed_transpiler=1234, coupling_map=adj_list,optimization_level=1,
                    backend=simulator)
     print(ct.depth())
+    ct.draw('latex').show()
     #print(pu.adjacency2matrix(pu.coordinate2adjacent(points)))
-    plot_circuit_layout(ct, simulator)
+    #plot_circuit_layout(ct, simulator)

@@ -2,9 +2,14 @@ import argparse
 from munch import Munch
 import torch
 import yaml
+
+from utils.file_util import FileUtil
+
+
 def get_args():
     config = None
-    with open('config.yml', 'r') as file:
+    rootdir = FileUtil.get_root_dir()
+    with open(rootdir+'\\config.yml', 'r') as file:
         config = yaml.safe_load(file)
         config['device'] = "cuda" if torch.cuda.is_available() else "cpu"
         config = Munch(config)

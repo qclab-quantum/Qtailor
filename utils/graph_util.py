@@ -147,25 +147,27 @@ def test_adj(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
-
-    def test_tian():
+#测试 Qiskit 在田字格上的编译结果
+def test_tian():
         #points
-        points = []
-        for i in range(10):
-            for j in range(10):
-                points.append((i,j))
+    points = []
+    for i in range(10):
+        for j in range(10):
+            points.append((i, j))
+
+    adj = PointsUtil.coordinate2adjacent(points)
+    PointsUtil.plot_points(points)
 
 def testdag():
-    pass
-    # data = [[0, 1, 1, 0, 1],
-    #    [1, 0, 1, 0, 0],
-    #    [1, 1, 0, 1, 0],
-    #    [0, 0, 1, 0, 1],
-    #    [1, 0, 0, 1, 0]]
-    #
-    # GraphUtil.draw_adj_matrix(data)
-    # adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
-    # test_adj(adj)
+    data = [[0, 1, 1, 0, 1],
+       [1, 0, 1, 0, 0],
+       [1, 1, 0, 1, 0],
+       [0, 0, 1, 0, 1],
+       [1, 0, 0, 1, 0]]
+
+    GraphUtil.draw_adj_matrix(data)
+    adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
+    test_adj(adj)
 if __name__ == '__main__':
 
     # g = GraphUtil.get_new_graph(5)
@@ -173,15 +175,9 @@ if __name__ == '__main__':
     # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
     # print(GraphUtil.get_adj_list(g))
     # plt.show()
-
+    #
     # c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
     # c.draw('mpl').show()
     # graph = GraphUtil.get_new_graph(len(c.qubits))
-    g  = nx.Graph()
-    g.add_nodes_from([0,1,2])
-    g.add_edge(0,1)
-    print(g.edges(0))
-    print(g.has_edge(1, 0))
-    print(g.has_edge(0, 1))
-    print(len(g.edges(0)))
-    print(len(g.edges(1)))
+
+    test_tian()
