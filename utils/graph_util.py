@@ -109,6 +109,15 @@ class GraphUtil():
         return g
 
     @staticmethod
+    #为所有的点之间增加边，将图变为全连接
+    def set_full_conn(graph:nx.Graph):
+        n = len(graph.nodes)
+        for i in range(n):
+            for j in range(n):
+                if i != j and not graph.has_edge(i,j):
+                    graph.add_edge(i,j)
+
+    @staticmethod
     #获取 qiskit 识别的邻接表
     def get_adj_list(graph:nx.Graph):
         adj = []
@@ -138,14 +147,16 @@ def test_adj(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
-if __name__ == '__main__':
 
-    # g = GraphUtil.get_new_graph(5)
-    # g.add_edges_from([[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]])
-    # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
-    # print(GraphUtil.get_adj_list(g))
-    # plt.show()
+    def test_tian():
+        #points
+        points = []
+        for i in range(10):
+            for j in range(10):
+                points.append((i,j))
 
+def testdag():
+    pass
     # data = [[0, 1, 1, 0, 1],
     #    [1, 0, 1, 0, 0],
     #    [1, 1, 0, 1, 0],
@@ -155,20 +166,22 @@ if __name__ == '__main__':
     # GraphUtil.draw_adj_matrix(data)
     # adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
     # test_adj(adj)
+if __name__ == '__main__':
 
-    c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    # g = GraphUtil.get_new_graph(5)
+    # g.add_edges_from([[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]])
+    # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
+    # print(GraphUtil.get_adj_list(g))
+    # plt.show()
 
-    c.draw('mpl').show()
-    graph = GraphUtil.get_new_graph(len(c.qubits))
-    # graph.add_edge(3,0)
-    # graph.add_edge(3,1)
-    # graph.add_edge(2,0)
-    # graph.add_edge(2,4)
-    # graph.add_edge(4,1)
-    adj = GraphUtil.get_adj_list(graph)
-    print(adj)
-    GraphUtil.draw_adj_list(adj,10)
-    # print(CircutUtil.get_circuit_score1(circuit=c,adj=adj))
-    ct =transpile(circuits=c, seed_transpiler=1234, coupling_map=adj,initial_layout=[0,1,2,3,4,5,6,7,8,9],optimization_level=2,
-              backend=simulator)
-    print(ct.depth())
+    # c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    # c.draw('mpl').show()
+    # graph = GraphUtil.get_new_graph(len(c.qubits))
+    g  = nx.Graph()
+    g.add_nodes_from([0,1,2])
+    g.add_edge(0,1)
+    print(g.edges(0))
+    print(g.has_edge(1, 0))
+    print(g.has_edge(0, 1))
+    print(len(g.edges(0)))
+    print(len(g.edges(1)))

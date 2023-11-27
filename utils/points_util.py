@@ -3,7 +3,11 @@
 import matplotlib.pyplot as plt
 from math import sqrt
 import matplotlib.ticker as ticker
+from qiskit import transpile
+from qiskit.visualization import plot_circuit_layout
 
+from utils.circuit_util import CircutUtil
+from qiskit_aer import AerSimulator
 
 class PointsUtil:
     @staticmethod
@@ -62,8 +66,8 @@ class PointsUtil:
                     plt.plot([points[i][0], points[j][0]], [points[i][1], points[j][1]], color='red')
 
         # 将x轴和y轴的刻度设置为整数
-        plt.xticks(range(int(0), int(5) + 1))
-        plt.yticks(range(int(0), int(5) + 1))
+        plt.xticks(range(int(0), int(10) + 1))
+        plt.yticks(range(int(0), int(10) + 1))
 
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -76,9 +80,19 @@ class PointsUtil:
 if __name__ == '__main__':
     pu = PointsUtil()
    # points = [(1,0),(1,1),(1,2),(1,3),(1,4)]
-    points = [(0,0),(0,1),(0,2),
-              (1,0),(1,1),(1,2)
-              ,(2,0),(2,1),(2,2)]
-    print(pu.coordinate2adjacent(points))
+   #  points = [(0,0),(0,1),(0,2),
+   #            (1,0),(1,1),(1,2)
+   #            ,(2,0),(2,1),(2,2)]
+    points = []
+    for i in range(10):
+        for j in range(10):
+            points.append((i, j))
+    adj_list = pu.coordinate2adjacent(points)
+    c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    simulator = AerSimulator()
+    print(simulator.coupling_map)
+    ct = transpile(circuits=c, seed_transpiler=1234, coupling_map=adj_list,optimization_level=1,
+                   backend=simulator)
+    print(ct.depth())
     #print(pu.adjacency2matrix(pu.coordinate2adjacent(points)))
-    #pu.plot_points(points)
+    plot_circuit_layout(ct, simulator)

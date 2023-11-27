@@ -127,7 +127,6 @@ class CircuitEnvTest_v3(gym.Env):
         if opt==1:
                 #执行删除边的操作
                 if self.graph.has_edge(action[0],action[1]):
-
                     self.graph.remove_edge(action[0],action[1])
                     self.adj = gu.get_adj_list(self.graph)
                     score = cu.get_circuit_score1(self.circuit, self.adj)
@@ -135,8 +134,8 @@ class CircuitEnvTest_v3(gym.Env):
                     reward = self.stop_thresh
         else:
             #超出最大连通分量
-            if len(self.graph.edges(action[0]))>self.max_edges or \
-                    len(self.graph.edges(action[1]))>self.max_edges:
+            if len(self.graph.edges(action[0]))== self.max_edges or \
+                    len(self.graph.edges(action[1]))== self.max_edges:
                 reward = self.stop_thresh
             else:
                 # 执行增加边的操作
@@ -148,7 +147,7 @@ class CircuitEnvTest_v3(gym.Env):
         if score is not None :
                 #和上一次的比较
                 if score >= self.best_score:
-                    reward = 0.5*((self.best_score-score)/self.default_score)-0.02
+                    reward = -0.5*((self.best_score-score)/self.default_score)-0.02
                 #和默认分数比较
                 else:
                     reward = 2*(self.default_score-score)/self.default_score
