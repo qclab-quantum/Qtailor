@@ -9,7 +9,7 @@ step_per_epoch: 2000
 step_per_collect: 2000
 repeat_per_collect: 20
 batch_size: 64
-hidden_sizes: [ 32, 64, 128, 256, 128]
+hidden_sizes: [ 128, 256,512, 1024,512,256,128]
 training_num: 20
 test_num: 5
 logdir: log

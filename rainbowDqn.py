@@ -86,8 +86,8 @@ def test_rainbow(args=get_args(), kwargs=kwargs):
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.11.27_DQN', run_id = '1')
-    logger.load(SummaryWriter(log_path))
+    #logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.11.27_DQN', run_id = '2')
+    #logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
