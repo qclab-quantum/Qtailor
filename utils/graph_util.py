@@ -40,7 +40,7 @@ class GraphUtil():
 
         node_labels = {0: 'Q0',}
 
-        for i in range(5):
+        for i in range(10):
             node_labels[i] = 'Q' + str(i)
         # 绘制有向无环图
         pos = nx.spring_layout(G)
@@ -159,15 +159,20 @@ def test_tian():
     PointsUtil.plot_points(points)
 
 def testdag():
-    data = [[0, 1, 1, 0, 1],
-       [1, 0, 1, 0, 0],
-       [1, 1, 0, 1, 0],
-       [0, 0, 1, 0, 1],
-       [1, 0, 0, 1, 0]]
+    data = [[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+       [1, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+       [0, 1, 0, 1, 0, 0, 0, 0, 1, 0],
+       [0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+       [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+       [0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+       [0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+       [0, 1, 0, 0, 0, 0, 1, 0, 1, 0],
+       [0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+       [1, 0, 0, 0, 0, 1, 1, 0, 1, 0]]
 
     GraphUtil.draw_adj_matrix(data)
-    adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
-    test_adj(adj)
+    # adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
+    # test_adj(adj)
 if __name__ == '__main__':
 
     # g = GraphUtil.get_new_graph(5)
@@ -179,5 +184,5 @@ if __name__ == '__main__':
     # c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
     # c.draw('mpl').show()
     # graph = GraphUtil.get_new_graph(len(c.qubits))
-
-    test_tian()
+    testdag()
+    #test_tian()

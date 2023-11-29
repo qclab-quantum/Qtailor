@@ -48,7 +48,7 @@ target_update_freq: 32
 prioritized_replay: True
 beta_final: 1.0
 beta: 0.4
-resume: true
+resume: false
 alpha: 0.6
 update_per_step: 0.125
 eps_test: 0.05

@@ -77,7 +77,7 @@ class CircuitEnvTest_v3(gym.Env):
             terminated = True
 
         if action[3] == 1:
-            if self.debug: print('early stop at %r'% self.step_cnt)
+            if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
             terminated = True
 
         return observation, reward, terminated,truncated, info
