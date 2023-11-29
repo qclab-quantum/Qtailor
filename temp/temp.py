@@ -1,3 +1,3 @@
-from utils.file_util import FileUtil
-
-print(FileUtil.get_root_dir())
+a = -(1+3+3)
+a = a+1
+print(a)

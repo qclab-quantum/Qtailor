@@ -1,3 +1,5 @@
+import math
+
 import gymnasium as gym
 import numpy
 import numpy as np
@@ -114,24 +116,24 @@ class CircuitEnvTest_v3(gym.Env):
         #print(action)
         reward = self.stop_thresh
         if action[0] == action[1]:
-            return self.stop_thresh, self._get_obs()
+            return self.stop_thresh/5, self._get_obs()
 
         #防止出现相同的动作（原地摇摆）
-        if  np.array_equal(action, self.last_action) \
-            or np.array_equal(np.flip(action), self.last_action):
-
-            return self.stop_thresh, self._get_obs()
+        # if  np.array_equal(action, self.last_action) \
+        #     or np.array_equal(np.flip(action), self.last_action):
+        #
+        #     return self.stop_thresh/5, self._get_obs()
 
         score = None
         #执行动作
         if opt==1:
-                #执行删除边的操作
-                if self.graph.has_edge(action[0],action[1]):
-                    self.graph.remove_edge(action[0],action[1])
-                    self.adj = gu.get_adj_list(self.graph)
-                    score = cu.get_circuit_score1(self.circuit, self.adj)
-                else :
-                    reward = self.stop_thresh
+            # 执行删除边的操作
+            if self.graph.has_edge(action[0], action[1]):
+                self.graph.remove_edge(action[0], action[1])
+                self.adj = gu.get_adj_list(self.graph)
+                score = cu.get_circuit_score1(self.circuit, self.adj)
+            else:
+                reward = self.stop_thresh
         else:
             #超出最大连通分量
             if len(self.graph.edges(action[0]))== self.max_edges or \
@@ -143,22 +145,27 @@ class CircuitEnvTest_v3(gym.Env):
                 self.adj = gu.get_adj_list(self.graph)
                 score = cu.get_circuit_score1(self.circuit, self.adj)
 
-
+        k1 = self.default_score - score
+        k2 = self.last_score - score
         if score is not None :
                 #和上一次的比较
-                if score >= self.best_score:
-                    reward = 0.5*((self.best_score-score)/self.default_score)-0.02
+                # if score >= self.best_score:
+                #     reward = 0.5*((self.best_score-score)/self.default_score)-0.02
+                #
+                # #和默认分数比较
+                # else:
+                #     reward = 2*(self.default_score-score)/self.default_score
+                #     self.best_score = score
 
-                #和默认分数比较
-                else:
-                    reward = 2*(self.default_score-score)/self.default_score
-                    self.best_score = score
+                if k1 > 0:
+                    reward =      (math.pow((1 + k1), 2) -1) * math.fabs(1 + k1)
+                else :
+                    reward = -1 * (math.pow((1 - k2), 2) -1 )* math.fabs(1 - k2)
 
-                # 删除边的奖励
-                if opt == 1: score += 0.025
         else:
             reward = self.stop_thresh
 
+        self.last_score = score
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
