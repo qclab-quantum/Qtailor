@@ -159,9 +159,9 @@ class CircuitEnvTest_v3(gym.Env):
             #     self.best_score = score
 
             if k1 > 0:
-                reward = (math.pow((1 + k1), 2) - 1) * math.fabs(1 + k1)
+                reward = (math.pow((1 + k1), 2) - 1) * math.fabs(1 + k2)
             else:
-                reward = -1 * (math.pow((1 - k2), 2) - 1) * math.fabs(1 - k2)
+                reward = -1 * (math.pow((1 - k1), 2) - 1) * math.fabs(1 - k2)
 
         else:
             reward = self.stop_thresh
