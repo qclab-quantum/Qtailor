@@ -147,8 +147,8 @@ class CircuitEnvTest_v3(gym.Env):
 
 
         if score is not None :
-            k1 = self.default_score - score
-            k2 = self.last_score - score
+            k1 = (self.default_score - score)/self.default_score
+            k2 = (self.last_score - score)/self.last_score
             # 和上一次的比较
             # if score >= self.best_score:
             #     reward = 0.5*((self.best_score-score)/self.default_score)-0.02
