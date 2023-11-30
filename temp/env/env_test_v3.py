@@ -163,10 +163,11 @@ class CircuitEnvTest_v3(gym.Env):
             else:
                 reward = -1*(math.pow((1 - k2), 2)-1)*(1 - k1)
 
+            self.last_score = score
         else:
             reward = self.stop_thresh
 
-        self.last_score = score
+
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
