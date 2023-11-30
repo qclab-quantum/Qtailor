@@ -19,11 +19,12 @@ from tianshou.utils.net.discrete import NoisyLinear
 from config import get_args
 from train_policy import register_env
 
-kwargs = {
-    'debug': False
-}
 
-def test_rainbow(args=get_args(), kwargs=kwargs):
+
+def train_rainbow(args=get_args()):
+    kwargs = {
+        'debug': False
+    }
     env =  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -192,16 +193,75 @@ def test_rainbow(args=get_args(), kwargs=kwargs):
 
 def test_rainbow_resume(args=get_args()):
     args.resume = True
-    test_rainbow(args)
+    train_rainbow(args)
 
 
 def test_prainbow(args=get_args()):
+    env = MultiDiscreteToDiscrete(gym.make(args.task, **kwargs))
+    args.state_shape = env.observation_space.shape or env.observation_space.n
+    args.action_shape = env.action_space.shape or env.action_space.n
+
     args.prioritized_replay = True
     args.gamma = 0.95
     args.seed = 1
-    test_rainbow(args)
+    train_rainbow(args)
 
 
+#测试训练结果
+def test_rainbow(args=get_args()):
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    kwargs = {
+        'debug': True
+    }
+    env = MultiDiscreteToDiscrete(gym.make(args.task, **kwargs))
+    # model
+    args.state_shape = env.observation_space.shape or env.observation_space.n
+    args.action_shape = env.action_space.shape or env.action_space.n
+    def noisy_linear(x, y):
+        return NoisyLinear(x, y, args.noisy_std)
+
+    net = Net(
+        args.state_shape,
+        args.action_shape,
+        hidden_sizes=args.hidden_sizes,
+        device=args.device,
+        softmax=True,
+        num_atoms=args.num_atoms,
+        dueling_param=({"linear_layer": noisy_linear}, {"linear_layer": noisy_linear}),
+    )
+    optim = torch.optim.Adam(net.parameters(), lr=args.lr)
+    policy = RainbowPolicy(
+        model=net,
+        optim=optim,
+        discount_factor=args.gamma,
+        action_space=env.action_space,
+        num_atoms=args.num_atoms,
+        v_min=args.v_min,
+        v_max=args.v_max,
+        estimation_step=args.n_step,
+        target_update_freq=args.target_update_freq,
+    ).to(args.device)
+    # buffer
+    if args.prioritized_replay:
+        buf = PrioritizedVectorReplayBuffer(
+            args.buffer_size,
+            buffer_num=10,
+            alpha=args.alpha,
+            beta=args.beta,
+            weight_norm=True,
+        )
+    else:
+        buf = VectorReplayBuffer(args.buffer_size, buffer_num=10)
+
+    log_path = 'D:\workspace\data\\rainbow-CircuitEnvTest-v3-b2f589d3d980693986eb80e64d8b1879aba8f0a7'
+    policy.load_state_dict(torch.load(log_path + "\\policy.pth", map_location=torch.device('cpu')))
+    policy.eval()
+    policy.set_eps(args.eps_test)
+    collector = Collector(policy, env)
+    result = collector.collect(n_episode=1, render=args.render)
+    print(result)
 if __name__ == "__main__":
     register_env()
+    #train_rainbow(get_args())
     test_rainbow(get_args())
