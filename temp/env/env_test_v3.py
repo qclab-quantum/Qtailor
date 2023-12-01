@@ -36,9 +36,9 @@ class CircuitEnvTest_v3(gym.Env):
         self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
         self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
 
-        self.max_step = 30
+        self.max_step = 60
         self.max_edges=4
-        self.stop_thresh = -5
+        self.stop_thresh = -2
 
 
 
@@ -75,7 +75,9 @@ class CircuitEnvTest_v3(gym.Env):
 
         terminated = False
         truncated = False
-        if self.total_reward <= self.stop_thresh or self.step_cnt==self.max_step :
+        if self.total_reward <= self.stop_thresh \
+                or reward == self.stop_thresh \
+                or self.step_cnt==self.max_step :
             terminated = True
 
         if action[3] == 1:
@@ -116,7 +118,7 @@ class CircuitEnvTest_v3(gym.Env):
         #print(action)
         reward = self.stop_thresh
         if action[0] == action[1]:
-            return self.stop_thresh/5, self._get_obs()
+            return self.stop_thresh/10, self._get_obs()
 
         #防止出现相同的动作（原地摇摆）
         # if  np.array_equal(action, self.last_action) \
@@ -133,12 +135,15 @@ class CircuitEnvTest_v3(gym.Env):
                 self.adj = gu.get_adj_list(self.graph)
                 score = cu.get_circuit_score1(self.circuit, self.adj)
             else:
-                reward = self.stop_thresh
+                #reward = self.stop_thresh
+                #要删除的边不存在，无法执行操作
+                return self.stop_thresh / 10, self._get_obs()
         else:
-            #超出最大连通分量
+            #超出最大连通分量，无法执行操作
             if len(self.graph.edges(action[0]))== self.max_edges or \
                     len(self.graph.edges(action[1]))== self.max_edges:
-                reward = self.stop_thresh
+                #reward = self.stop_thresh
+                return self.stop_thresh / 10, self._get_obs()
             else:
                 # 执行增加边的操作
                 self.graph.add_edge(action[0],action[1])
