@@ -34,7 +34,8 @@ class CircuitEnvTest_v3(gym.Env):
         # self.qr =self.circuit.qubits
 
         self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
-        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
+        #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
+        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2])
 
         self.max_step = 60
         self.max_edges=4
@@ -80,9 +81,9 @@ class CircuitEnvTest_v3(gym.Env):
                 or self.step_cnt==self.max_step :
             terminated = True
 
-        if action[3] == 1:
-            if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
-            terminated = True
+        # if action[3] == 1:
+        #     if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
+        #     terminated = True
 
         return observation, reward, terminated,truncated, info
 
@@ -165,9 +166,10 @@ class CircuitEnvTest_v3(gym.Env):
 
             if k2 > 0:
                 reward =    (math.pow((1 + k2), 2)-1)*(1 + k1)
-            else:
+            elif k2 < 0:
                 reward = -1*(math.pow((1 - k2), 2)-1)*(1 - k1)
-
+            else:
+                reward = 0
             self.last_score = score
         else:
             reward = self.stop_thresh
@@ -179,10 +181,12 @@ class CircuitEnvTest_v3(gym.Env):
         self.total_reward+=reward
         self.last_action = action
 
-        if self.debug:
-            print('step%r obs=%r, score=%r reward=%r'%(self.step_cnt,self.obs,score,reward))
 
         self.obs = gu.get_adj_matrix(self.graph)
+        if self.debug:
+            print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(action,self.step_cnt,score,reward,self.obs))
+
+
 
         return reward,self._get_obs()
 

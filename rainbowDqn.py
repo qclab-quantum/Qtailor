@@ -87,7 +87,7 @@ def train_rainbow(args=get_args()):
     writer = SummaryWriter(log_path)
     #logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.11.30_DQN_6', run_id = '6')
+    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.2_DQN_8', run_id = '8')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
@@ -254,7 +254,7 @@ def test_rainbow(args=get_args()):
     else:
         buf = VectorReplayBuffer(args.buffer_size, buffer_num=10)
 
-    log_path = 'D:\workspace\data\\rainbow-CircuitEnvTest-v3-b2f589d3d980693986eb80e64d8b1879aba8f0a7'
+    log_path = 'D:\workspace\data'
     policy.load_state_dict(torch.load(log_path + "\\policy.pth", map_location=torch.device('cpu')))
     policy.eval()
     policy.set_eps(args.eps_test)
