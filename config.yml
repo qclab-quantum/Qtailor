@@ -1,14 +1,14 @@
 task: CircuitEnvTest-v3
 reward_threshold: 100
 seed: 1996
-buffer_size: 20000
+buffer_size: 4000
 lr: 0.0001
 gamma: 0.99
-epoch: 4000
-step_per_epoch: 20000
-step_per_collect: 20000
-repeat_per_collect: 200
-batch_size: 640
+epoch: 800
+step_per_epoch: 4000
+step_per_collect: 4000
+repeat_per_collect: 40
+batch_size: 128
 #hidden_sizes: [ 128,256,512,1024,512,512]
 hidden_sizes: [ 128,256,256,128]
 training_num: 20

@@ -87,7 +87,7 @@ def train_rainbow(args=get_args()):
     writer = SummaryWriter(log_path)
     #logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.2_DQN_8', run_id = '8')
+    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.3_DQN_9', run_id = '9')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
@@ -197,6 +197,9 @@ def test_rainbow_resume(args=get_args()):
 
 
 def test_prainbow(args=get_args()):
+    kwargs = {
+        'debug': False
+    }
     env = MultiDiscreteToDiscrete(gym.make(args.task, **kwargs))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -263,5 +266,5 @@ def test_rainbow(args=get_args()):
     print(result)
 if __name__ == "__main__":
     register_env()
-    train_rainbow(get_args())
-    #test_rainbow(get_args())
+   # train_rainbow(get_args())
+    test_rainbow(get_args())
