@@ -101,7 +101,7 @@ def train_ppo(args=get_args()):
     # logger = TensorboardLogger(writer)
 
     #wandb logger
-    logger = WandbLogger(project = 'CircuitEnvTest_v2',name  = '2023.11.22_test', run_id = '11221')
+    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.2204_ppo_1', run_id = 'ppo1')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
