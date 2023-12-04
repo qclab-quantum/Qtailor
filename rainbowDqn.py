@@ -85,9 +85,9 @@ def train_rainbow(args=get_args()):
     # log
     log_path = os.path.join(args.logdir, args.task, "rainbow")
     writer = SummaryWriter(log_path)
-    #logger = TensorboardLogger(writer)
+    logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.3_DQN_9', run_id = '9')
+    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.4_DQN_11', run_id = '11')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
@@ -266,5 +266,5 @@ def test_rainbow(args=get_args()):
     print(result)
 if __name__ == "__main__":
     register_env()
-   # train_rainbow(get_args())
-    test_rainbow(get_args())
+    train_rainbow(get_args())
+    #test_rainbow(get_args())

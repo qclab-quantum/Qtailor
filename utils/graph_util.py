@@ -1,3 +1,6 @@
+import multiprocessing
+import time
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,9 +14,28 @@ from utils.points_util import PointsUtil
 from qiskit_aer import AerSimulator
 
 simulator = AerSimulator()
+from multiprocessing import Pool
+
+# 设置 graph 样式
+def setOption( nt: Network):
+    nt.set_options("""
+           var options = {
+         "edges": {
+           "smooth": false
+         },
+         "physics": {
+           "enabled": false,
+           "minVelocity": 0.75
+         }
+       }
+           """)
+
 
 class GraphUtil():
 
+
+    def __init__(self,  **kwargs):
+        self.pool = Pool(10)
     @staticmethod
     def draw_adj_list(adj_list:list,node_number):
         g = nx.Graph()
@@ -25,7 +47,7 @@ class GraphUtil():
     #根据邻接矩阵绘制DAG
     @staticmethod
     def draw_adj_matrix(adj_matrix):
-        # 创建有向无环图对象
+        # 创建图对象
         G = nx.DiGraph()
 
         # 添加节点
@@ -47,25 +69,19 @@ class GraphUtil():
         nx.draw(G, pos,with_labels=False, node_color='lightblue', node_size=500, arrows=True)
 
         # 设置节点标签
-        nx.draw_networkx_labels(G, pos, labels=node_labels)
-        plt.show()
+        #nx.draw_networkx_labels(G, pos, labels=node_labels)
+        #plt.show()
 
-    #设置 graph 样式
-    def setOption(self,nt:Network):
-        nt.set_options("""
-               var options = {
-             "edges": {
-               "smooth": false
-             },
-             "physics": {
-               "enabled": false,
-               "minVelocity": 0.75
-             }
-           }
-               """)
+        nt = Network('1000px', '1000px')
+        setOption(nt)
+        nt.from_nx(G)
+        for i in range(len(nt.nodes)):
+            nt.nodes[i]['label'] = 'Q' + str(nt.nodes[i]['id'])
+            #print(nt.nodes[i])
+        nt.show('nx.html', notebook=False)
 
 
-    def test(self):
+    def demo(self):
         from pyvis.network import Network
         import networkx as nx
         nx_graph = nx.cycle_graph(10)
@@ -79,7 +95,7 @@ class GraphUtil():
         nx_graph.add_node(25, size=25, label='lonely', title='lonely node', group=3)
         # populates the nodes and edges data structures
         nt = Network('1000px', '1000px')
-        self.setOption(nt)
+        setOption(nt)
         nt.from_nx(nx_graph)
       #  nt.show_buttons()
 
@@ -95,7 +111,7 @@ class GraphUtil():
         G1.add_edge(0, 1)
         #print(isomorphism.GraphMatcher(G1, G2).is_isomorphic())
         nt = Network('1000px', '1000px')
-        self.setOption(nt)
+        setOption(nt)
         nt.from_nx(G1)
         nt.show('nx.html', notebook=False)
 
@@ -132,7 +148,21 @@ class GraphUtil():
     def get_adj_matrix(graph:nx.Graph):
         return np.array(nx.adjacency_matrix(graph).todense())
 
-def test_adj(adj):
+    def temp(self):
+
+        start_time = time.time()
+        with  self.pool as p:
+            print( p.map(CircutUtil.task, [1, 2, 3]))
+        end_time = time.time()
+        print(round(end_time - start_time, 3))
+
+        start_time = time.time()
+        with  self.pool as p:
+            print( p.map(CircutUtil.task, [1, 2, 3]))
+        end_time = time.time()
+        print(round(end_time - start_time, 3))
+
+def test_adj_list(adj):
     g = nx.Graph()
     g.add_nodes_from([0,1,2,3,4])
     #[[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]]
@@ -147,6 +177,38 @@ def test_adj(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
+def test_adj_matrix():
+    circuit = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    G = nx.DiGraph()
+    adj_matrix = \
+        [[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+       [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+       [0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+       [0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+       [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+       [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+       [0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+       [0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+       [1, 0, 1, 0, 0, 0, 0, 0, 1, 0]]
+    # 添加节点
+    num_nodes = len(adj_matrix)
+    G.add_nodes_from(range(num_nodes))
+
+    # 添加边
+    for i in range(num_nodes):
+        for j in range(num_nodes):
+            if adj_matrix[i][j] == 1:
+                G.add_edge(i, j)
+    adj_list = GraphUtil.get_adj_list(G)
+    layout = list(range(len(circuit.qubits)))
+    avr = 0
+    for i in range(10):
+        ct = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout, layout_method='sabre',
+                                     routing_method='sabre', optimization_level=1, backend=simulator)
+        avr += ct.size()*0.5+ ct.depth()*0.5
+    avr /= 10
+    return  avr
 #测试 Qiskit 在田字格上的编译结果
 def test_tian():
         #points
@@ -158,32 +220,26 @@ def test_tian():
     adj = PointsUtil.coordinate2adjacent(points)
     PointsUtil.plot_points(points)
 
-def testdag():
+def test_dag():
     data = \
         [[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
          [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-         [0, 1, 0, 1, 0, 0, 0, 0, 1, 0],
+         [0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
          [0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
          [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
          [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-         [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
          [0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
          [0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-         [1, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
+         [1, 0, 1, 0, 0, 0, 1, 0, 1, 0]]
 
     GraphUtil.draw_adj_matrix(data)
-    # adj = [ (0, 1), (0, 2), (1, 0),  (1, 2), (2, 0), (2, 1), (2, 3),(2, 4)]
-    # test_adj(adj)
-if __name__ == '__main__':
 
-    # g = GraphUtil.get_new_graph(5)
-    # g.add_edges_from([[0, 1], [0, 4], [0, 2], [1, 0], [1, 2], [2, 1], [2, 3], [2, 0], [3, 2], [3, 4], [4, 3], [4, 0]])
-    # nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_weight='bold')
-    # print(GraphUtil.get_adj_list(g))
-    # plt.show()
-    #
-    # c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
-    # c.draw('mpl').show()
-    # graph = GraphUtil.get_new_graph(len(c.qubits))
-    testdag()
-    #test_tian()
+
+
+
+if __name__ == '__main__':
+    pass
+
+
+

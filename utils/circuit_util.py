@@ -1,5 +1,6 @@
 import os
-
+import threading
+import networkx as nx
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 import traceback
@@ -20,7 +21,6 @@ class CircutUtil:
             return -1
         return compiled_circuit.decompose().depth()
 
-    #10W 次compiled_circuit.decompose().depth() 在 笔记本上大概需要30s
     @staticmethod
     def get_circuit_score(circuit:QuantumCircuit, adj:list,initial_layout: list) -> int:
         try:
@@ -37,10 +37,13 @@ class CircutUtil:
         #[0,1,2,....,qubits的个数-1]
         layout = list(range(len(circuit.qubits)))
         try:
-            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj,initial_layout=layout, optimization_level=1,backend=simulator)
-            #return compiled_circuit.depth()
-            d_circuit = compiled_circuit.decompose()
-            return d_circuit.depth()
+            avr = 0
+            for i in range(10):
+                cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
+                avr += cc.size() * 0.5 + cc.depth()*0.5
+
+            #取平均值
+            return avr/10
         except Exception as e:
             #print(adj)
             #traceback.print_exc()
@@ -103,48 +106,6 @@ class CircutUtil:
         return circuit
 
 
-def main():
-    # Add a H gate on qubit 0
-    # circuit.h(0)
-    circuit = QuantumCircuit(5)
-    circuit.cx(0, 1)
-    circuit.cx(0, 2)
-    circuit.cx(0, 3)
-    circuit.cx(0, 4)
-
-    # Map the quantum measurement to the classical bits
-    # circuit.measure([0, 1], [0, 1])
-
-    # adj = [[0, 1],[1, 2],[2, 3],[3, 4],]
-
-    # 全连接
-    # adj = [[0, 1], [0, 3], [1, 0], [1, 2], [1, 4], [2, 1],
-    #        [2, 5], [3, 0], [3, 4], [3, 6], [4, 1], [4, 3], [4, 5],
-    #        [4, 7], [5, 2], [5, 4], [5, 8], [6, 3], [6, 7], [7, 4],
-    #        [7, 6], [7, 8], [8, 5], [8, 7]]
-    cu = CircutUtil('')
-    adj = cu.coordinate2adjacent([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)])
-    qr = circuit.qubits
-    initial_layout = [None,qr[1],  None,qr[2], qr[0], qr[3],None, qr[4],   None]
-    #initial_layout = [None, qr[1], None, qr[2], qr[0], qr[3], None, qr[4], None]
-    compiled_circuit = transpile(circuits=circuit,
-                                # initial_layout=initial_layout,
-                                 coupling_map=adj,
-                                 backend=simulator)
-
-    #compiled_circuit.draw('mpl').show()
-    #print(compiled_circuit.decompose().depth())
-
-    print(adj)
-    cu.get_circuit_score1(circuit,adj =adj )
-
-    compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
-                                 backend=simulator, seed_transpiler=1234)
-    d_circuit = compiled_circuit.decompose()
-    d_circuit.draw('mpl').show()
-    print(d_circuit.depth())
-
-
 if __name__ == '__main__':
-    #main()
+
     pass

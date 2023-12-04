@@ -33,7 +33,7 @@ class PointsUtil:
         # return adjacency_dict
         return res
 
-    # 二维坐标->邻接表
+    # 邻接表-> 邻接矩阵
     @staticmethod
     def adjacency2matrix(adj_list):
         max_index = max(max(pair) for pair in adj_list)
@@ -89,10 +89,11 @@ if __name__ == '__main__':
             points.append((i, j))
     adj_list = pu.coordinate2adjacent(points)
     c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    c.draw('mpl').show()
     simulator = AerSimulator()
     ct = transpile(circuits=c, seed_transpiler=1234, coupling_map=adj_list,optimization_level=1,
                    backend=simulator)
     print(ct.depth())
-    ct.draw('latex').show()
+    #ct.draw('latex').show()
     #print(pu.adjacency2matrix(pu.coordinate2adjacent(points)))
     #plot_circuit_layout(ct, simulator)

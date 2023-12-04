@@ -35,7 +35,7 @@ class CircuitEnvTest_v3(gym.Env):
 
         self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
         #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
-        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2])
+        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2,2])
 
         self.max_step = 60
         self.max_edges=4
