@@ -34,10 +34,10 @@ class CircuitEnvTest_v3(gym.Env):
         # self.qr =self.circuit.qubits
 
         self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
-        #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
-        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2,2])
+        self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
+        #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2])
 
-        self.max_step = 60
+        self.max_step = 15
         self.max_edges=4
         self.stop_thresh = -2
 
@@ -122,10 +122,10 @@ class CircuitEnvTest_v3(gym.Env):
             return self.stop_thresh/10, self._get_obs()
 
         #防止出现相同的动作（原地摇摆）
-        # if  np.array_equal(action, self.last_action) \
-        #     or np.array_equal(np.flip(action), self.last_action):
-        #
-        #     return self.stop_thresh/5, self._get_obs()
+        if  np.array_equal(action, self.last_action) \
+            or np.array_equal(np.flip(action), self.last_action):
+
+            return self.stop_thresh/5, self._get_obs()
 
         score = None
         #执行动作
@@ -155,14 +155,6 @@ class CircuitEnvTest_v3(gym.Env):
         if score is not None :
             k1 = (self.default_score - score)/self.default_score
             k2 = (self.last_score - score)/self.last_score
-            # 和上一次的比较
-            # if score >= self.best_score:
-            #     reward = 0.5*((self.best_score-score)/self.default_score)-0.02
-            #
-            # #和默认分数比较
-            # else:
-            #     reward = 2*(self.default_score-score)/self.default_score
-            #     self.best_score = score
 
             if k2 > 0:
                 reward =    (math.pow((1 + k2), 2)-1)*(1 + k1)
@@ -179,14 +171,12 @@ class CircuitEnvTest_v3(gym.Env):
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
         self.total_reward+=reward
-        self.last_action = action
 
+        self.last_action = action
 
         self.obs = gu.get_adj_matrix(self.graph)
         if self.debug:
             print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(action,self.step_cnt,score,reward,self.obs))
-
-
 
         return reward,self._get_obs()
 

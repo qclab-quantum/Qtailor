@@ -90,8 +90,8 @@ def test_policy():
 
     )
     # log
-    #log_path = os.path.join(args.logdir, args.task, "ppo")
-    log_path = 'D:\workspace\data\ppo-45757ec95dc51bc5a97fbaca44955c04c370ffc6'
+    log_path = os.path.join(args.logdir, args.task, "ppo")
+   # log_path = 'D:\workspace\data\ppo-45757ec95dc51bc5a97fbaca44955c04c370ffc6'
     policy.load_state_dict(torch.load(log_path+"\\policy.pth",map_location=torch.device('cpu')))
     env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
     policy.eval()

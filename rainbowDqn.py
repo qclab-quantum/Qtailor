@@ -87,7 +87,7 @@ def train_rainbow(args=get_args()):
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.4_DQN_11', run_id = '11')
+    logger = WandbLogger(project = 'Stage2',name  = '12-05_DQN_1', run_id = '1')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
