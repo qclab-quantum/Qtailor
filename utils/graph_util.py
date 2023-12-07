@@ -64,7 +64,7 @@ class GraphUtil():
 
         node_labels = {0: 'Q0',}
 
-        for i in range(10):
+        for i in range(num_nodes):
             node_labels[i] = 'Q' + str(i)
         # 绘制有向无环图
         pos = nx.spring_layout(G)
@@ -169,7 +169,7 @@ def test_adj_list(adj):
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
 def test_adj_matrix(adj_matrix):
-    circuit = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    circuit = CircutUtil.get_from_qasm('vqe_indep_qiskit_5.qasm')
     G = nx.DiGraph()
     # 添加节点
     num_nodes = len(adj_matrix)
@@ -223,57 +223,53 @@ def test_matrix():
     # del_edge_from_matrix(matrix,5,9)
     # del_edge_from_matrix(matrix,3,7)
     # add_edge_to_matrix(matrix,0,8)
-    matrix =[[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-             [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-             [0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
-             [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-             [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-             [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-             [0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
-             [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-             [1, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
-    #GraphUtil.draw_adj_matrix(matrix)
+    matrix =[[0, 1, 0, 0, 1],
+       [1, 0, 1, 0, 0],
+       [0, 1, 0, 1, 0],
+       [0, 0, 1, 0, 1],
+       [1, 0, 0, 1, 0]]
+    GraphUtil.draw_adj_matrix(matrix)
+    print(test_adj_matrix(matrix))
     # for i in range(5):
     #     print(test_adj_matrix(matrix))
-    avr = []
-    temp = 0
-    for i in range(50):
-        x1 = random.randint(0, 9)
-        y1 = random.randint(0, 9)
-        x2 = random.randint(0, 9)
-        y2 = random.randint(0, 9)
-        x3 = random.randint(0, 9)
-        y3 = random.randint(0, 9)
-
-        while x1==x2 and y1==y2 or \
-                abs(x1-y1)%9 <=1 \
-                or abs(x2-y2)%9 <=1 \
-                or abs(x3-y3)%9 <=1:
-            x1 = random.randint(0, 9)
-            y1 = random.randint(0, 9)
-            x2 = random.randint(0, 9)
-            y2 = random.randint(0, 9)
-            x3 = random.randint(0, 9)
-            y3 = random.randint(0, 9)
-
-        add_edge_to_matrix(matrix, x1, y1)
-        add_edge_to_matrix(matrix, x2, y2)
-        add_edge_to_matrix(matrix, x3, y3)
-
-        depth = test_adj_matrix(matrix)
-
-        print('add (%r,%r),(%r,%r) depth = %r'%(x1,x2,y1,y2,depth))
-        #print('%r'%(test_adj_matrix(matrix)))
-
-        temp += depth
-        if (i+1)%10==0 and i >1:
-            avr.append(temp/10)
-            temp = 0
-        del_edge_from_matrix(matrix,x1, y1)
-        del_edge_from_matrix(matrix,x2, y2)
-        del_edge_from_matrix(matrix,x3, y3)
-    print(avr)
+    # avr = []
+    # temp = 0
+    # for i in range(50):
+    #     x1 = random.randint(0, 9)
+    #     y1 = random.randint(0, 9)
+    #     x2 = random.randint(0, 9)
+    #     y2 = random.randint(0, 9)
+    #     x3 = random.randint(0, 9)
+    #     y3 = random.randint(0, 9)
+    #
+    #     while x1==x2 and y1==y2 or \
+    #             abs(x1-y1)%9 <=1 \
+    #             or abs(x2-y2)%9 <=1 \
+    #             or abs(x3-y3)%9 <=1:
+    #         x1 = random.randint(0, 9)
+    #         y1 = random.randint(0, 9)
+    #         x2 = random.randint(0, 9)
+    #         y2 = random.randint(0, 9)
+    #         x3 = random.randint(0, 9)
+    #         y3 = random.randint(0, 9)
+    #
+    #     add_edge_to_matrix(matrix, x1, y1)
+    #     add_edge_to_matrix(matrix, x2, y2)
+    #     add_edge_to_matrix(matrix, x3, y3)
+    #
+    #     depth = test_adj_matrix(matrix)
+    #
+    #     print('add (%r,%r),(%r,%r) depth = %r'%(x1,x2,y1,y2,depth))
+    #     #print('%r'%(test_adj_matrix(matrix)))
+    #
+    #     temp += depth
+    #     if (i+1)%10==0 and i >1:
+    #         avr.append(temp/10)
+    #         temp = 0
+    #     del_edge_from_matrix(matrix,x1, y1)
+    #     del_edge_from_matrix(matrix,x2, y2)
+    #     del_edge_from_matrix(matrix,x3, y3)
+    # print(avr)
 
 if __name__ == '__main__':
     #print(GraphUtil.get_adj_matrix(GraphUtil.get_new_graph(10)))

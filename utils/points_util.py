@@ -93,7 +93,7 @@ if __name__ == '__main__':
     #     for j in range(10):
     #         points.append((i, j))
     adj_list = pu.coordinate2adjacent(points)
-    c = CircutUtil.get_from_qasm('qftentangled_indep_qiskit_10.qasm')
+    c = CircutUtil.get_from_qasm('vqe_indep_qiskit_5.qasm')
     #c.draw('mpl').show()
     simulator = AerSimulator()
     for i in range(5):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             avr += ct.decompose().depth()
 
         print(avr/20)
-    #print(ct.layout.initial_layout)
+    print(ct.layout.initial_layout)
     #ct.draw('latex').show()
     #print(pu.adjacency2matrix(pu.coordinate2adjacent(points)))
     #plot_circuit_layout(ct, simulator)

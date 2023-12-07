@@ -38,7 +38,7 @@ class CircutUtil:
         layout = list(range(len(circuit.qubits)))
         try:
             avr = 0
-            for i in range(20):
+            for i in range(10):
                 cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
                 #avr += cc.size() * 0.5 + cc.depth()*0.5
                 avr += cc.depth()

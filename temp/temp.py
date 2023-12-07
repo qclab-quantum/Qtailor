@@ -1,11 +1,13 @@
-import time
+import numpy as np
+import matplotlib.pyplot as plt
 
-matrices = set()
+# 生成从正态分布中采样的数据点
+data = np.random.normal(size=10000)
 
-#生成矩阵并存储到集合中
-for i in range(500000):
-    matrix = tuple(range(i, i+100))
-    matrices.add(frozenset(matrix))
+# 组成100x100像素的图像
+image = np.reshape(data, (100, 100))
 
-print('done')
-time.sleep(100)
+# 显示图像
+plt.imshow(image, cmap='gray')
+plt.colorbar()
+plt.show()
