@@ -1,16 +1,16 @@
 task: CircuitEnvTest-v3
 reward_threshold: 100
 seed: 1996
-buffer_size: 2000
+buffer_size: 4000
 lr: 0.0001
 gamma: 0.99
 epoch: 800
-step_per_epoch: 2000
-step_per_collect: 2000
+step_per_epoch: 4000
+step_per_collect: 4000
 repeat_per_collect: 20
-batch_size: 64
+batch_size: 2048
 #hidden_sizes: [ 128,256,512,1024,512,512]
-hidden_sizes: [ 128,256,256,128]
+hidden_sizes: [ 512,1024,1024,512,256,128]
 training_num: 20
 test_num: 5
 logdir: log
@@ -36,7 +36,7 @@ max_epoch: 10000
 n_step: 1024
 
 #cricuit special
-circuit_name: simple_demo.qasm
+circuit_name: dj_indep_qiskit_20.qasm
 #circuit_name: qftentangled_indep_qiskit_10.qasm
 
 

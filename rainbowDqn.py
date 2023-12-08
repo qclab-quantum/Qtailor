@@ -258,6 +258,7 @@ def test_rainbow(args=get_args()):
         buf = VectorReplayBuffer(args.buffer_size, buffer_num=10)
 
     log_path = 'D:\workspace\data'
+    log_path = os.path.join(args.logdir, args.task, "rainbow")
     policy.load_state_dict(torch.load(log_path + "\\policy.pth", map_location=torch.device('cpu')))
     policy.eval()
     policy.set_eps(args.eps_test)

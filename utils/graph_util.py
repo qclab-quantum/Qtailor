@@ -169,7 +169,7 @@ def test_adj_list(adj):
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
 def test_adj_matrix(adj_matrix):
-    circuit = CircutUtil.get_from_qasm('vqe_indep_qiskit_5.qasm')
+    circuit = CircutUtil.get_from_qasm('simple_demo.qasm')
     G = nx.DiGraph()
     # 添加节点
     num_nodes = len(adj_matrix)
@@ -187,7 +187,7 @@ def test_adj_matrix(adj_matrix):
     for i in range(10):
         ct = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
         avr += ct.decompose().depth()
-        #print(ct.layout.final_layout)
+        print(ct.layout.initial_layout)
     avr /= 10
     return  avr
 
@@ -223,11 +223,23 @@ def test_matrix():
     # del_edge_from_matrix(matrix,5,9)
     # del_edge_from_matrix(matrix,3,7)
     # add_edge_to_matrix(matrix,0,8)
-    matrix =[[0, 1, 0, 0, 1],
-       [1, 0, 1, 0, 0],
-       [0, 1, 0, 1, 0],
-       [0, 0, 1, 0, 1],
-       [1, 0, 0, 1, 0]]
+    matrix =[[0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+       [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1],
+       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
     GraphUtil.draw_adj_matrix(matrix)
     print(test_adj_matrix(matrix))
     # for i in range(5):
