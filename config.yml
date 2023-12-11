@@ -4,11 +4,11 @@ seed: 1996
 buffer_size: 4000
 lr: 0.0001
 gamma: 0.99
-epoch: 800
+epoch: 300
 step_per_epoch: 4000
 step_per_collect: 4000
 repeat_per_collect: 20
-batch_size: 2048
+batch_size: 256
 #hidden_sizes: [ 128,256,512,1024,512,512]
 hidden_sizes: [ 512,512,128,64]
 training_num: 20

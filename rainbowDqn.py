@@ -2,6 +2,7 @@ import argparse
 import os
 import pickle
 import pprint
+import time
 
 import gymnasium as gym
 import numpy as np
@@ -87,7 +88,7 @@ def train_rainbow(args=get_args()):
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'Stage2',name  = '12-05_DQN_1', run_id = '1')
+    logger = WandbLogger(project = 'Stage2',name  = 'stage2 12-11_DQN_12', run_id = '12')
     logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
@@ -267,5 +268,7 @@ def test_rainbow(args=get_args()):
     print(result)
 if __name__ == "__main__":
     register_env()
+    start_time = time.time()
     train_rainbow(get_args())
+    print('run time = ', time.time()-start_time)
     #test_rainbow(get_args())
