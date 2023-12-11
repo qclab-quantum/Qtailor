@@ -10,7 +10,7 @@ step_per_collect: 4000
 repeat_per_collect: 20
 batch_size: 2048
 #hidden_sizes: [ 128,256,512,1024,512,512]
-hidden_sizes: [ 512,1024,1024,512,256,128]
+hidden_sizes: [ 512,512,128,64]
 training_num: 20
 test_num: 5
 logdir: log
