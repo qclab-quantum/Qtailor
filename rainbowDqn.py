@@ -10,7 +10,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, PrioritizedVectorReplayBuffer, VectorReplayBuffer
-from tianshou.env import DummyVectorEnv, MultiDiscreteToDiscrete
+from tianshou.env import DummyVectorEnv, MultiDiscreteToDiscrete, SubprocVectorEnv
 from tianshou.policy import RainbowPolicy
 from tianshou.trainer import OffpolicyTrainer
 from tianshou.utils import TensorboardLogger, WandbLogger
@@ -32,9 +32,9 @@ def train_rainbow(args=get_args()):
 
     # train_envs = gym.make(args.task)
     # you can also use tianshou.env.SubprocVectorEnv
-    train_envs = DummyVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
+    train_envs = SubprocVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
     # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
+    test_envs = SubprocVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -154,7 +154,7 @@ def train_rainbow(args=get_args()):
             print("Successfully restore buffer.")
         else:
             print("Fail to restore buffer.")
-
+    start_time = time.time()
     # trainer
     result = OffpolicyTrainer(
         policy=policy,
@@ -177,6 +177,7 @@ def train_rainbow(args=get_args()):
     assert stop_fn(result["best_reward"])
 
     if __name__ == "__main__":
+        print('run time = ', time.time() - start_time)
         pprint.pprint(result)
         # Let's watch its performance!
         kwargs = {
@@ -268,7 +269,5 @@ def test_rainbow(args=get_args()):
     print(result)
 if __name__ == "__main__":
     register_env()
-    start_time = time.time()
     train_rainbow(get_args())
-    print('run time = ', time.time()-start_time)
     #test_rainbow(get_args())
