@@ -1,13 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from scipy.sparse import lil_matrix
 
-# 生成从正态分布中采样的数据点
-data = np.random.normal(size=10000)
+# 创建一个二维矩阵
+matrix = np.array([[1, 2, 0],
+                   [0, 3, 4],
+                   [5, 0, 6]])
 
-# 组成100x100像素的图像
-image = np.reshape(data, (100, 100))
-
-# 显示图像
-plt.imshow(image, cmap='gray')
-plt.colorbar()
-plt.show()
+# 创建LIL格式的稀疏矩阵
+sparse_matrix = lil_matrix(matrix)
+print(sparse_matrix)

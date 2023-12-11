@@ -13,6 +13,7 @@ from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
+from utils.concurrent_set import ConcurrentMap
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
 from config import get_args
@@ -26,7 +27,7 @@ class CircuitEnvTest_v3(gym.Env):
     def __init__(self, render_mode=None,**kwargs):
         args = get_args()
         self.debug = kwargs.get('debug')
-
+        self.map = ConcurrentMap()
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         self.circuit = self.get_criruit(args.circuit_name)
@@ -40,6 +41,8 @@ class CircuitEnvTest_v3(gym.Env):
         self.max_step = 15
         self.max_edges=4
         self.stop_thresh = -2
+
+
 
 
 
@@ -59,7 +62,7 @@ class CircuitEnvTest_v3(gym.Env):
 
 
         # 上个动作获取到的score
-        self.default_score = cu.get_circuit_score1(self.circuit, self.adj)
+        self.default_score = cu.get_circuit_score(self.circuit, self.adj)
         self.last_score = self.default_score
         self.best_score = self.default_score
         self.last_action = np.array(0)
@@ -134,7 +137,7 @@ class CircuitEnvTest_v3(gym.Env):
             if self.graph.has_edge(action[0], action[1]):
                 self.graph.remove_edge(action[0], action[1])
                 self.adj = gu.get_adj_list(self.graph)
-                score = cu.get_circuit_score1(self.circuit, self.adj)
+                score = cu.get_circuit_score(self.circuit, self.adj)
             else:
                 #reward = self.stop_thresh
                 #要删除的边不存在，无法执行操作
@@ -149,7 +152,7 @@ class CircuitEnvTest_v3(gym.Env):
                 # 执行增加边的操作
                 self.graph.add_edge(action[0],action[1])
                 self.adj = gu.get_adj_list(self.graph)
-                score = cu.get_circuit_score1(self.circuit, self.adj)
+                score = cu.get_circuit_score(self.circuit, self.adj)
 
 
         if score is not None :

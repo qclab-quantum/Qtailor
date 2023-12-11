@@ -7,7 +7,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 from qiskit import QuantumCircuit, transpile
-from networkx.algorithms import isomorphism
 from pyvis.network import Network
 
 from utils.circuit_util import CircutUtil
@@ -125,7 +124,7 @@ class GraphUtil():
         pair_list = [(nodes[i], nodes[(i + 1) % n]) for i in range(n)]
         g.add_edges_from(pair_list)
         #去掉一条线，使圆变成线
-        g.remove_edge(0,1)
+        g.remove_edge(0,n-1)
         return g
 
     @staticmethod
@@ -152,6 +151,18 @@ class GraphUtil():
     def get_adj_matrix(graph:nx.Graph):
         return np.array(nx.adjacency_matrix(graph).todense())
 
+    @staticmethod
+    def add_edge_to_matrix(matrix, i, j):
+        if i == j: return
+
+        matrix[i][j] = 1
+        matrix[j][i] = 1
+
+    @staticmethod
+    def del_edge_from_matrix(matrix, i, j):
+        matrix[i][j] = 0
+        matrix[j][i] = 0
+
 
 def test_adj_list(adj):
     g = nx.Graph()
@@ -168,8 +179,8 @@ def test_adj_list(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
-def test_adj_matrix(adj_matrix):
-    circuit = CircutUtil.get_from_qasm('simple_demo.qasm')
+def test_adj_matrix(adj_matrix,qasm):
+    circuit = CircutUtil.get_from_qasm(qasm)
     G = nx.DiGraph()
     # 添加节点
     num_nodes = len(adj_matrix)
@@ -186,8 +197,9 @@ def test_adj_matrix(adj_matrix):
     avr = 0
     for i in range(10):
         ct = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
+        #ct = transpile(circuits=circuit, coupling_map=adj_list,   optimization_level=3, backend=simulator)
         avr += ct.decompose().depth()
-        print(ct.layout.initial_layout)
+        #print(ct.layout.initial_layout)
     avr /= 10
     return  avr
 
@@ -201,14 +213,8 @@ def test_tian():
     adj = PointsUtil.coordinate2adjacent(points)
     PointsUtil.plot_points(points)
 
-def add_edge_to_matrix(matrix,i,j):
-    matrix[i][j] = 1
-    matrix[j][i] = 1
 
-def del_edge_from_matrix(matrix,i,j):
-    matrix[i][j] = 0
-    matrix[j][i] = 0
-def test_matrix():
+def test_matrix(qasm):
     # matrix = [[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
     #    [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
     #    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
@@ -219,29 +225,31 @@ def test_matrix():
     #    [0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
     #    [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
     #    [1, 0, 0, 0, 0, 1, 0, 0, 1, 0]]
-
-    # del_edge_from_matrix(matrix,5,9)
-    # del_edge_from_matrix(matrix,3,7)
-    # add_edge_to_matrix(matrix,0,8)
-    matrix =[[0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-       [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1],
-       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
+    matrix = [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+       [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
+    # del_edge_from_matrix(matrix,0,2)
+    # del_edge_from_matrix(matrix,2,7)
+    # del_edge_from_matrix(matrix,9,11)
     GraphUtil.draw_adj_matrix(matrix)
-    print(test_adj_matrix(matrix))
+    print(test_adj_matrix(matrix,qasm))
     # for i in range(5):
     #     print(test_adj_matrix(matrix))
     # avr = []
@@ -286,5 +294,4 @@ def test_matrix():
 if __name__ == '__main__':
     #print(GraphUtil.get_adj_matrix(GraphUtil.get_new_graph(10)))
 
-    test_matrix()
-
+    test_matrix(qasm= 'dj_indep_qiskit_20.qasm')

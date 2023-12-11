@@ -21,30 +21,20 @@ class CircutUtil:
             return -1
         return compiled_circuit.decompose().depth()
 
-    @staticmethod
-    def get_circuit_score(circuit:QuantumCircuit, adj:list,initial_layout: list) -> int:
-        try:
-            compiled_circuit = transpile(circuits=circuit, seed_transpiler=1234,coupling_map=adj, initial_layout=initial_layout, backend=simulator)
-            #return compiled_circuit.depth()
-            d_circuit = compiled_circuit.decompose()
-            return d_circuit.depth()
-        except:
-            return None
-
 
     @staticmethod
-    def get_circuit_score1(circuit:QuantumCircuit, adj:list) -> int:
+    def get_circuit_score(circuit:QuantumCircuit, adj:list) -> int:
         #[0,1,2,....,qubits的个数-1]
         layout = list(range(len(circuit.qubits)))
         try:
             avr = 0
-            for i in range(10):
+            for i in range(3):
                 cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
                 #avr += cc.size() * 0.5 + cc.depth()*0.5
                 avr += cc.depth()
 
             #取平均值
-            return avr/10
+            return avr/3
         except Exception as e:
             #print(adj)
             #traceback.print_exc()
