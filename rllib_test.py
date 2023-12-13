@@ -1,19 +1,9 @@
-"""
-Example of a custom gym environment. Run this example for a demo.
-
-This example shows the usage of:
-  - a custom environment
-  - Ray Tune for grid search to try different learning rates
-
-You can visualize experiment results in ~/ray_results using TensorBoard.
-
-Run example with defaults:
-$ python custom_env.py
-For CLI options:
-$ python custom_env.py --help
-"""
 import argparse
+import datetime
+import tempfile
+
 import gymnasium as gym
+from gymnasium import register
 from gymnasium.spaces import Discrete, Box
 import numpy as np
 import os
@@ -25,11 +15,12 @@ from ray.rllib.algorithms import Algorithm
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.rllib.utils.test_utils import check_learning_achieved
-from ray.tune.logger import pretty_print
+from ray.tune.logger import pretty_print, UnifiedLogger
 from ray.tune.registry import get_trainable_cls
-
+from pathlib import Path
+from typing import List, Optional, Dict, Union, Callable
+from ray import cloudpickle
 from temp.env.env_test_v3 import CircuitEnvTest_v3
-from train_policy import register_env
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
@@ -50,14 +41,18 @@ parser.add_argument(
     help="Whether this script should be run as a test: --stop-reward must "
     "be achieved within --stop-timesteps AND --stop-iters.",
 )
+'''
+stop-iters
+'''
 parser.add_argument(
-    "--stop-iters", type=int, default=50, help="Number of iterations to train."
+    "--stop-iters", type=int, default=100000, help="Number of iterations to train."
 )
 parser.add_argument(
-    "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
+    "--stop-timesteps", type=int, default=10000, help="Number of timesteps to train."
 )
+#the reward for multi-agent is the total sum (not the mean) over the agents.
 parser.add_argument(
-    "--stop-reward", type=float, default=1.5, help="Reward at which we stop training."
+    "--stop-reward", type=float, default=3, help="Reward at which we stop training."
 )
 parser.add_argument(
     "--no-tune",
@@ -70,42 +65,6 @@ parser.add_argument(
     action="store_true",
     help="Init Ray in local mode for easier debugging.",
 )
-
-
-class SimpleCorridor(gym.Env):
-    """Example of a custom env in which you have to walk down a corridor.
-
-    You can configure the length of the corridor via the env config."""
-
-    def __init__(self, config: EnvContext):
-        self.end_pos = config["corridor_length"]
-        self.cur_pos = 0
-        self.action_space = Discrete(2)
-        self.observation_space = Box(0.0, self.end_pos, shape=(1,), dtype=np.float32)
-
-        # Set the seed. This is only used for the final (reach goal) reward.
-        self.reset(seed=config.worker_index * config.num_workers)
-
-    def reset(self, *, seed=None, options=None):
-        random.seed(seed)
-        self.cur_pos = 0
-        return [self.cur_pos], {}
-
-    def step(self, action):
-        assert action in [0, 1], action
-        if action == 0 and self.cur_pos > 0:
-            self.cur_pos -= 1
-        elif action == 1:
-            self.cur_pos += 1
-        done = truncated = self.cur_pos >= self.end_pos
-        # Produce a random reward when we reach the goal.
-        return (
-            [self.cur_pos],
-            random.random() * 2 if done else -0.1,
-            done,
-            truncated,
-            {},
-        )
 
 def set_logger():
     import warnings
@@ -125,12 +84,30 @@ def set_logger():
     ray_rllib_logger.setLevel(logging.ERROR)
     ray_train_logger.setLevel(logging.ERROR)
     ray_serve_logger.setLevel(logging.ERROR)
-if __name__ == "__main__":
+def custom_log_creator(custom_path, custom_str):
 
-    set_logger()
+    timestr = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
+    logdir_prefix = "{}_{}".format(custom_str, timestr)
+
+    def logger_creator(config):
+
+        if not os.path.exists(custom_path):
+            os.makedirs(custom_path)
+        logdir = tempfile.mkdtemp(prefix=logdir_prefix, dir=custom_path)
+        return UnifiedLogger(config, logdir, loggers=None)
+
+    return logger_creator
+
+def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
+    """Utility function to load a checkpoint Dict from a path."""
+    checkpoint_path = Path(checkpoint_to_load).expanduser()
+    if not checkpoint_path.exists():
+        raise ValueError(f"Checkpoint path {checkpoint_path} does not exist.")
+    with checkpoint_path.open("rb") as f:
+        return cloudpickle.load(f)
+
+def train():
     args = parser.parse_args()
-    print(f"Running with following CLI options: {args}")
-
     ray.init(local_mode=args.local_mode)
 
     # Can also register the env creator function explicitly with:
@@ -179,42 +156,66 @@ if __name__ == "__main__":
             run_config=air.RunConfig(stop=stop),
         )
         results = tuner.fit()
-        ###evaluate start
+        # ###################### evaluate start ######################
         print("Training completed. Restoring new Algorithm for action inference.")
         # Get the last checkpoint from the above training run.
         checkpoint = results.get_best_result().checkpoint
-        # Create new Algorithm and restore its state from the last checkpoint.
-        algo = Algorithm.from_checkpoint(checkpoint)
-
-        register_env()
-        # Create the env to do inference in.
-        env = gym.make("CircuitEnvTest-v3")
-        obs, info = env.reset()
-
-        num_episodes = 0
-        episode_reward = 0.0
-
-        while num_episodes < args.num_episodes_during_inference:
-            # Compute an action (`a`).
-            a = algo.compute_single_action(
-                observation=obs,
-                explore=args.explore_during_inference,
-                policy_id="default_policy",  # <- default value
-            )
-            # Send the computed action `a` to the env.
-            obs, reward, done, truncated, _ = env.step(a)
-            episode_reward += reward
-            # Is the episode `done`? -> Reset.
-            if done:
-                print(f"Episode done: Total reward = {episode_reward}")
-                obs, info = env.reset()
-                num_episodes += 1
-                episode_reward = 0.0
-
-        algo.stop()
-        ###evaluate end
+        test_result(checkpoint)
+        #######################  evaluate end ######################
         if args.as_test:
             print("Checking if learning goals were achieved")
             check_learning_achieved(results, args.stop_reward)
 
     ray.shutdown()
+
+'''
+checkpoint can be string or Checkpoint Object
+'''
+def test_result(checkpoint):
+    algo = Algorithm.from_checkpoint(checkpoint)
+
+    register(
+        id='CircuitEnvTest-v3',
+        # entry_point='core.envs.circuit_env:CircuitEnv',
+        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
+        max_episode_steps=4000000,
+    )
+
+    # Create the env to do inference in.
+    env = gym.make("CircuitEnvTest-v3")
+    obs, info = env.reset()
+
+
+    num_episodes = 0
+    episode_reward = 0.0
+#    while num_episodes < args.num_episodes_during_inference:
+    while num_episodes < 1:
+        # Compute an action (`a`).
+        a = algo.compute_single_action(
+            observation=obs,
+            explore=None,
+            policy_id="default_policy",  # <- default value
+        )
+        # Send the computed action `a` to the env.
+        obs, reward, done, truncated, _ = env.step(a)
+
+        print('done = %r, reward = %r   '%(done,reward))
+        if done:
+            print('done = %r, reward = %r obs = \n %r '%(done,reward,np.array(obs).reshape(20,20)))
+        episode_reward += reward
+        # Is the episode `done`? -> Reset.
+        if done:
+            print(f"Episode done: Total reward = {episode_reward}")
+            obs, info = env.reset()
+            num_episodes += 1
+            episode_reward = 0.0
+
+    algo.stop()
+
+if __name__ == "__main__":
+
+    set_logger()
+    args = parser.parse_args()
+    print(f"Running with following CLI options: {args}")
+    train()
+    #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')
