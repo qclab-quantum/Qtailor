@@ -7,6 +7,7 @@ import time
 import gymnasium as gym
 import numpy as np
 import torch
+from gymnasium import register, registry
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, PrioritizedVectorReplayBuffer, VectorReplayBuffer
@@ -32,9 +33,12 @@ def train_rainbow(args=get_args()):
 
     # train_envs = gym.make(args.task)
     # you can also use tianshou.env.SubprocVectorEnv
-    train_envs = SubprocVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
+    env_fns = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
+    env_fns2 = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
+    #train_envs = SubprocVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
+    train_envs = DummyVectorEnv(env_fns)
     # test_envs = gym.make(args.task)
-    test_envs = SubprocVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
+    test_envs = DummyVectorEnv(env_fns2)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -88,8 +92,8 @@ def train_rainbow(args=get_args()):
     writer = SummaryWriter(log_path)
     logger = TensorboardLogger(writer)
 
-    logger = WandbLogger(project = 'Stage2',name  = 'stage2 12-11_DQN_12', run_id = '12')
-    logger.load(SummaryWriter(log_path))
+    #logger = WandbLogger(project = 'Stage2',name  = 'stage2 12-11_DQN_12', run_id = '12')
+    #logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
@@ -193,9 +197,9 @@ def train_rainbow(args=get_args()):
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
 
 
-def test_rainbow_resume(args=get_args()):
-    args.resume = True
-    train_rainbow(args)
+# def test_rainbow_resume(args=get_args()):
+#     args.resume = True
+#     train_rainbow(args)
 
 
 def test_prainbow(args=get_args()):
@@ -269,5 +273,6 @@ def test_rainbow(args=get_args()):
     print(result)
 if __name__ == "__main__":
     register_env()
+    #print(registry.values())
     train_rainbow(get_args())
     #test_rainbow(get_args())

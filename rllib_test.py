@@ -21,11 +21,15 @@ import random
 
 import ray
 from ray import air, tune
+from ray.rllib.algorithms import Algorithm
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.rllib.utils.test_utils import check_learning_achieved
 from ray.tune.logger import pretty_print
 from ray.tune.registry import get_trainable_cls
+
+from temp.env.env_test_v3 import CircuitEnvTest_v3
+from train_policy import register_env
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
@@ -53,7 +57,7 @@ parser.add_argument(
     "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
 parser.add_argument(
-    "--stop-reward", type=float, default=0.1, help="Reward at which we stop training."
+    "--stop-reward", type=float, default=1.5, help="Reward at which we stop training."
 )
 parser.add_argument(
     "--no-tune",
@@ -78,6 +82,7 @@ class SimpleCorridor(gym.Env):
         self.cur_pos = 0
         self.action_space = Discrete(2)
         self.observation_space = Box(0.0, self.end_pos, shape=(1,), dtype=np.float32)
+
         # Set the seed. This is only used for the final (reach goal) reward.
         self.reset(seed=config.worker_index * config.num_workers)
 
@@ -102,8 +107,27 @@ class SimpleCorridor(gym.Env):
             {},
         )
 
+def set_logger():
+    import warnings
+    warnings.simplefilter('ignore')
+    import logging
 
+    # First, get the handle for the logger you want to modify
+    ray_data_logger = logging.getLogger("ray.data")
+    ray_tune_logger = logging.getLogger("ray.tune")
+    ray_rllib_logger = logging.getLogger("ray.rllib")
+    ray_train_logger = logging.getLogger("ray.train")
+    ray_serve_logger = logging.getLogger("ray.serve")
+
+    # Modify the ray.data logging level
+    ray_data_logger.setLevel(logging.ERROR)
+    ray_tune_logger.setLevel(logging.ERROR)
+    ray_rllib_logger.setLevel(logging.ERROR)
+    ray_train_logger.setLevel(logging.ERROR)
+    ray_serve_logger.setLevel(logging.ERROR)
 if __name__ == "__main__":
+
+    set_logger()
     args = parser.parse_args()
     print(f"Running with following CLI options: {args}")
 
@@ -111,12 +135,10 @@ if __name__ == "__main__":
 
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
-
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        # or "corridor" if registered above
-        .environment(SimpleCorridor, env_config={"corridor_length": 5})
+        .environment(env = CircuitEnvTest_v3,env_config={"debug": False})
         .framework(args.framework)
         .rollouts(num_rollout_workers=1)
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
@@ -157,7 +179,40 @@ if __name__ == "__main__":
             run_config=air.RunConfig(stop=stop),
         )
         results = tuner.fit()
+        ###evaluate start
+        print("Training completed. Restoring new Algorithm for action inference.")
+        # Get the last checkpoint from the above training run.
+        checkpoint = results.get_best_result().checkpoint
+        # Create new Algorithm and restore its state from the last checkpoint.
+        algo = Algorithm.from_checkpoint(checkpoint)
 
+        register_env()
+        # Create the env to do inference in.
+        env = gym.make("CircuitEnvTest-v3")
+        obs, info = env.reset()
+
+        num_episodes = 0
+        episode_reward = 0.0
+
+        while num_episodes < args.num_episodes_during_inference:
+            # Compute an action (`a`).
+            a = algo.compute_single_action(
+                observation=obs,
+                explore=args.explore_during_inference,
+                policy_id="default_policy",  # <- default value
+            )
+            # Send the computed action `a` to the env.
+            obs, reward, done, truncated, _ = env.step(a)
+            episode_reward += reward
+            # Is the episode `done`? -> Reset.
+            if done:
+                print(f"Episode done: Total reward = {episode_reward}")
+                obs, info = env.reset()
+                num_episodes += 1
+                episode_reward = 0.0
+
+        algo.stop()
+        ###evaluate end
         if args.as_test:
             print("Checking if learning goals were achieved")
             check_learning_achieved(results, args.stop_reward)

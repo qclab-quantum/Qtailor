@@ -8,6 +8,7 @@ import copy
 import qiskit
 from gymnasium import spaces
 from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
+from gymnasium.spaces.utils import flatten_space
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from loguru import logger
@@ -24,27 +25,24 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
-    def __init__(self, render_mode=None,**kwargs):
+    def __init__(self, render_mode=None,kwargs = {'debug':False}):
         args = get_args()
         self.debug = kwargs.get('debug')
-        self.map = ConcurrentMap()
+
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         self.circuit = self.get_criruit(args.circuit_name)
         self.qubit_nums = len(self.circuit.qubits)
         # self.qr =self.circuit.qubits
 
-        self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
+        #self.observation_space = spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,)
+        self.observation_space = flatten_space(spaces.Box(0,1,(self.qubit_nums, self.qubit_nums),dtype=np.uint8,))
         self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
         #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2])
 
         self.max_step = 15
         self.max_edges=4
         self.stop_thresh = -2
-
-
-
-
 
     def _get_info(self):
         return {'info':'this is info'}
@@ -98,7 +96,8 @@ class CircuitEnvTest_v3(gym.Env):
 
     def _get_obs(self):
         #obs = np.array(cu.adjacency2matrix(cu.coordinate2adjacent(self.points)))
-        return copy.deepcopy(self.obs)
+        flattened_matrix = np.array(copy.deepcopy(self.obs)).flatten()
+        return flattened_matrix
 
     def _get_info(self):
         return {"info":"this is info"}
@@ -188,9 +187,4 @@ class CircuitEnvTest_v3(gym.Env):
 
 
 if __name__ == '__main__':
-    print(spaces.Box(
-        0,
-        1,
-        (5, 5),
-        dtype=np.uint8,
-    ).sample())
+    print(flatten_space(spaces.Box(0,1,(10, 10),dtype=np.uint8,)).sample())

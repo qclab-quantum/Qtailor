@@ -1,4 +1,4 @@
-task: CircuitEnvTest-v3
+task: CircuitEnvTest
 reward_threshold: 100
 seed: 1996
 buffer_size: 4000
@@ -11,7 +11,7 @@ repeat_per_collect: 20
 batch_size: 256
 #hidden_sizes: [ 128,256,512,1024,512,512]
 hidden_sizes: [ 512,512,128,64]
-training_num: 20
+training_num: 2
 test_num: 5
 logdir: log
 render: 0.0
