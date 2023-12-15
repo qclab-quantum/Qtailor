@@ -11,6 +11,7 @@ import random
 
 import ray
 from ray import air, tune
+from ray.air import CheckpointConfig
 from ray.rllib.algorithms import Algorithm
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
@@ -44,11 +45,13 @@ parser.add_argument(
 '''
 stop-iters
 '''
+##Iters is the number of batches your model will train on and the number of times your model weights will be updated (not counting minibatches).
 parser.add_argument(
-    "--stop-iters", type=int, default=100000, help="Number of iterations to train."
+    "--stop-iters", type=int, default=1500000, help="Number of iterations to train."
 )
+##One call to env.step() is one timestep.
 parser.add_argument(
-    "--stop-timesteps", type=int, default=10000, help="Number of timesteps to train."
+    "--stop-timesteps", type=int, default=1500000, help="Number of timesteps to train."
 )
 #the reward for multi-agent is the total sum (not the mean) over the agents.
 parser.add_argument(
@@ -106,9 +109,9 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
     with checkpoint_path.open("rb") as f:
         return cloudpickle.load(f)
 
-def train():
+def train_policy():
     args = parser.parse_args()
-    ray.init(local_mode=args.local_mode)
+    ray.init(local_mode=args.local_mode,num_gpus = 1)
 
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
@@ -117,9 +120,10 @@ def train():
         .get_default_config()
         .environment(env = CircuitEnvTest_v3,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=1)
+        .rollouts(num_rollout_workers=2)
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-        .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+        #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+        .resources(num_gpus=int(1))
     )
 
     stop = {
@@ -127,6 +131,8 @@ def train():
         "timesteps_total": args.stop_timesteps,
         "episode_reward_mean": args.stop_reward,
     }
+    #每个 1 iter 都保存一次 checkpoint
+    Checkpoint=  CheckpointConfig(checkpoint_frequency = 1)
 
     if args.no_tune:
         # manual training with train loop using PPO and fixed learning rate
@@ -153,15 +159,17 @@ def train():
         tuner = tune.Tuner(
             args.run,
             param_space=config.to_dict(),
-            run_config=air.RunConfig(stop=stop),
+            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint),
         )
         results = tuner.fit()
+
         # ###################### evaluate start ######################
         print("Training completed. Restoring new Algorithm for action inference.")
         # Get the last checkpoint from the above training run.
         checkpoint = results.get_best_result().checkpoint
         test_result(checkpoint)
         #######################  evaluate end ######################
+
         if args.as_test:
             print("Checking if learning goals were achieved")
             check_learning_achieved(results, args.stop_reward)
@@ -217,5 +225,5 @@ if __name__ == "__main__":
     set_logger()
     args = parser.parse_args()
     print(f"Running with following CLI options: {args}")
-    train()
+    train_policy()
     #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')
