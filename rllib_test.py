@@ -47,7 +47,7 @@ stop-iters
 '''
 ##Iters is the number of batches your model will train on and the number of times your model weights will be updated (not counting minibatches).
 parser.add_argument(
-    "--stop-iters", type=int, default=1500000, help="Number of iterations to train."
+    "--stop-iters", type=int, default=100, help="Number of iterations to train."
 )
 ##One call to env.step() is one timestep.
 parser.add_argument(
@@ -132,7 +132,7 @@ def train_policy():
         "episode_reward_mean": args.stop_reward,
     }
     #每个 1 iter 都保存一次 checkpoint
-    Checkpoint=  CheckpointConfig(checkpoint_frequency = 1)
+    Checkpoint=  CheckpointConfig(checkpoint_frequency = 1,checkpoint_at_end=True)
 
     if args.no_tune:
         # manual training with train loop using PPO and fixed learning rate
@@ -152,6 +152,11 @@ def train_policy():
                 or result["episode_reward_mean"] >= args.stop_reward
             ):
                 break
+            #当reward 有提示，保存 checkpoint
+            if result["episode_reward_mean"] > best_reward:
+                best_reward = result["episode_reward_mean"]
+                checkpoint = algo.save()
+                print(f"New best reward: {best_reward}. Checkpoint saved to: {checkpoint}")
         algo.stop()
     else:
         # automated run with Tune and grid search and TensorBoard
@@ -159,7 +164,7 @@ def train_policy():
         tuner = tune.Tuner(
             args.run,
             param_space=config.to_dict(),
-            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint),
+            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint,log_to_file=True),
         )
         results = tuner.fit()
 

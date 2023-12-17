@@ -56,14 +56,14 @@ class PointsUtil:
         # 设置x轴和y轴的刻度为整数
 
         for i, point in enumerate(sorted_points):
-            plt.scatter(point[0], point[1], color='blue')
-            plt.annotate(str(i), (point[0], point[1]), textcoords="offset points", xytext=(0, 10), ha='center')
+            plt.scatter(point[0], point[1], color='black',linewidths=0.1)
+            plt.annotate(str(i), (point[0], point[1]), textcoords="offset points", fontsize = 7,xytext=(0, 10), ha='center')
 
         for i in range(len(points)):
             for j in range(i + 1, len(points)):
                 dist = sqrt((points[i][0] - points[j][0]) ** 2 + (points[i][1] - points[j][1]) ** 2)
                 if dist <= 1:
-                    plt.plot([points[i][0], points[j][0]], [points[i][1], points[j][1]], color='red')
+                    plt.plot([points[i][0], points[j][0]], [points[i][1], points[j][1]], color='#c6c6c6')
 
         # 将x轴和y轴的刻度设置为整数
         plt.xticks(range(int(0), int(10) + 1))
@@ -89,22 +89,21 @@ if __name__ == '__main__':
               (7,0),(7,1),(7,2),(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(7,9),
               (8,0),(8,1),(8,2),(8,3),(8,4),(8,5),(8,6),(8,7),(8,8),(8,9),
               (9,0),(9,1),(9,2),(9,3),(9,4),(9,5),(9,6),(9,7),(9,8),(9,9)]
-    # for i in range(10):
-    #     for j in range(10):
-    #         points.append((i, j))
+    pu.plot_points(points)
     adj_list = pu.coordinate2adjacent(points)
-    c = CircutUtil.get_from_qasm('vqe_indep_qiskit_5.qasm')
+
+    c = CircutUtil.get_from_qasm('dj_indep_qiskit_20.qasm')
     #c.draw('mpl').show()
     simulator = AerSimulator()
-    for i in range(5):
-        avr = 0
-        for i in range(20):
-            ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=3,
-                           backend=simulator)
-            avr += ct.decompose().depth()
+    avr = 0
+    for i in range(10):
+        ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=3,
+                       backend=simulator)
+        avr += ct.decompose().depth()
 
-        print(avr/20)
+    print(avr / 10)
+
     print(ct.layout.initial_layout)
     #ct.draw('latex').show()
     #print(pu.adjacency2matrix(pu.coordinate2adjacent(points)))
-    #plot_circuit_layout(ct, simulator)
+    plot_circuit_layout(ct, simulator)
