@@ -10,3 +10,9 @@ pyyaml
 munch
 wandb
 pyvis
+dm_tree
+scikit-image
+lz4
+tensorboard
+
+pip install loguru gymnasium qiskit qiskit-aer matplotlib pyyaml munch pyvis scikit-image dm_tree lz4  tensorboard

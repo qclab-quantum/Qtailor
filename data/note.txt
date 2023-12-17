@@ -5,7 +5,7 @@ step_per_collect:  每次网络更新要收集的transitions
 
 episode_per_test： 在evaluation时，执行的episode的数量
 
-update_per_step：step_per_collect*update_per_step=收集够step_per_collect个 transition后，策略网络更新的次数，默认为1
+update_per_step：step_per_collect*update_per_step= 收集够step_per_collect个 transition后，策略网络更新的次数，默认为1
 
 一个 epoch 包含多个 episode，一个episode代表一次完整的任务执行
 
