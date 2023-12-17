@@ -146,7 +146,7 @@ class CircuitEnvTest_v3(gym.Env):
             if len(self.graph.edges(action[0]))== self.max_edges or \
                     len(self.graph.edges(action[1]))== self.max_edges:
                 #reward = self.stop_thresh
-                return self.stop_thresh / 10, self._get_obs()
+                return self.stop_thresh , self._get_obs()
             else:
                 # 执行增加边的操作
                 self.graph.add_edge(action[0],action[1])
