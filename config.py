@@ -25,7 +25,7 @@ class Singleton(type):
 
 class ConfigSingleton(metaclass=Singleton):
     def __init__(self):
-        self.config = None
+        self.config = get_args()
         self.load_config()
 
     def load_config(self):
@@ -39,6 +39,6 @@ class ConfigSingleton(metaclass=Singleton):
         return self.config
 
 if __name__ == '__main__':
-    print(ConfigSingleton().get_config().circuit_name)
-    ConfigSingleton().get_config().circuit_name = 'test'
-    print(ConfigSingleton().get_config().circuit_name)
+    print(ConfigSingleton().get_config().qasm)
+    ConfigSingleton().get_config().qasm = 'test'
+    print(ConfigSingleton().get_config().qasm)
