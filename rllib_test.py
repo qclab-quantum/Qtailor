@@ -29,7 +29,7 @@ from utils.file_util import FileUtil
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 
-args = None
+
 def set_logger():
     import warnings
     warnings.simplefilter('ignore')
@@ -71,6 +71,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         return cloudpickle.load(f)
 
 def train_policy():
+    args = ConfigSingleton().get_config()
     ray.init(num_gpus = 1)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
@@ -210,13 +211,12 @@ def get_qasm():
     ]
     return qasm
 if __name__ == "__main__":
-    args = ConfigSingleton().get_config()
-    args.log_file_id = random.randint(0, 10000)
     set_logger()
     #print(f"Running with following CLI options: {args}")
     qasms = get_qasm()
     for q in qasms:
-        args.qasm = q
+        ConfigSingleton().get_config().log_file_id = random.randint(0, 10000)
+        ConfigSingleton().get_config().qasm = q
         train_policy()
         time.sleep(5)
     #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')
