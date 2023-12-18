@@ -17,7 +17,8 @@ import warnings
 from utils.concurrent_set import ConcurrentMap
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
-from config import get_args
+from config import get_args, ConfigSingleton
+
 simulator = AerSimulator()
 '''
 不给定硬件拓扑，让智能体自己寻找最佳连接
@@ -26,7 +27,7 @@ from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False}):
-        args = get_args()
+        args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
 
         # obs[i] == qubit_nums 说明该位置为空，
