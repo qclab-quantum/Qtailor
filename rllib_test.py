@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Union, Callable
 from ray import cloudpickle
 from temp.env.env_test_v3 import CircuitEnvTest_v3
+from utils.benchmark import Benchmark
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
@@ -47,7 +48,7 @@ stop-iters
 '''
 ##Iters is the number of batches your model will train on and the number of times your model weights will be updated (not counting minibatches).
 parser.add_argument(
-    "--stop-iters", type=int, default=100, help="Number of iterations to train."
+    "--stop-iters", type=int, default=200, help="Number of iterations to train."
 )
 ##One call to env.step() is one timestep.
 parser.add_argument(
@@ -55,7 +56,7 @@ parser.add_argument(
 )
 #the reward for multi-agent is the total sum (not the mean) over the agents.
 parser.add_argument(
-    "--stop-reward", type=float, default=3, help="Reward at which we stop training."
+    "--stop-reward", type=float, default=100, help="Reward at which we stop training."
 )
 parser.add_argument(
     "--no-tune",
@@ -213,12 +214,13 @@ def test_result(checkpoint):
         obs, reward, done, truncated, _ = env.step(a)
 
         print('done = %r, reward = %r   '%(done,reward))
-        if done:
-            print('done = %r, reward = %r obs = \n %r '%(done,reward,np.array(obs).reshape(20,20)))
         episode_reward += reward
+
         # Is the episode `done`? -> Reset.
         if done:
+            print('done = %r, reward = %r obs = \n %r ' % (done, reward, np.array(obs).reshape(20, 20)))
             print(f"Episode done: Total reward = {episode_reward}")
+            Benchmark.depth_benchmark( np.array(obs).reshape(20, 20), '', True)
             obs, info = env.reset()
             num_episodes += 1
             episode_reward = 0.0

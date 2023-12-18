@@ -35,7 +35,7 @@ def setOption( nt: Network):
 class GraphUtil():
 
 
-    def __init__(self,  **kwargs):
+    def __init__(self, ):
         self.pool = Pool(10)
     @staticmethod
     def draw_adj_list(adj_list:list,node_number):
@@ -47,7 +47,7 @@ class GraphUtil():
 
     #根据邻接矩阵绘制DAG
     @staticmethod
-    def draw_adj_matrix(adj_matrix):
+    def draw_adj_matrix(adj_matrix,is_draw_nt=False):
         # 创建图对象
         G = nx.DiGraph()
 
@@ -72,14 +72,14 @@ class GraphUtil():
         # 设置节点标签
         nx.draw_networkx_labels(G, pos, labels=node_labels)
         plt.show()
-
-        # nt = Network('1000px', '1000px')
-        # setOption(nt)
-        # nt.from_nx(G)
-        # for i in range(len(nt.nodes)):
-        #     nt.nodes[i]['label'] = 'Q' + str(nt.nodes[i]['id'])
-        #     #print(nt.nodes[i])
-        # nt.show('nx.html', notebook=False)
+        if is_draw_nt:
+            nt = Network('1000px', '1000px')
+            setOption(nt)
+            nt.from_nx(G)
+            for i in range(len(nt.nodes)):
+                nt.nodes[i]['label'] = 'Q' + str(nt.nodes[i]['id'])
+                #print(nt.nodes[i])
+            nt.show('nx.html', notebook=False)
 
 
     def demo(self):
@@ -163,6 +163,34 @@ class GraphUtil():
         matrix[i][j] = 0
         matrix[j][i] = 0
 
+    @staticmethod
+    def test_adj_matrix(adj_matrix, qasm):
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(adj_matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if adj_matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj_list = GraphUtil.get_adj_list(G)
+        layout = list(range(len(circuit.qubits)))
+        avr_rl = 0
+        avr_rl_qiskit = 0
+        for i in range(20):
+            ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
+            ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
+            avr_rl += ct1.decompose().depth()
+            avr_rl_qiskit += ct2.decompose().depth()
+            # print(ct.layout.initial_layout)
+        avr_rl /= 20
+        avr_rl_qiskit /= 20
+        return avr_rl,avr_rl_qiskit
+
 
 def test_adj_list(adj):
     g = nx.Graph()
@@ -179,29 +207,7 @@ def test_adj_list(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
-def test_adj_matrix(adj_matrix,qasm):
-    circuit = CircutUtil.get_from_qasm(qasm)
-    G = nx.DiGraph()
-    # 添加节点
-    num_nodes = len(adj_matrix)
-    G.add_nodes_from(range(num_nodes))
 
-    # 添加边
-    for i in range(num_nodes):
-        for j in range(num_nodes):
-            if adj_matrix[i][j] == 1:
-                G.add_edge(i, j)
-
-    adj_list = GraphUtil.get_adj_list(G)
-    layout = list(range(len(circuit.qubits)))
-    avr = 0
-    for i in range(10):
-        #ct = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
-        ct = transpile(circuits=circuit, coupling_map=adj_list,   optimization_level=3, backend=simulator)
-        avr += ct.decompose().depth()
-        #print(ct.layout.initial_layout)
-    avr /= 10
-    return  avr
 
 #测试 Qiskit 在田字格上的编译结果
 def test_tian():
@@ -214,87 +220,6 @@ def test_tian():
     PointsUtil.plot_points(points)
 
 
-def test_matrix(qasm):
-    # matrix = [[0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    #    [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    #    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    #    [0, 0, 1, 0, 1, 0, 0, 1, 0, 0],
-    #    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-    #    [0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-    #    [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-    #    [0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
-    #    [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-    #    [1, 0, 0, 0, 0, 1, 0, 0, 1, 0]]
-    matrix = [[0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-       [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-       [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-       [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-       [1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0],
-       [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0],
-       [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1],
-       [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]
-
-
-
-    # del_edge_from_matrix(matrix,0,2)
-    # del_edge_from_matrix(matrix,2,7)
-    # del_edge_from_matrix(matrix,9,11)
-    GraphUtil.draw_adj_matrix(matrix)
-    print(test_adj_matrix(matrix,qasm))
-    # for i in range(5):
-    #     print(test_adj_matrix(matrix))
-    # avr = []
-    # temp = 0
-    # for i in range(50):
-    #     x1 = random.randint(0, 9)
-    #     y1 = random.randint(0, 9)
-    #     x2 = random.randint(0, 9)
-    #     y2 = random.randint(0, 9)
-    #     x3 = random.randint(0, 9)
-    #     y3 = random.randint(0, 9)
-    #
-    #     while x1==x2 and y1==y2 or \
-    #             abs(x1-y1)%9 <=1 \
-    #             or abs(x2-y2)%9 <=1 \
-    #             or abs(x3-y3)%9 <=1:
-    #         x1 = random.randint(0, 9)
-    #         y1 = random.randint(0, 9)
-    #         x2 = random.randint(0, 9)
-    #         y2 = random.randint(0, 9)
-    #         x3 = random.randint(0, 9)
-    #         y3 = random.randint(0, 9)
-    #
-    #     add_edge_to_matrix(matrix, x1, y1)
-    #     add_edge_to_matrix(matrix, x2, y2)
-    #     add_edge_to_matrix(matrix, x3, y3)
-    #
-    #     depth = test_adj_matrix(matrix)
-    #
-    #     print('add (%r,%r),(%r,%r) depth = %r'%(x1,x2,y1,y2,depth))
-    #     #print('%r'%(test_adj_matrix(matrix)))
-    #
-    #     temp += depth
-    #     if (i+1)%10==0 and i >1:
-    #         avr.append(temp/10)
-    #         temp = 0
-    #     del_edge_from_matrix(matrix,x1, y1)
-    #     del_edge_from_matrix(matrix,x2, y2)
-    #     del_edge_from_matrix(matrix,x3, y3)
-    # print(avr)
 
 if __name__ == '__main__':
-    #print(GraphUtil.get_adj_matrix(GraphUtil.get_new_graph(10)))
-
-    test_matrix(qasm= 'dj_indep_qiskit_20.qasm')
+    pass
