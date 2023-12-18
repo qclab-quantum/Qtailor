@@ -79,7 +79,7 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v3,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers,num_gpus_per_worker=1/(args.num_rollout_workers+1))
+        .rollouts(num_rollout_workers=args.num_rollout_workers,num_gpus_per_learner_worker=1)
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
         #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
         .resources(num_gpus=int(1))
@@ -201,12 +201,13 @@ def log2file(content):
 def get_qasm():
     qasm = [
         'ghz/ghz_indep_qiskit_10.qasm',
-    #     'ghz/ghz_indep_qiskit_15.qasm',
-    #     'ghz/ghz_indep_qiskit_20.qasm',
-    #     'ghz/ghz_indep_qiskit_25.qasm',
+         'ghz/ghz_indep_qiskit_15.qasm',
+         'ghz/ghz_indep_qiskit_20.qasm',
+         'ghz/ghz_indep_qiskit_25.qasm',
     #     'ghz/ghz_indep_qiskit_30.qasm',
     #     'ghz/ghz_indep_qiskit_35.qasm',
     ]
+    return qasm
 if __name__ == "__main__":
     args = ConfigSingleton().get_config()
     args.log_file_id = random.randint(0, 10000)
