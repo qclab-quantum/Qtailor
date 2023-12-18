@@ -31,7 +31,7 @@ class CircuitEnvTest_v3(gym.Env):
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
-        self.circuit = self.get_criruit(args.circuit_name)
+        self.circuit = self.get_criruit(args.qasm)
         self.qubit_nums = len(self.circuit.qubits)
         # self.qr =self.circuit.qubits
 

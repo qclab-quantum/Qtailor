@@ -1,13 +1,12 @@
-import argparse
 import datetime
+import random
 import tempfile
+import time
 
 import gymnasium as gym
 from gymnasium import register
-from gymnasium.spaces import Discrete, Box
 import numpy as np
 import os
-import random
 
 import ray
 from ray import air, tune
@@ -21,55 +20,16 @@ from ray.tune.registry import get_trainable_cls
 from pathlib import Path
 from typing import List, Optional, Dict, Union, Callable
 from ray import cloudpickle
+
+from config import  ConfigSingleton
 from temp.env.env_test_v3 import CircuitEnvTest_v3
 from utils.benchmark import Benchmark
+from utils.file_util import FileUtil
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--run", type=str, default="PPO", help="The RLlib-registered algorithm to use."
-)
-parser.add_argument(
-    "--framework",
-    choices=["tf", "tf2", "torch"],
-    default="torch",
-    help="The DL framework specifier.",
-)
-parser.add_argument(
-    "--as-test",
-    action="store_true",
-    help="Whether this script should be run as a test: --stop-reward must "
-    "be achieved within --stop-timesteps AND --stop-iters.",
-)
-'''
-stop-iters
-'''
-##Iters is the number of batches your model will train on and the number of times your model weights will be updated (not counting minibatches).
-parser.add_argument(
-    "--stop-iters", type=int, default=200, help="Number of iterations to train."
-)
-##One call to env.step() is one timestep.
-parser.add_argument(
-    "--stop-timesteps", type=int, default=1500000, help="Number of timesteps to train."
-)
-#the reward for multi-agent is the total sum (not the mean) over the agents.
-parser.add_argument(
-    "--stop-reward", type=float, default=100, help="Reward at which we stop training."
-)
-parser.add_argument(
-    "--no-tune",
-    action="store_true",
-    help="Run without Tune using a manual train loop instead. In this case,"
-    "use PPO without grid search and no TensorBoard.",
-)
-parser.add_argument(
-    "--local-mode",
-    action="store_true",
-    help="Init Ray in local mode for easier debugging.",
-)
-
+args = None
 def set_logger():
     import warnings
     warnings.simplefilter('ignore')
@@ -111,9 +71,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         return cloudpickle.load(f)
 
 def train_policy():
-    args = parser.parse_args()
-    ray.init(local_mode=args.local_mode,num_gpus = 1)
-
+    ray.init(num_gpus = 1)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
@@ -121,19 +79,19 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v3,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=2)
+        .rollouts(num_rollout_workers=args.num_rollout_workers,num_gpus_per_worker=1/(args.num_rollout_workers+1))
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
         #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
         .resources(num_gpus=int(1))
     )
-
     stop = {
         "training_iteration": args.stop_iters,
         "timesteps_total": args.stop_timesteps,
         "episode_reward_mean": args.stop_reward,
     }
     #每个 1 iter 都保存一次 checkpoint
-    Checkpoint=  CheckpointConfig(checkpoint_frequency = 1,checkpoint_at_end=True)
+    Checkpoint=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
+                                  ,checkpoint_at_end=args.checkpoint_at_end)
 
     if args.no_tune:
         # manual training with train loop using PPO and fixed learning rate
@@ -141,7 +99,7 @@ def train_policy():
             raise ValueError("Only support --run PPO with --no-tune.")
         print("Running manual train loop without Ray Tune.")
         # use fixed learning rate instead of grid search (needs tune)
-        config.lr = 1e-3
+        config.lr = args.rllib_lr
         algo = config.build()
         # run manual training loop and print results after each iteration
         for _ in range(args.stop_iters):
@@ -198,11 +156,11 @@ def test_result(checkpoint):
     # Create the env to do inference in.
     env = gym.make("CircuitEnvTest-v3")
     obs, info = env.reset()
-
-
     num_episodes = 0
     episode_reward = 0.0
 #    while num_episodes < args.num_episodes_during_inference:
+
+    content = ''
     while num_episodes < 1:
         # Compute an action (`a`).
         a = algo.compute_single_action(
@@ -212,25 +170,51 @@ def test_result(checkpoint):
         )
         # Send the computed action `a` to the env.
         obs, reward, done, truncated, _ = env.step(a)
-
-        print('done = %r, reward = %r   '%(done,reward))
+        info  = 'done = %r, reward = %r \n' % (done, reward)
+        print(info)
+        content = content.join(info)
         episode_reward += reward
 
         # Is the episode `done`? -> Reset.
         if done:
             print('done = %r, reward = %r obs = \n %r ' % (done, reward, np.array(obs).reshape(20, 20)))
+            content = content.join('done = %r, reward = %r obs = \n %r ' % (done, reward, np.array(obs).reshape(20, 20)))
             print(f"Episode done: Total reward = {episode_reward}")
-            Benchmark.depth_benchmark( np.array(obs).reshape(20, 20), '', True)
+            #log to file
+            content = content.join(f"Episode done: Total reward = {episode_reward}")
+            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( np.array(obs).reshape(20, 20), args.qasm, True)
+            content = content.join('rl = %r, rl_qiskit = %r, qiskit = %r '%(rl,rl_qiskit,qiskit))
+            log2file(content)
+
             obs, info = env.reset()
             num_episodes += 1
             episode_reward = 0.0
 
     algo.stop()
 
-if __name__ == "__main__":
+def log2file(content):
+    rootdir = FileUtil.get_root_dir()
+    sep =os.path.sep
+    path = rootdir+sep+'benchmark'+sep+'a-result'+str(args.qasm)+'_'+str(args.log_file_id)+'.txt'
+    FileUtil.write(path, content)
 
+def get_qasm():
+    qasm = [
+        'ghz/ghz_indep_qiskit_10.qasm',
+    #     'ghz/ghz_indep_qiskit_15.qasm',
+    #     'ghz/ghz_indep_qiskit_20.qasm',
+    #     'ghz/ghz_indep_qiskit_25.qasm',
+    #     'ghz/ghz_indep_qiskit_30.qasm',
+    #     'ghz/ghz_indep_qiskit_35.qasm',
+    ]
+if __name__ == "__main__":
+    args = ConfigSingleton().get_config()
+    args.log_file_id = random.randint(0, 10000)
     set_logger()
-    args = parser.parse_args()
-    print(f"Running with following CLI options: {args}")
-    train_policy()
+    #print(f"Running with following CLI options: {args}")
+    qasms = get_qasm()
+    for q in qasms:
+        args.qasm = q
+        train_policy()
+        time.sleep(5)
     #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')

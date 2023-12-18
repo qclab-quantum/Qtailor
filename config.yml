@@ -35,11 +35,6 @@ exploration_noise: 0.4
 max_epoch: 10000
 n_step: 1024
 
-#cricuit special
-circuit_name: dj_indep_qiskit_20.qasm
-#circuit_name: qftentangled_indep_qiskit_10.qasm
-
-
 #rainbowDQN
 num_atoms : 51
 v_min: -10.0
@@ -54,3 +49,23 @@ alpha: 0.6
 update_per_step: 0.125
 eps_test: 0.05
 eps_train: 0.1
+
+#rllib ppo start
+###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
+stop_iters: 250
+##One call to env.step() is one timestep.
+stop_timesteps: 1500000
+
+#the reward for multi-agent is the total sum (not the mean) over the agents.
+stop_reward: 100
+no_tune: False
+local_mode: False
+framework: torch
+run: PPO
+num_rollout_workers: 60
+checkpoint_frequency: 1
+checkpoint_at_end: True
+rllib_lr: 1e-3
+qasm: dj_indep_qiskit_20.qasm
+log_file_id: 0
+#rllib ppo end

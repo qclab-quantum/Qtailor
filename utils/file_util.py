@@ -28,7 +28,13 @@ class FileUtil:
         root_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = root_dir[:-6]
         return root_dir
+    @staticmethod
+    def write(file,content):
 
+        # Open the file in write mode
+        file = open(file, "w")
+        # Close the file
+        file.close()
 if __name__ == '__main__':
     circuit = QuantumCircuit(5)
     circuit.cx(0, 1)
