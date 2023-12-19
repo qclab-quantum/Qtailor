@@ -2,7 +2,7 @@ import datetime
 import random
 import tempfile
 import time
-
+import math
 import gymnasium as gym
 from gymnasium import register
 import numpy as np
@@ -20,6 +20,7 @@ from ray.tune.registry import get_trainable_cls
 from pathlib import Path
 from typing import List, Optional, Dict, Union, Callable
 from ray import cloudpickle
+from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
 from temp.env.env_test_v3 import CircuitEnvTest_v3
@@ -28,7 +29,7 @@ from utils.file_util import FileUtil
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
-
+from config import args
 
 def set_logger():
     import warnings
@@ -71,7 +72,6 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         return cloudpickle.load(f)
 
 def train_policy():
-    args = ConfigSingleton().get_config()
     ray.init(num_gpus = 1)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
@@ -173,18 +173,20 @@ def test_result(checkpoint):
         obs, reward, done, truncated, _ = env.step(a)
         info  = 'done = %r, reward = %r \n' % (done, reward)
         print(info)
-        content = content.join(info)
+        content += info
         episode_reward += reward
 
         # Is the episode `done`? -> Reset.
         if done:
-            print('done = %r, reward = %r obs = \n %r ' % (done, reward, np.array(obs).reshape(20, 20)))
-            content = content.join('done = %r, reward = %r obs = \n %r ' % (done, reward, np.array(obs).reshape(20, 20)))
+            shape = int(math.sqrt(len(obs)))
+            reshape_obs = np.array(obs).reshape(shape, shape)
+            print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
+            content += ('done = %r, reward = %r obs = \n %r ' % (done, reward, reshape_obs))
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
-            content = content.join(f"Episode done: Total reward = {episode_reward}")
-            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( np.array(obs).reshape(20, 20), args.qasm, True)
-            content = content.join('rl = %r, rl_qiskit = %r, qiskit = %r '%(rl,rl_qiskit,qiskit))
+            #content += (f"Episode done: Total reward = {episode_reward}")
+            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( reshape_obs, smd['qasm'], False)
+            content += ('\n @rl = %r, rl_qiskit = %r, qiskit = %r@ '%(rl,rl_qiskit,qiskit))
             log2file(content)
 
             obs, info = env.reset()
@@ -196,15 +198,16 @@ def test_result(checkpoint):
 def log2file(content):
     rootdir = FileUtil.get_root_dir()
     sep =os.path.sep
-    path = rootdir+sep+'benchmark'+sep+'a-result'+str(args.qasm)+'_'+str(args.log_file_id)+'.txt'
+    path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
     FileUtil.write(path, content)
 
 def get_qasm():
     qasm = [
-        'ghz/ghz_indep_qiskit_25.qasm',
-        'ghz/ghz_indep_qiskit_10.qasm',
-         'ghz/ghz_indep_qiskit_15.qasm',
-         'ghz/ghz_indep_qiskit_20.qasm',
+
+        'ghz/ghz_indep_qiskit_10.qasm'
+          'ghz/ghz_indep_qiskit_15.qasm',
+        #'ghz\\ghz_indep_qiskit_25.qasm',
+        #  'ghz/ghz_indep_qiskit_20.qasm',
 
     #     'ghz/ghz_indep_qiskit_30.qasm',
     #     'ghz/ghz_indep_qiskit_35.qasm',
@@ -212,11 +215,22 @@ def get_qasm():
     return qasm
 if __name__ == "__main__":
     set_logger()
+    import os
+    os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
+
     #print(f"Running with following CLI options: {args}")
+
     qasms = get_qasm()
+
+    args = ConfigSingleton().get_config()
     for q in qasms:
-        ConfigSingleton().get_config().log_file_id = random.randint(0, 10000)
-        ConfigSingleton().get_config().qasm = q
+        args.log_file_id = random.randint(0, 10000)
+
+        smd = SharedMemoryDict(name='tokens',size=1024)
+        smd['qasm'] = q
+
+        print('run %r with id %r'%(smd['qasm'],args.log_file_id))
+
         train_policy()
         time.sleep(5)
     #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')

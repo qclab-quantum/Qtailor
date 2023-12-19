@@ -18,7 +18,10 @@ from utils.concurrent_set import ConcurrentMap
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
 from config import get_args, ConfigSingleton
+import os
+os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
+from shared_memory_dict import SharedMemoryDict
 simulator = AerSimulator()
 '''
 不给定硬件拓扑，让智能体自己寻找最佳连接
@@ -26,13 +29,18 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
-    def __init__(self, render_mode=None,kwargs = {'debug':False}):
+    def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
-        self.circuit = self.get_criruit(args.qasm)
+        smd = SharedMemoryDict(name='tokens',size=1024)
+
+        qasm = smd['qasm']
+        self.circuit = self.get_criruit(qasm)
+        print('qasm = ',qasm)
+
         self.qubit_nums = len(self.circuit.qubits)
         # self.qr =self.circuit.qubits
 
@@ -188,4 +196,4 @@ class CircuitEnvTest_v3(gym.Env):
 
 
 if __name__ == '__main__':
-    print(flatten_space(spaces.Box(0,1,(10, 10),dtype=np.uint8,)).sample())
+    pass

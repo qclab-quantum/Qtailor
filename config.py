@@ -25,8 +25,9 @@ class Singleton(type):
 
 class ConfigSingleton(metaclass=Singleton):
     def __init__(self):
-        self.config = get_args()
+        self.config = None
         self.load_config()
+        self.flag = 0
 
     def load_config(self):
         rootdir = FileUtil.get_root_dir()
@@ -36,8 +37,10 @@ class ConfigSingleton(metaclass=Singleton):
             self.config = Munch(config)
 
     def get_config(self):
+        self.flag += 1
         return self.config
 
+args = ConfigSingleton().get_config()
 if __name__ == '__main__':
     print(ConfigSingleton().get_config().qasm)
     ConfigSingleton().get_config().qasm = 'test'

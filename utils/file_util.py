@@ -31,14 +31,19 @@ class FileUtil:
     @staticmethod
     def write(file,content):
 
-        # Open the file in write mode
-        file = open(file, "w")
-        # Close the file
-        file.close()
+        try:
+            directory = os.path.dirname(file)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            # Open file in write mode; if file doesn't exist, it will be created
+            file = open(file, "w")
+            file.write(content)
+            file.close()
+            print(f"Successfully written to '{file}'.")
+
+        except Exception as e:
+            print(f"Error occurred: {e}")
 if __name__ == '__main__':
-    circuit = QuantumCircuit(5)
-    circuit.cx(0, 1)
-    circuit.cx(0, 2)
-    circuit.cx(0, 3)
-    circuit.cx(0, 4)
-    print(circuit.qasm())
+    file = 'D:\\project\\QCC\\qccrl\\benchmark\\a-result\\ghz\\ghz_indep_qiskit_25.qasm_111.txt'
+    content = '123123'
+    FileUtil.write(file,content)

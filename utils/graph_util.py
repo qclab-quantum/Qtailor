@@ -181,14 +181,15 @@ class GraphUtil():
         layout = list(range(len(circuit.qubits)))
         avr_rl = 0
         avr_rl_qiskit = 0
-        for i in range(20):
+        repeat = 20
+        for i in range(repeat):
             ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
             ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
             avr_rl += ct1.decompose().depth()
             avr_rl_qiskit += ct2.decompose().depth()
             # print(ct.layout.initial_layout)
-        avr_rl /= 20
-        avr_rl_qiskit /= 20
+        avr_rl /= repeat
+        avr_rl_qiskit /= repeat
         return avr_rl,avr_rl_qiskit
 
 

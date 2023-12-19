@@ -52,7 +52,7 @@ eps_train: 0.1
 
 #rllib ppo start
 ###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
-stop_iters: 250
+stop_iters: 1
 ##One call to env.step() is one timestep.
 stop_timesteps: 1500000
 
@@ -62,10 +62,11 @@ no_tune: False
 local_mode: False
 framework: torch
 run: PPO
-num_rollout_workers: 60
+num_rollout_workers: 1
 checkpoint_frequency: 1
 checkpoint_at_end: True
 rllib_lr: 1e-3
-qasm: dj_indep_qiskit_20.qasm
+qasm: None
 log_file_id: 0
+as_test: False
 #rllib ppo end

@@ -39,19 +39,20 @@ class Benchmark():
 
     @staticmethod
     def get_qiskit_depth(qasm:str):
+        repeat = 20
         adj_list = pu.coordinate2adjacent(points)
         c = cu.get_from_qasm(qasm)
         # c.draw('mpl').show()
         simulator = AerSimulator()
         avr = 0
-        for i in range(20):
+        for i in range(repeat):
             try:
                 ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=3,backend=simulator)
                 avr += ct.decompose().depth()
             except Exception as e:
                 traceback.print_exc()
 
-        return  avr/20
+        return  avr/repeat
 
 
 if __name__ == '__main__':
