@@ -204,7 +204,7 @@ def log2file(content):
 def get_qasm():
     qasm = [
 
-        'ghz/ghz_indep_qiskit_10.qasm'
+        'ghz/ghz_indep_qiskit_10.qasm',
           'ghz/ghz_indep_qiskit_15.qasm',
         #'ghz\\ghz_indep_qiskit_25.qasm',
         #  'ghz/ghz_indep_qiskit_20.qasm',
