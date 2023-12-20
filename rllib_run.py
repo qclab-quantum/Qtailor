@@ -7,7 +7,6 @@ import gymnasium as gym
 from gymnasium import register
 import numpy as np
 import os
-
 import ray
 from ray import air, tune
 from ray.air import CheckpointConfig
@@ -24,12 +23,13 @@ from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
 from temp.env.env_test_v3 import CircuitEnvTest_v3
+from temp.env.env_test_v4 import CircuitEnvTest_v4
 from utils.benchmark import Benchmark
 from utils.file_util import FileUtil
+from utils.graph_util import GraphUtil
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
-from config import args
 
 def set_logger():
     import warnings
@@ -70,7 +70,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         raise ValueError(f"Checkpoint path {checkpoint_path} does not exist.")
     with checkpoint_path.open("rb") as f:
         return cloudpickle.load(f)
-
+args = None
 def train_policy():
     ray.init(num_gpus = 1)
     # Can also register the env creator function explicitly with:
@@ -78,7 +78,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v3,env_config={"debug": False})
+        .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers)
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
@@ -135,27 +135,31 @@ def train_policy():
         test_result(checkpoint)
         #######################  evaluate end ######################
 
-        if args.as_test:
-            print("Checking if learning goals were achieved")
-            check_learning_achieved(results, args.stop_reward)
+        # if args.as_test:
+        #     print("Checking if learning goals were achieved")
+        #     check_learning_achieved(results, args.stop_reward)
 
     ray.shutdown()
 
 '''
-checkpoint can be string or Checkpoint Object
+
 '''
 def test_result(checkpoint):
+
+    #checkpoint can be string or Checkpoint Object
     algo = Algorithm.from_checkpoint(checkpoint)
+    #获取checkpoint 路径
+    print('check point path = ',checkpoint)
 
     register(
-        id='CircuitEnvTest-v3',
+        id='CircuitEnvTest-v4',
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
+        entry_point='temp.env.env_test_v4:CircuitEnvTest_v4',
         max_episode_steps=4000000,
     )
 
     # Create the env to do inference in.
-    env = gym.make("CircuitEnvTest-v3")
+    env = gym.make("CircuitEnvTest-v4")
     obs, info = env.reset()
     num_episodes = 0
     episode_reward = 0.0
@@ -178,9 +182,11 @@ def test_result(checkpoint):
 
         # Is the episode `done`? -> Reset.
         if done:
-            shape = int(math.sqrt(len(obs)))
-            reshape_obs = np.array(obs).reshape(shape, shape)
+            # shape = int(math.sqrt(len(obs)))
+            # reshape_obs = np.array(obs).reshape(shape, shape)
+            reshape_obs = GraphUtil.restore_from_1d_array(obs)
             print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
+
             content += ('done = %r, reward = %r obs = \n %r ' % (done, reward, reshape_obs))
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
@@ -203,19 +209,12 @@ def log2file(content):
 
 def get_qasm():
     qasm = [
-
-        'ghz/ghz_indep_qiskit_10.qasm',
-          'ghz/ghz_indep_qiskit_15.qasm',
-        #'ghz\\ghz_indep_qiskit_25.qasm',
-        #  'ghz/ghz_indep_qiskit_20.qasm',
-
-    #     'ghz/ghz_indep_qiskit_30.qasm',
-    #     'ghz/ghz_indep_qiskit_35.qasm',
+        'amplitude_estimation/ae_indep_qiskit_10.qasm'
     ]
     return qasm
 if __name__ == "__main__":
     set_logger()
-    import os
+    #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
     #print(f"Running with following CLI options: {args}")
@@ -223,14 +222,14 @@ if __name__ == "__main__":
     qasms = get_qasm()
 
     args = ConfigSingleton().get_config()
+    smd = SharedMemoryDict(name='tokens', size=1024)
     for q in qasms:
-        args.log_file_id = random.randint(0, 10000)
+        args.log_file_id = random.randint(1000, 9999)
 
-        smd = SharedMemoryDict(name='tokens',size=1024)
         smd['qasm'] = q
 
         print('run %r with id %r'%(smd['qasm'],args.log_file_id))
-
         train_policy()
         time.sleep(5)
-    #test_result(checkpoint_path='C:/Users/Administrator/ray_results/PPO_2023-12-13_10-31-08/PPO_CircuitEnvTest_v3_ac724_00000_0_2023-12-13_10-31-08/checkpoint_000000')
+    smd.shm.close()
+    smd.shm.unlink()

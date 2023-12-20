@@ -183,14 +183,45 @@ class GraphUtil():
         avr_rl_qiskit = 0
         repeat = 20
         for i in range(repeat):
-            ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
-            ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
-            avr_rl += ct1.decompose().depth()
-            avr_rl_qiskit += ct2.decompose().depth()
+            try:
+                ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
+                ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
+                avr_rl += ct1.decompose().depth()
+                avr_rl_qiskit += ct2.decompose().depth()
+            except Exception as e:
+                print(e)
+                return -1,-1
+
             # print(ct.layout.initial_layout)
         avr_rl /= repeat
         avr_rl_qiskit /= repeat
         return avr_rl,avr_rl_qiskit
+
+    @staticmethod
+    def lower_triangle_to_1d_array( matrix):
+        rows = len(matrix)
+        cols = rows
+        result = []
+
+        for i in range(rows):
+            for j in range(cols):
+                if j < i:  # 仅处理左下三角部分
+                    result.append(matrix[i][j])
+        return result
+    @staticmethod
+    def restore_from_1d_array(array):
+        length = int(math.sqrt(8 * len(array) - 1) / 2)+1
+        #length*length的矩阵
+        matrix = [[0] * length for _ in range(length)]
+
+        index = 0
+        for i in range(1,length):
+            for j in range(0,i):
+                matrix[i][j] =array[index]
+                matrix[j][i] = array[index]
+                index += 1
+
+        return matrix
 
 
 def test_adj_list(adj):
@@ -223,4 +254,7 @@ def test_tian():
 
 
 if __name__ == '__main__':
-    pass
+    array=[1,2,3]
+    print( GraphUtil.restore_from_1d_array(array))
+    print( [[0] * 3 for _ in range(3)])
+
