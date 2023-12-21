@@ -101,7 +101,14 @@ def train_policy():
         print("Running manual train loop without Ray Tune.")
         # use fixed learning rate instead of grid search (needs tune)
         config.lr = args.rllib_lr
-        algo = config.build()
+
+        algo = None
+        #resuse from check point
+        if args.resume:
+            algo = Algorithm.from_checkpoint(args.checkpoint)
+        else:
+        # new algo
+            algo = config.build()
         # run manual training loop and print results after each iteration
         for _ in range(args.stop_iters):
             result = algo.train()
