@@ -36,19 +36,21 @@ max_epoch: 10000
 n_step: 1024
 
 #rainbowDQN
-num_atoms : 51
-v_min: -10.0
-v_max: 10.0
-noisy_std: 0.1
-target_update_freq: 32
-prioritized_replay: True
-beta_final: 1.0
-beta: 0.4
-resume: false
-alpha: 0.6
-update_per_step: 0.125
-eps_test: 0.05
-eps_train: 0.1
+#num_atoms : 51
+#v_min: -10.0
+#v_max: 10.0
+#noisy_std: 0.1
+#target_update_freq: 32
+#prioritized_replay: True
+#beta_final: 1.0
+#beta: 0.4
+#resume: false
+#alpha: 0.6
+#update_per_step: 0.125
+#eps_test: 0.05
+#eps_train: 0.1
+
+env_version: 3
 
 #rllib ppo start
 ###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
@@ -62,11 +64,18 @@ no_tune: False
 local_mode: False
 framework: torch
 run: PPO
-num_rollout_workers: 1
-checkpoint_frequency: 1
+num_rollout_workers: 4
+checkpoint_frequency: 0
 checkpoint_at_end: True
 rllib_lr: 1e-3
 qasm: None
 log_file_id: 0
 as_test: False
+
+#
+resume: False
+checkpoint: None
+
+#the save path of check_point zip file
+check_point_zip_path: None
 #rllib ppo end

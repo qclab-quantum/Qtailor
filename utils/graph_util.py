@@ -209,8 +209,9 @@ class GraphUtil():
                     result.append(matrix[i][j])
         return result
     @staticmethod
+    #n = ( -1 + sqrt(1 + 8S) ) / 2
     def restore_from_1d_array(array):
-        length = int(math.sqrt(8 * len(array) - 1) / 2)+1
+        length = int((math.sqrt(8 * len(array) +1) -1 ) / 2) + 1
         #length*length的矩阵
         matrix = [[0] * length for _ in range(length)]
 
@@ -256,5 +257,5 @@ def test_tian():
 if __name__ == '__main__':
     array=[1,2,3]
     print( GraphUtil.restore_from_1d_array(array))
-    print( [[0] * 3 for _ in range(3)])
+    #print( [[0] * 3 for _ in range(3)])
 

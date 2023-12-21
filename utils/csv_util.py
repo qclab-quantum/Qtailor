@@ -1,5 +1,9 @@
 import csv
+import datetime
 import os
+
+from utils.file_util import FileUtil
+
 
 class CSVUtil:
     @staticmethod
@@ -30,7 +34,7 @@ class CSVUtil:
                 data.append(row)
         return data
 
-if __name__ == '__main__':
+def test():
     # 写入数据
     data = [['Name', 'Age'], ['Alice', 25], ['Bob', 30]]
     CSVUtil.write_data('d:/data.csv', data)
@@ -43,3 +47,12 @@ if __name__ == '__main__':
     data = CSVUtil.read_data('d:/data.csv')
     for row in data:
         print(row)
+
+if __name__ == '__main__':
+    current_datetime = datetime.datetime.now()
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H-%M')
+    rootdir = FileUtil.get_root_dir()
+    sep = '/'
+    csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + formatted_datetime + '.csv'
+    print(csv_path)
+    CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'remark', 'checkpoint'] ])

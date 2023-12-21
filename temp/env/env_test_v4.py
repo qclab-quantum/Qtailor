@@ -50,7 +50,7 @@ class CircuitEnvTest_v4(gym.Env):
 
         self.max_step = 15
         self.max_edges=4
-        self.stop_thresh = -4
+        self.stop_thresh = -2
 
     def _get_info(self):
         return {'info':'this is info'}

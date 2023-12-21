@@ -25,12 +25,15 @@ from config import  ConfigSingleton
 from temp.env.env_test_v3 import CircuitEnvTest_v3
 from temp.env.env_test_v4 import CircuitEnvTest_v4
 from utils.benchmark import Benchmark
+from utils.csv_util import CSVUtil
 from utils.file_util import FileUtil
 from utils.graph_util import GraphUtil
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 
+csv_path = ''
+datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
 def set_logger():
     import warnings
     warnings.simplefilter('ignore')
@@ -148,15 +151,13 @@ def train_policy():
 
     ray.shutdown()
 
-'''
+''' 
 
 '''
 def test_result(checkpoint):
 
     #checkpoint can be string or Checkpoint Object
     algo = Algorithm.from_checkpoint(checkpoint)
-    #获取checkpoint 路径
-    print('check point path = ',checkpoint)
 
     register(
         id='CircuitEnvTest-v4',
@@ -172,7 +173,6 @@ def test_result(checkpoint):
     episode_reward = 0.0
 #    while num_episodes < args.num_episodes_during_inference:
 
-    content = ''
     while num_episodes < 1:
         # Compute an action (`a`).
         a = algo.compute_single_action(
@@ -184,7 +184,6 @@ def test_result(checkpoint):
         obs, reward, done, truncated, _ = env.step(a)
         info  = 'done = %r, reward = %r \n' % (done, reward)
         print(info)
-        content += info
         episode_reward += reward
 
         # Is the episode `done`? -> Reset.
@@ -194,13 +193,10 @@ def test_result(checkpoint):
             reshape_obs = GraphUtil.restore_from_1d_array(obs)
             print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
 
-            content += ('done = %r, reward = %r obs = \n %r ' % (done, reward, reshape_obs))
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
-            #content += (f"Episode done: Total reward = {episode_reward}")
             rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( reshape_obs, smd['qasm'], False)
-            content += ('\n @rl = %r, rl_qiskit = %r, qiskit = %r@ '%(rl,rl_qiskit,qiskit))
-            log2file(content)
+            log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint.path)
 
             obs, info = env.reset()
             num_episodes += 1
@@ -208,12 +204,22 @@ def test_result(checkpoint):
 
     algo.stop()
 
-def log2file(content):
+def log2file(rl, qiskit, rl_qiskit,  result,iter_cnt, checkpoint):
+    # rootdir = FileUtil.get_root_dir()
+    # sep =os.path.sep
+    # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
+    # FileUtil.write(path, content)
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    data = [datetime_str,smd['qasm'],rl, qiskit, rl_qiskit,  result,iter_cnt, checkpoint]
+    CSVUtil.append_data(csv_path,[data])
+def new_csv():
     rootdir = FileUtil.get_root_dir()
-    sep =os.path.sep
-    path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
-    FileUtil.write(path, content)
-
+    sep = '/'
+    global csv_path
+    csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + datetime_str + '.csv'
+    print(csv_path)
+    CSVUtil.write_data(csv_path,
+                       [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
 def get_qasm():
     qasm = [
         'amplitude_estimation/ae_indep_qiskit_10.qasm'
@@ -225,9 +231,10 @@ if __name__ == "__main__":
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
     #print(f"Running with following CLI options: {args}")
+    #创建 csv 并写入head
+    new_csv()
 
     qasms = get_qasm()
-
     args = ConfigSingleton().get_config()
     smd = SharedMemoryDict(name='tokens', size=1024)
     for q in qasms:
@@ -240,3 +247,4 @@ if __name__ == "__main__":
         time.sleep(5)
     smd.shm.close()
     smd.shm.unlink()
+    #test_result(r'C:\Users\Administrator\ray_results\PPO_2023-12-19_11-08-53\PPO_CircuitEnvTest_v3_f0c61_00000_0_2023-12-19_11-08-53\checkpoint_000000')
