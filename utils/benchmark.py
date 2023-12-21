@@ -5,6 +5,7 @@ from qiskit import transpile
 from qiskit_aer import AerSimulator
 
 from utils.circuit_util import CircutUtil as cu
+from utils.csv_util import CSVUtil
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
 
@@ -25,21 +26,33 @@ class Benchmark():
 
 
     @staticmethod
-    def depth_benchmark(matrix:np.ndarray,qasm:str,is_draw=False):
-        # get rl result
-        rl,rl_qiskit = gu.test_adj_matrix(matrix, qasm)
-
+    def depth_benchmark(file_path,matrix:np.ndarray,qasm:str,is_draw=False):
+        # b_1[
+        # [rl * n]
+        # [rl_qiskit * n]
+        # ]
+        b_1 = gu.test_adj_matrix(matrix, qasm)
+        rl = b_1[-1][0]
+        rl_qiskit = b_1[-1][1]
         #get Qiskit result
-        qiskit = Benchmark.get_qiskit_depth(qasm)
+        b_2 = Benchmark.get_qiskit_depth(qasm)
+        qiskit = b_2[-1]
         print('rl = %r, rl_qiskit = %r, qiskit = %r '%(rl,rl_qiskit,qiskit))
+
+        #write to csv file
+        data = []
+        for i in range(len(b_1)):
+            data.append(['','',b_1[i][0],b_1[i][1],b_2[i]])
+        CSVUtil.append_data(file_path, data)
         if is_draw:
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
             pu.plot_points(points)
-        return rl,rl_qiskit,qiskit
+        return rl,qiskit,rl_qiskit
 
     @staticmethod
     def get_qiskit_depth(qasm:str):
-        repeat = 20
+        result = []
+        repeat = 10
         adj_list = pu.coordinate2adjacent(points)
         c = cu.get_from_qasm(qasm)
         # c.draw('mpl').show()
@@ -48,11 +61,13 @@ class Benchmark():
         for i in range(repeat):
             try:
                 ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=3,backend=simulator)
-                avr += ct.decompose().depth()
+                d = ct.decompose().depth()
+                avr += d
+                result.append(d)
             except Exception as e:
                 traceback.print_exc()
-
-        return  avr/repeat
+        result.append(avr/repeat)
+        return  result
 
 
 if __name__ == '__main__':

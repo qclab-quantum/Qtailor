@@ -181,21 +181,26 @@ class GraphUtil():
         layout = list(range(len(circuit.qubits)))
         avr_rl = 0
         avr_rl_qiskit = 0
-        repeat = 20
+        result = []
+        repeat = 10
         for i in range(repeat):
             try:
                 ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
                 ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
-                avr_rl += ct1.decompose().depth()
-                avr_rl_qiskit += ct2.decompose().depth()
+                d1 = ct1.decompose().depth()
+                d2 = ct2.decompose().depth()
+                result.append([d1,d2])
+                avr_rl += d1
+                avr_rl_qiskit += d2
             except Exception as e:
                 print(e)
-                return -1,-1
+                result.append([-1,-1])
 
             # print(ct.layout.initial_layout)
         avr_rl /= repeat
         avr_rl_qiskit /= repeat
-        return avr_rl,avr_rl_qiskit
+        result.append([avr_rl,avr_rl_qiskit])
+        return result
 
     @staticmethod
     def lower_triangle_to_1d_array( matrix):

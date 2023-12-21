@@ -75,6 +75,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         return cloudpickle.load(f)
 args = None
 def train_policy():
+    os.environ.get("RLLIB_NUM_GPUS", "1")
     ray.init(num_gpus = 1)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
@@ -83,7 +84,9 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers)
+        .rollouts(num_rollout_workers=args.num_rollout_workers,
+                  #remote_worker_envs=True,num_gpus_per_worker=round(1/(args.num_rollout_workers*1.1),2)
+                  )
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
         #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
         .resources(num_gpus=int(1))
@@ -195,7 +198,7 @@ def test_result(checkpoint):
 
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
-            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( reshape_obs, smd['qasm'], False)
+            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
             log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint.path)
 
             obs, info = env.reset()
