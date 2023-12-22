@@ -14,6 +14,8 @@ from ray.rllib.algorithms import Algorithm
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.rllib.utils.test_utils import check_learning_achieved
+from ray.tune import ResultGrid
+from ray.tune.trainable import trainable
 from ray.tune.logger import pretty_print, UnifiedLogger
 from ray.tune.registry import get_trainable_cls
 from pathlib import Path
@@ -84,11 +86,7 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers,
-                  #remote_worker_envs=True,num_gpus_per_worker=round(1/(args.num_rollout_workers*1.1),2)
-                  )
-        # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-        #.resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+        .rollouts(num_rollout_workers=args.num_rollout_workers,)
         .resources(num_gpus=int(1))
     )
     stop = {
@@ -96,7 +94,7 @@ def train_policy():
         "timesteps_total": args.stop_timesteps,
         "episode_reward_mean": args.stop_reward,
     }
-    #每个 1 iter 都保存一次 checkpoint
+
     Checkpoint=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
                                   ,checkpoint_at_end=args.checkpoint_at_end)
 
@@ -138,8 +136,11 @@ def train_policy():
             args.run,
             param_space=config.to_dict(),
             run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint,log_to_file=True),
+
         )
         results = tuner.fit()
+
+        analyze_result(results)
 
         # ###################### evaluate start ######################
         print("Training completed. Restoring new Algorithm for action inference.")
@@ -154,8 +155,26 @@ def train_policy():
 
     ray.shutdown()
 
-''' 
+def analyze_result(results:ResultGrid):
+    ## result analysis
+    best_result = results.get_best_result()  # Get best result object
+    best_config = best_result.config  # Get best trial's hyperparameters
+    best_logdir = best_result.path  # Get best trial's result directory
+    best_checkpoint = best_result.checkpoint  # Get best trial's best checkpoint
+    best_metrics = best_result.metrics  # Get best trial's last results
+    best_result_df = best_result.metrics_dataframe  # Get best result as pandas dataframe
 
+    # Get a dataframe with the last results for each trial
+    df_results = results.get_dataframe()
+
+    # Get a dataframe of results for a specific score or mode
+    df = results.get_dataframe(filter_metric="score", filter_mode="max")
+    ##
+    print(best_config)
+    print('====================')
+    print(best_metrics)
+
+''' 
 '''
 def test_result(checkpoint):
 
