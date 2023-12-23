@@ -1,16 +1,16 @@
-task: CircuitEnvTest
+task: CircuitEnvTest-v4
 reward_threshold: 100
 seed: 1996
-buffer_size: 4000
+buffer_size: 2048
 lr: 0.0001
 gamma: 0.99
 epoch: 300
-step_per_epoch: 4000
-step_per_collect: 4000
+step_per_epoch: 1000
+step_per_collect: 1000
 repeat_per_collect: 20
-batch_size: 256
+batch_size: 1024
 #hidden_sizes: [ 128,256,512,1024,512,512]
-hidden_sizes: [ 512,512,128,64]
+hidden_sizes: [ 256,256]
 training_num: 2
 test_num: 5
 logdir: log
@@ -31,24 +31,24 @@ value_clip: 0
 actor_lr: 0.0001
 critic_lr: 0.0001
 tau: 0.005
-exploration_noise: 0.4
-max_epoch: 10000
+exploration_noise: 0.2
+max_epoch: 3
 n_step: 1024
 
 #rainbowDQN
-#num_atoms : 51
-#v_min: -10.0
-#v_max: 10.0
-#noisy_std: 0.1
-#target_update_freq: 32
-#prioritized_replay: True
-#beta_final: 1.0
-#beta: 0.4
-#resume: false
-#alpha: 0.6
-#update_per_step: 0.125
-#eps_test: 0.05
-#eps_train: 0.1
+num_atoms : 51
+v_min: -10.0
+v_max: 10.0
+noisy_std: 0.1
+target_update_freq: 32
+prioritized_replay: True
+beta_final: 1.0
+beta: 0.4
+resume: false
+alpha: 0.6
+update_per_step: 0.125
+eps_test: 0.05
+eps_train: 0.1
 
 env_version: 3
 
@@ -73,7 +73,7 @@ log_file_id: 0
 as_test: False
 
 #
-resume: False
+#resume: False
 checkpoint: None
 
 #the save path of check_point zip file

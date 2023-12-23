@@ -53,8 +53,13 @@ class PointsUtil:
 
         sorted_points = sorted(points, key=lambda p: (p[0], p[1]))
         # 设置x轴和y轴的刻度为整数
-
+        layout = []
         for i, point in enumerate(sorted_points):
+            color = 'black'
+            text = str(i)
+            if i in layout:
+                color = 'red'
+                text = ''
             plt.scatter(point[0], point[1], color='black',linewidths=0.1)
             plt.annotate(str(i), (point[0], point[1]), textcoords="offset points", fontsize = 7,xytext=(0, 10), ha='center')
 

@@ -86,8 +86,10 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers,)
-        .resources(num_gpus=int(1))
+        .rollouts(num_rollout_workers=args.num_rollout_workers
+                  #,remote_worker_envs=True
+                  )
+        .resources(num_gpus=1)
     )
     stop = {
         "training_iteration": args.stop_iters,
@@ -131,7 +133,6 @@ def train_policy():
         algo.stop()
     else:
         # automated run with Tune and grid search and TensorBoard
-        print("Training automatically with Ray Tune")
         tuner = tune.Tuner(
             args.run,
             param_space=config.to_dict(),
@@ -139,19 +140,12 @@ def train_policy():
 
         )
         results = tuner.fit()
-
         analyze_result(results)
 
-        # ###################### evaluate start ######################
-        print("Training completed. Restoring new Algorithm for action inference.")
-        # Get the last checkpoint from the above training run.
-        checkpoint = results.get_best_result().checkpoint
-        test_result(checkpoint)
-        #######################  evaluate end ######################
-
-        # if args.as_test:
-        #     print("Checking if learning goals were achieved")
-        #     check_learning_achieved(results, args.stop_reward)
+        #evaluate
+        print("Training completed")
+        # checkpoint = results.get_best_result().checkpoint
+        # test_result(checkpoint)
 
     ray.shutdown()
 
@@ -174,8 +168,6 @@ def analyze_result(results:ResultGrid):
     print('====================')
     print(best_metrics)
 
-''' 
-'''
 def test_result(checkpoint):
 
     #checkpoint can be string or Checkpoint Object
@@ -244,7 +236,7 @@ def new_csv():
                        [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
 def get_qasm():
     qasm = [
-        'amplitude_estimation/ae_indep_qiskit_10.qasm'
+        'qnn/qnn_indep_qiskit_15.qasm'
     ]
     return qasm
 if __name__ == "__main__":
@@ -252,7 +244,6 @@ if __name__ == "__main__":
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
-    #print(f"Running with following CLI options: {args}")
     #创建 csv 并写入head
     new_csv()
 
@@ -269,4 +260,3 @@ if __name__ == "__main__":
         time.sleep(5)
     smd.shm.close()
     smd.shm.unlink()
-    #test_result(r'C:\Users\Administrator\ray_results\PPO_2023-12-19_11-08-53\PPO_CircuitEnvTest_v3_f0c61_00000_0_2023-12-19_11-08-53\checkpoint_000000')

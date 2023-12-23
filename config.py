@@ -40,8 +40,8 @@ class ConfigSingleton(metaclass=Singleton):
         self.flag += 1
         return self.config
 
-args = ConfigSingleton().get_config()
 if __name__ == '__main__':
+    args = ConfigSingleton().get_config()
     print(ConfigSingleton().get_config().qasm)
     ConfigSingleton().get_config().qasm = 'test'
     print(ConfigSingleton().get_config().qasm)
