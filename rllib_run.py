@@ -168,9 +168,9 @@ def analyze_result(results:ResultGrid):
     # Get a dataframe of results for a specific score or mode
     df = results.get_dataframe(filter_metric="score", filter_mode="max")
     ##
-    print(best_config)
-    print('====================')
-    print(best_metrics)
+    # print(best_config)
+    # print('====================')
+    # print(best_metrics)
 
 def test_result(checkpoint):
 
