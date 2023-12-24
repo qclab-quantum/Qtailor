@@ -86,7 +86,7 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers
+        .rollouts(num_rollout_workers=args.num_rollout_workers,num_envs_per_worker=5
                   #,remote_worker_envs=True
                   )
         .resources(num_gpus=1)
@@ -106,7 +106,7 @@ def train_policy():
             raise ValueError("Only support --run PPO with --no-tune.")
         print("Running manual train loop without Ray Tune.")
         # use fixed learning rate instead of grid search (needs tune)
-        config.lr = args.rllib_lr
+        config.lr = [(0, 0.001), (1e6, 0.0001), (2e6, 0.00005)]
 
         algo = None
         #resuse from check point
@@ -126,10 +126,14 @@ def train_policy():
             ):
                 break
             #当reward 有提示，保存 checkpoint
-            if result["episode_reward_mean"] > best_reward:
+            checkpoint = None
+            if result["episode_reward_mean"] > -100:
                 best_reward = result["episode_reward_mean"]
                 checkpoint = algo.save()
                 print(f"New best reward: {best_reward}. Checkpoint saved to: {checkpoint}")
+            if not isinstance(checkpoint,str):
+                checkpoint = checkpoint.path
+            test_result(checkpoint)
         algo.stop()
     else:
         # automated run with Tune and grid search and TensorBoard
@@ -171,8 +175,8 @@ def analyze_result(results:ResultGrid):
 def test_result(checkpoint):
 
     #checkpoint can be string or Checkpoint Object
+    print('path =',checkpoint)
     algo = Algorithm.from_checkpoint(checkpoint)
-
     register(
         id='CircuitEnvTest-v4',
         # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -209,6 +213,7 @@ def test_result(checkpoint):
 
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
+            smd = SharedMemoryDict(name='tokens', size=1024)
             rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
             log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint.path)
 
@@ -239,21 +244,41 @@ def get_qasm():
        'qnn/qnn_indep_qiskit_15.qasm'
     ]
     return qasm
-if __name__ == "__main__":
-    set_logger()
-    #给 SharedMemoryDict 加锁
-    os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
-    #创建 csv 并写入head
+def train():
     new_csv()
     qasms = get_qasm()
-    args = ConfigSingleton().get_config()
+
     smd = SharedMemoryDict(name='tokens', size=1024)
     for q in qasms:
         args.log_file_id = random.randint(1000, 9999)
-
         smd['qasm'] = q
-        #print('run %r with id %r'%(smd['qasm'],args.log_file_id))
+        # print('run %r with id %r'%(smd['qasm'],args.log_file_id))
         train_policy()
         time.sleep(5)
     smd.shm.close()
     smd.shm.unlink()
+def test():
+    ray.init()
+    checkpoint = 'C:/Users/Administrator/ray_results/PPO_2023-12-24_19-28-54/PPO_CircuitEnvTest_v4_9f0ce_00000_0_2023-12-24_19-28-55/checkpoint_000000'
+    new_csv()
+
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['qasm'] = 'amplitude_estimation/ae_indep_qiskit_40.qasm'
+    try:
+        test_result(checkpoint)
+        smd.shm.close()
+        smd.shm.unlink()
+    except Exception as e:
+        print(e)
+    finally:
+        smd.shm.close()
+        smd.shm.unlink()
+        ray.shutdown
+if __name__ == "__main__":
+    args = ConfigSingleton().get_config()
+    set_logger()
+    #给 SharedMemoryDict 加锁
+    os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
+    #test()
+    train()
+
