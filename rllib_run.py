@@ -97,7 +97,7 @@ def train_policy():
         "episode_reward_mean": args.stop_reward,
     }
 
-    Checkpoint=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
+    Checkpoint_config=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
                                   ,checkpoint_at_end=args.checkpoint_at_end)
 
     if args.no_tune:
@@ -136,16 +136,16 @@ def train_policy():
         tuner = tune.Tuner(
             args.run,
             param_space=config.to_dict(),
-            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint,log_to_file=True),
+            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint_config,log_to_file=True),
 
         )
         results = tuner.fit()
-        analyze_result(results)
+        #analyze_result(results)
 
         #evaluate
         print("Training completed")
-        # checkpoint = results.get_best_result().checkpoint
-        # test_result(checkpoint)
+        checkpoint = results.get_best_result().checkpoint
+        test_result(checkpoint)
 
     ray.shutdown()
 
@@ -236,17 +236,15 @@ def new_csv():
                        [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
 def get_qasm():
     qasm = [
-        'qnn/qnn_indep_qiskit_15.qasm'
+       'qnn/qnn_indep_qiskit_15.qasm'
     ]
     return qasm
 if __name__ == "__main__":
     set_logger()
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
-
     #创建 csv 并写入head
     new_csv()
-
     qasms = get_qasm()
     args = ConfigSingleton().get_config()
     smd = SharedMemoryDict(name='tokens', size=1024)
@@ -254,8 +252,7 @@ if __name__ == "__main__":
         args.log_file_id = random.randint(1000, 9999)
 
         smd['qasm'] = q
-
-        print('run %r with id %r'%(smd['qasm'],args.log_file_id))
+        #print('run %r with id %r'%(smd['qasm'],args.log_file_id))
         train_policy()
         time.sleep(5)
     smd.shm.close()
