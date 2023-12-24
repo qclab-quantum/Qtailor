@@ -60,7 +60,7 @@ stop_timesteps: 1500000
 
 #the reward for multi-agent is the total sum (not the mean) over the agents.
 stop_reward: 100
-no_tune: False
+no_tune: True
 local_mode: False
 framework: torch
 run: PPO

@@ -116,6 +116,7 @@ def train_policy():
         # new algo
             algo = config.build()
         # run manual training loop and print results after each iteration
+        TrainingResult = None
         for _ in range(args.stop_iters):
             result = algo.train()
             print(pretty_print(result))
@@ -126,14 +127,13 @@ def train_policy():
             ):
                 break
             #当reward 有提示，保存 checkpoint
-            checkpoint = None
+
             if result["episode_reward_mean"] > -100:
                 best_reward = result["episode_reward_mean"]
-                checkpoint = algo.save()
-                print(f"New best reward: {best_reward}. Checkpoint saved to: {checkpoint}")
-            if not isinstance(checkpoint,str):
-                checkpoint = checkpoint.path
-            test_result(checkpoint)
+                TrainingResult = algo.save()
+                print(f"New best reward: {best_reward}. Checkpoint saved to: {TrainingResult}")
+
+        test_result(TrainingResult.checkpoint.path)
         algo.stop()
     else:
         # automated run with Tune and grid search and TensorBoard
@@ -215,7 +215,10 @@ def test_result(checkpoint):
             #log to file
             smd = SharedMemoryDict(name='tokens', size=1024)
             rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
-            log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint.path)
+
+            if not isinstance(checkpoint,str):
+                checkpoint = checkpoint.path
+            log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint)
 
             obs, info = env.reset()
             num_episodes += 1
@@ -259,7 +262,7 @@ def train():
     smd.shm.unlink()
 def test():
     ray.init()
-    checkpoint = 'C:/Users/Administrator/ray_results/PPO_2023-12-24_19-28-54/PPO_CircuitEnvTest_v4_9f0ce_00000_0_2023-12-24_19-28-55/checkpoint_000000'
+    checkpoint = r'C:\Users\Administrator\AppData\Local\Temp\tmpepz88gzf'
     new_csv()
 
     smd = SharedMemoryDict(name='tokens', size=1024)
@@ -279,6 +282,6 @@ if __name__ == "__main__":
     set_logger()
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
-    #test()
-    train()
+    test()
+    #train()
 

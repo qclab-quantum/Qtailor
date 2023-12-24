@@ -29,9 +29,9 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
-    def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
+    def __init__(self, render_mode=None,**kwargs):
         args = ConfigSingleton().get_config()
-        self.debug = kwargs.get('debug')
+        self.debug = kwargs['debug']
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
@@ -39,8 +39,6 @@ class CircuitEnvTest_v3(gym.Env):
 
         qasm = smd['qasm']
         self.circuit = self.get_criruit(qasm)
-        print('qasm = ',qasm)
-
         self.qubit_nums = len(self.circuit.qubits)
         # self.qr =self.circuit.qubits
 
@@ -113,11 +111,6 @@ class CircuitEnvTest_v3(gym.Env):
 
 
     def get_criruit(self,name:str):
-        # circuit = QuantumCircuit(5)
-        # circuit.cx(0, 1)
-        # circuit.cx(0, 2)
-        # circuit.cx(0, 3)
-        # circuit.cx(0, 4)
         circuit = cu.get_from_qasm(name)
         return circuit
 
