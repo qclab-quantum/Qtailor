@@ -77,8 +77,8 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
         return cloudpickle.load(f)
 args = None
 def train_policy():
-    os.environ.get("RLLIB_NUM_GPUS", "1")
-    ray.init(num_gpus = 1)
+    #os.environ.get("RLLIB_NUM_GPUS", "1")
+    ray.init(num_gpus = 1,local_mode=args.local_mode)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
@@ -86,7 +86,8 @@ def train_policy():
         .get_default_config()
         .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
         .framework(args.framework)
-        .rollouts(num_rollout_workers=args.num_rollout_workers,num_envs_per_worker=5
+        .rollouts(num_rollout_workers=args.num_rollout_workers
+                  #,num_envs_per_worker=5
                   #,remote_worker_envs=True
                   )
         .resources(num_gpus=1)
@@ -97,6 +98,10 @@ def train_policy():
         "episode_reward_mean": args.stop_reward,
     }
 
+    '''
+    Checkpoints are py-version specific, but can be converted to be version independent
+    https://docs.ray.io/en/latest/rllib/rllib-saving-and-loading-algos-and-policies.html
+    '''
     Checkpoint_config=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
                                   ,checkpoint_at_end=args.checkpoint_at_end)
 
@@ -140,7 +145,10 @@ def train_policy():
         tuner = tune.Tuner(
             args.run,
             param_space=config.to_dict(),
-            run_config=air.RunConfig(stop=stop,checkpoint_config=Checkpoint_config,log_to_file=True),
+            run_config=air.RunConfig(stop=stop
+                                     # ,checkpoint_config=Checkpoint_config
+                                     # ,log_to_file=True
+                                     ),
 
         )
         results = tuner.fit()
@@ -174,9 +182,8 @@ def analyze_result(results:ResultGrid):
 
 def test_result(checkpoint):
 
-    #checkpoint can be string or Checkpoint Object
-    print('path =',checkpoint)
     algo = Algorithm.from_checkpoint(checkpoint)
+
     register(
         id='CircuitEnvTest-v4',
         # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -214,7 +221,7 @@ def test_result(checkpoint):
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
             smd = SharedMemoryDict(name='tokens', size=1024)
-            rl,rl_qiskit,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
+            rl,qiskit,rl_qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
 
             if not isinstance(checkpoint,str):
                 checkpoint = checkpoint.path
@@ -244,7 +251,11 @@ def new_csv():
                        [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
 def get_qasm():
     qasm = [
-       'qnn/qnn_indep_qiskit_15.qasm'
+       'qnn/qnn_indep_qiskit_6.qasm',
+       'qnn/qnn_indep_qiskit_7.qasm',
+       'qnn/qnn_indep_qiskit_8.qasm',
+       'qnn/qnn_indep_qiskit_9.qasm',
+       'qnn/qnn_indep_qiskit_10.qasm',
     ]
     return qasm
 def train():
@@ -261,12 +272,11 @@ def train():
     smd.shm.close()
     smd.shm.unlink()
 def test():
-    ray.init()
-    checkpoint = r'C:\Users\Administrator\AppData\Local\Temp\tmpepz88gzf'
+    checkpoint = r'C:/Users/Administrator/ray_results/PPO_2023-12-25_12-58-19/PPO_CircuitEnvTest_v4_39103_00000_0_2023-12-25_12-58-19/checkpoint_000000'
     new_csv()
 
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['qasm'] = 'amplitude_estimation/ae_indep_qiskit_40.qasm'
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_3.qasm'
     try:
         test_result(checkpoint)
         smd.shm.close()
@@ -276,12 +286,26 @@ def test():
     finally:
         smd.shm.close()
         smd.shm.unlink()
-        ray.shutdown
+def test_checkpoint():
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_3.qasm'
+    try:
+        checkpoint = r'C:\Users\Administrator\AppData\Local\Temp\tmppvaizpqo'
+        algo = Algorithm.from_checkpoint(checkpoint)
+        smd.shm.close()
+        smd.shm.unlink()
+    except Exception as e:
+        print(e)
+    finally:
+        smd.shm.close()
+        smd.shm.unlink()
 if __name__ == "__main__":
     args = ConfigSingleton().get_config()
     set_logger()
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     test()
-    #train()
+    train()
+
+
 
