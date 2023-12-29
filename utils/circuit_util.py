@@ -96,7 +96,9 @@ class CircutUtil:
         circuit = QuantumCircuit.from_qasm_str(qasm_str=qasm_str)
         return circuit
 
-
+    @staticmethod
+    def draw_circult(qasm):
+        circuit = CircutUtil.get_from_qasm(qasm)
+        circuit.draw('mpl').show()
 if __name__ == '__main__':
-
     pass

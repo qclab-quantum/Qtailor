@@ -8,6 +8,7 @@ import gymnasium as gym
 import numpy as np
 import torch
 from gymnasium import register, registry
+from shared_memory_dict import SharedMemoryDict
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, PrioritizedVectorReplayBuffer, VectorReplayBuffer
@@ -36,9 +37,9 @@ def train_rainbow(args=get_args()):
     env_fns = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
     env_fns2 = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
     #train_envs = SubprocVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
-    train_envs = DummyVectorEnv(env_fns)
+    train_envs = SubprocVectorEnv(env_fns)
     # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv(env_fns2)
+    test_envs = SubprocVectorEnv(env_fns2)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -272,6 +273,8 @@ def test_rainbow(args=get_args()):
     result = collector.collect(n_episode=1, render=args.render)
     print(result)
 if __name__ == "__main__":
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['qasm'] = 'qftentangled/qftentangled_indep_qiskit_10.qasm'
     register_env()
     #print(registry.values())
     train_rainbow(get_args())

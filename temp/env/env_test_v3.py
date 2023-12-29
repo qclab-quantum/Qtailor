@@ -29,9 +29,9 @@ simulator = AerSimulator()
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
-    def __init__(self, render_mode=None,**kwargs):
+    def __init__(self, render_mode=None):
         args = ConfigSingleton().get_config()
-        self.debug = kwargs['debug']
+        self.debug = False
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量

@@ -182,7 +182,7 @@ class GraphUtil():
         avr_rl = 0
         avr_rl_qiskit = 0
         result = []
-        repeat = 10
+        repeat = 5
         for i in range(repeat):
             try:
                 ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)
@@ -257,10 +257,15 @@ def test_tian():
     adj = PointsUtil.coordinate2adjacent(points)
     PointsUtil.plot_points(points)
 
-
+    @staticmethod
+    #调用 draw_adj_matrix 实现绘制拓扑图
+    def draw_1d_array(array):
+        graph = GraphUtil.restore_from_1d_array(array)
+        GraphUtil.draw_adj_matrix(graph)
+        print(GraphUtil.restore_from_1d_array(array))
 
 if __name__ == '__main__':
-    array=[1,2,3]
-    print( GraphUtil.restore_from_1d_array(array))
-    #print( [[0] * 3 for _ in range(3)])
+    array=[1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1]
+    GraphUtil.draw_1d_array(array)
+
 
