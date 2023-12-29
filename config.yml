@@ -50,17 +50,17 @@ update_per_step: 0.125
 eps_test: 0.05
 eps_train: 0.1
 
-env_version: 3
+env_version: 5
 
 #rllib ppo start
 ###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
-stop_iters: 1
+stop_iters: 2
 ##One call to env.step() is one timestep.
 stop_timesteps: 1500000
 
 #the reward for multi-agent is the total sum (not the mean) over the agents.
 stop_reward: 100
-no_tune: True
+no_tune: False
 local_mode: False
 framework: torch
 run: PPO

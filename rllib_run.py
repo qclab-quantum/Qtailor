@@ -26,6 +26,7 @@ from shared_memory_dict import SharedMemoryDict
 from config import  ConfigSingleton
 from temp.env.env_test_v3 import CircuitEnvTest_v3
 from temp.env.env_test_v4 import CircuitEnvTest_v4
+from temp.env.env_test_v5 import CircuitEnvTest_v5
 from utils.benchmark import Benchmark
 from utils.csv_util import CSVUtil
 from utils.file_util import FileUtil
@@ -84,7 +85,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v4,env_config={"debug": False})
+        .environment(env = CircuitEnvTest_v5,env_config={"debug": False})
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -183,16 +184,16 @@ def analyze_result(results:ResultGrid):
 def test_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
-
+    env_id = "CircuitEnvTest-v"+str(args.env_version)
     register(
-        id='CircuitEnvTest-v4',
+        id=env_id,
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v4:CircuitEnvTest_v4',
+        entry_point='temp.env.env_test_v'+str(args.env_version)+':'+'CircuitEnvTest_v'+str(args.env_version),
         max_episode_steps=4000000,
     )
 
     # Create the env to do inference in.
-    env = gym.make("CircuitEnvTest-v4")
+    env = gym.make(env_id)
     obs, info = env.reset()
     num_episodes = 0
     episode_reward = 0.0
@@ -251,11 +252,7 @@ def new_csv():
                        [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
 def get_qasm():
     qasm = [
-       'qnn/qnn_indep_qiskit_6.qasm',
-       'qnn/qnn_indep_qiskit_7.qasm',
-       'qnn/qnn_indep_qiskit_8.qasm',
-       'qnn/qnn_indep_qiskit_9.qasm',
-       'qnn/qnn_indep_qiskit_10.qasm',
+       'qnn/qnn_indep_qiskit_6.qasm'
     ]
     return qasm
 def train():
@@ -304,7 +301,7 @@ if __name__ == "__main__":
     set_logger()
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
-    test()
+    #test()
     train()
 
 
