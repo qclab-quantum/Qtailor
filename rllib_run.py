@@ -1,8 +1,6 @@
 import datetime
 import random
-import tempfile
 import time
-import math
 import gymnasium as gym
 from gymnasium import register
 import numpy as np
@@ -13,14 +11,13 @@ from ray.air import CheckpointConfig
 from ray.rllib.algorithms import Algorithm
 from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
-from ray.rllib.utils.test_utils import check_learning_achieved
 from ray.tune import ResultGrid
 from ray.tune.trainable import trainable
 from ray.tune.logger import pretty_print, UnifiedLogger
 from ray.tune.registry import get_trainable_cls
-from pathlib import Path
+
 from typing import List, Optional, Dict, Union, Callable
-from ray import cloudpickle
+
 from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
@@ -31,54 +28,20 @@ from utils.benchmark import Benchmark
 from utils.csv_util import CSVUtil
 from utils.file_util import FileUtil
 from utils.graph_util import GraphUtil
-
+from io import StringIO
+import contextlib
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
+from utils.rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
 
 csv_path = ''
+text_path=''
 datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
-def set_logger():
-    import warnings
-    warnings.simplefilter('ignore')
-    import logging
-
-    # First, get the handle for the logger you want to modify
-    ray_data_logger = logging.getLogger("ray.data")
-    ray_tune_logger = logging.getLogger("ray.tune")
-    ray_rllib_logger = logging.getLogger("ray.rllib")
-    ray_train_logger = logging.getLogger("ray.train")
-    ray_serve_logger = logging.getLogger("ray.serve")
-
-    # Modify the ray.data logging level
-    ray_data_logger.setLevel(logging.ERROR)
-    ray_tune_logger.setLevel(logging.ERROR)
-    ray_rllib_logger.setLevel(logging.ERROR)
-    ray_train_logger.setLevel(logging.ERROR)
-    ray_serve_logger.setLevel(logging.ERROR)
-def custom_log_creator(custom_path, custom_str):
-
-    timestr = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
-    logdir_prefix = "{}_{}".format(custom_str, timestr)
-
-    def logger_creator(config):
-
-        if not os.path.exists(custom_path):
-            os.makedirs(custom_path)
-        logdir = tempfile.mkdtemp(prefix=logdir_prefix, dir=custom_path)
-        return UnifiedLogger(config, logdir, loggers=None)
-
-    return logger_creator
-
-def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
-    """Utility function to load a checkpoint Dict from a path."""
-    checkpoint_path = Path(checkpoint_to_load).expanduser()
-    if not checkpoint_path.exists():
-        raise ValueError(f"Checkpoint path {checkpoint_path} does not exist.")
-    with checkpoint_path.open("rb") as f:
-        return cloudpickle.load(f)
+tensorboard=''
 args = None
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
+    ray.shutdown()
     ray.init(num_gpus = 1,local_mode=args.local_mode)
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
@@ -103,8 +66,8 @@ def train_policy():
     Checkpoints are py-version specific, but can be converted to be version independent
     https://docs.ray.io/en/latest/rllib/rllib-saving-and-loading-algos-and-policies.html
     '''
-    Checkpoint_config=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
-                                  ,checkpoint_at_end=args.checkpoint_at_end)
+    # Checkpoint_config=  CheckpointConfig(checkpoint_frequency = args.checkpoint_frequency
+    #                               ,checkpoint_at_end=args.checkpoint_at_end)
 
     if args.no_tune:
         # manual training with train loop using PPO and fixed learning rate
@@ -153,33 +116,12 @@ def train_policy():
 
         )
         results = tuner.fit()
-        #analyze_result(results)
-
         #evaluate
         print("Training completed")
-        checkpoint = results.get_best_result().checkpoint
-        test_result(checkpoint)
-
+        ray.shutdown()
+        return  results
     ray.shutdown()
 
-def analyze_result(results:ResultGrid):
-    ## result analysis
-    best_result = results.get_best_result()  # Get best result object
-    best_config = best_result.config  # Get best trial's hyperparameters
-    best_logdir = best_result.path  # Get best trial's result directory
-    best_checkpoint = best_result.checkpoint  # Get best trial's best checkpoint
-    best_metrics = best_result.metrics  # Get best trial's last results
-    best_result_df = best_result.metrics_dataframe  # Get best result as pandas dataframe
-
-    # Get a dataframe with the last results for each trial
-    df_results = results.get_dataframe()
-
-    # Get a dataframe of results for a specific score or mode
-    df = results.get_dataframe(filter_metric="score", filter_mode="max")
-    ##
-    # print(best_config)
-    # print('====================')
-    # print(best_metrics)
 
 def test_result(checkpoint):
 
@@ -222,11 +164,11 @@ def test_result(checkpoint):
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
             smd = SharedMemoryDict(name='tokens', size=1024)
-            rl,qiskit,rl_qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
+            rl,qiskit,mix = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
 
             if not isinstance(checkpoint,str):
                 checkpoint = checkpoint.path
-            log2file(rl, qiskit, rl_qiskit,  obs,args.stop_iters, checkpoint)
+            log2file(rl, qiskit, mix,  obs,args.stop_iters, checkpoint,)
 
             obs, info = env.reset()
             num_episodes += 1
@@ -234,37 +176,45 @@ def test_result(checkpoint):
 
     algo.stop()
 
-def log2file(rl, qiskit, rl_qiskit,  result,iter_cnt, checkpoint):
+def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
     # rootdir = FileUtil.get_root_dir()
     # sep =os.path.sep
     # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
     # FileUtil.write(path, content)
     smd = SharedMemoryDict(name='tokens', size=1024)
-    data = [datetime_str,smd['qasm'],rl, qiskit, rl_qiskit,  result,iter_cnt, checkpoint]
+    data = [datetime_str,smd['qasm'],rl, qiskit, mix,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
-def new_csv():
-    rootdir = FileUtil.get_root_dir()
-    sep = '/'
-    global csv_path
-    csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + datetime_str + '.csv'
-    print(csv_path)
-    CSVUtil.write_data(csv_path,
-                       [['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'checkpoint','remark', ]])
-def get_qasm():
-    qasm = [
-       'qnn/qnn_indep_qiskit_6.qasm'
-    ]
-    return qasm
+
+
 def train():
-    new_csv()
+    global csv_path
+    csv_path = new_csv(datetime_str)
     qasms = get_qasm()
 
     smd = SharedMemoryDict(name='tokens', size=1024)
+    sep = '/'
+
     for q in qasms:
         args.log_file_id = random.randint(1000, 9999)
         smd['qasm'] = q
-        # print('run %r with id %r'%(smd['qasm'],args.log_file_id))
-        train_policy()
+        global  text_path
+        global tensorboard
+        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result'  +sep +q+'_'+ datetime_str + '.txt'
+        # Create a StringIO object to redirect the console output
+        output = StringIO()
+        with contextlib.redirect_stdout(output):
+            results = train_policy()
+
+        strings = output.getvalue()
+        FileUtil.write(text_path, strings)
+        tensorboard = parse_tensorboard(strings)
+
+        checkpoint = results.get_best_result().checkpoint
+        test_result(checkpoint)
+
+        output.truncate(0)
+        output.close()
+
         time.sleep(5)
     smd.shm.close()
     smd.shm.unlink()
@@ -299,10 +249,14 @@ def test_checkpoint():
 if __name__ == "__main__":
     args = ConfigSingleton().get_config()
     set_logger()
+    # 设置环境变量
+    #os.environ['TUNE_RESULT_DIR'] = 'd:/tensorboard'
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     #test()
     train()
+
+
 
 
 

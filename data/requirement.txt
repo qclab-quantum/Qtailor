@@ -17,5 +17,6 @@ tensorboard
 gputil
 shutil
 zipfile
+seaborn
 
-pip install loguru gymnasium qiskit qiskit-aer matplotlib pyyaml munch pyvis scikit-image dm_tree lz4  tensorboard gputil shutil zipfile
+pip install seaborn loguru gymnasium qiskit qiskit-aer matplotlib pyyaml munch pyvis scikit-image dm_tree lz4  tensorboard gputil shutil zipfile

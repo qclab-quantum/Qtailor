@@ -182,7 +182,7 @@ class GraphUtil():
         avr_rl = 0
         avr_rl_qiskit = 0
         result = []
-        repeat = 5
+        repeat = 10
         for i in range(repeat):
             try:
                 ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=3, backend=simulator)

@@ -54,7 +54,7 @@ env_version: 5
 
 #rllib ppo start
 ###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
-stop_iters: 2
+stop_iters: 1
 ##One call to env.step() is one timestep.
 stop_timesteps: 1500000
 

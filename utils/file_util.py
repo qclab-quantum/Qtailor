@@ -38,13 +38,14 @@ class FileUtil:
             if not os.path.exists(directory):
                 os.makedirs(directory)
             # Open file in write mode; if file doesn't exist, it will be created
-            file = open(file, "w")
+            file = open(file, "w",encoding="utf-8")
             file.write(content)
             file.close()
             print(f"Successfully written to '{file}'.")
 
         except Exception as e:
             print(f"Error occurred: {e}")
+
     @staticmethod
     def compress_folder(path1):
         # 检查 path1 文件夹是否存在

@@ -33,11 +33,11 @@ class Benchmark():
         # ]
         b_1 = gu.test_adj_matrix(matrix, qasm)
         rl = b_1[-1][0]
-        rl_qiskit = b_1[-1][1]
+        mix = b_1[-1][1]
         #get Qiskit result
         b_2 = Benchmark.get_qiskit_depth(qasm)
         qiskit = b_2[-1]
-        print('rl = %r, rl_qiskit = %r, qiskit = %r '%(rl,rl_qiskit,qiskit))
+        print('rl = %r,qiskit= %r, mix = %r '%(rl,qiskit,mix))
 
         #write to csv file
         data = []
@@ -47,7 +47,7 @@ class Benchmark():
         if is_draw:
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
             pu.plot_points(points)
-        return rl,qiskit,rl_qiskit
+        return rl,qiskit,mix
 
     @staticmethod
     def get_qiskit_depth(qasm:str):
