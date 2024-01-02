@@ -3,7 +3,6 @@ import math
 import gymnasium as gym
 import numpy
 import numpy as np
-import copy
 
 import qiskit
 from gymnasium import spaces, register
@@ -14,9 +13,7 @@ from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
-from utils.concurrent_set import ConcurrentMap
 from utils.graph_util import GraphUtil as gu, GraphUtil
-from utils.points_util import PointsUtil as pu
 from config import get_args, ConfigSingleton
 import os
 os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
@@ -44,7 +41,6 @@ class CircuitEnvTest_v5(gym.Env):
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
-        #self.action_space = MultiDiscrete([self.qubit_nums, self.qubit_nums, 2, 2])
         self.action_space = MultiDiscrete([self.qubit_nums + 1, self.qubit_nums + 1])
 
         self.max_step = 100

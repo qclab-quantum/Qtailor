@@ -163,18 +163,26 @@ def register_env():
     #     entry_point='temp.env.env_test_v2:CircuitEnvTest_v2',
     #     max_episode_steps=4000000,
     # )
-    register(
-        id='CircuitEnvTest-v3',
-        # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
-        max_episode_steps=4000000,
-    )
-    register(
-        id='CircuitEnvTest-v4',
-        # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v4:CircuitEnvTest_v4',
-        max_episode_steps=4000000,
-    )
+    try:
+        register(
+            id='CircuitEnvTest-v3',
+            # entry_point='core.envs.circuit_env:CircuitEnv',
+            entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
+            max_episode_steps=4000000,
+        )
+        register(
+            id='CircuitEnvTest-v4',
+            entry_point='temp.env.env_test_v4:CircuitEnvTest_v4',
+            max_episode_steps=4000000,
+        )
+        register(
+            id='CircuitEnvTest-v5',
+            entry_point='temp.env.env_test_v5:CircuitEnvTest_v5',
+            max_episode_steps=4000000,
+        )
+    except Exception as e:
+        print('register error')
+        print(e)
 def train():
     # Start the timer
     start_time = time.time()
@@ -187,4 +195,4 @@ def train():
     print("Function runtime:", runtime, "seconds")
 if __name__ == "__main__":
     register_env()
-    train()
+    #train()

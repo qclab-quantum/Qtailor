@@ -25,21 +25,19 @@ from train_policy import register_env
 
 
 def train_rainbow(args=get_args()):
-    kwargs = {
-        'debug': False
-    }
-    env =  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    time.sleep(3)
+    env =  MultiDiscreteToDiscrete(gym.make(args.task))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
 
     # train_envs = gym.make(args.task)
     # you can also use tianshou.env.SubprocVectorEnv
-    env_fns = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
-    env_fns2 = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for i in range(args.training_num)]
-    #train_envs = SubprocVectorEnv([lambda:  MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
-    train_envs = SubprocVectorEnv(env_fns)
-    # test_envs = gym.make(args.task)
-    test_envs = SubprocVectorEnv(env_fns2)
+    env_fns = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task)) for i in range(args.training_num)]
+    env_fns2 = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task)) for i in range(args.training_num)]
+    # train_envs = SubprocVectorEnv(env_fns)
+    # test_envs = SubprocVectorEnv(env_fns2)
+    train_envs = DummyVectorEnv(env_fns)
+    test_envs = DummyVectorEnv(env_fns2)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -272,6 +270,7 @@ def test_rainbow(args=get_args()):
     collector = Collector(policy, env)
     result = collector.collect(n_episode=1, render=args.render)
     print(result)
+
 if __name__ == "__main__":
     smd = SharedMemoryDict(name='tokens', size=1024)
     smd['qasm'] = 'qftentangled/qftentangled_indep_qiskit_10.qasm'

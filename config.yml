@@ -1,4 +1,4 @@
-task: CircuitEnvTest-v4
+task: CircuitEnvTest-v5
 reward_threshold: 100
 seed: 1996
 buffer_size: 2048
