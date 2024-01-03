@@ -41,7 +41,7 @@ class CircuitEnvTest_v5(gym.Env):
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
-        self.action_space = MultiDiscrete([self.qubit_nums + 1, self.qubit_nums + 1])
+        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums,2])
 
         self.max_step = 100
         self.max_edges=4
@@ -75,7 +75,7 @@ class CircuitEnvTest_v5(gym.Env):
         self.step_cnt+=1
 
         #early stop
-        if action[0] == self.qubit_nums or action[1] == self.qubit_nums:
+        if action[2] == 1:
             if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
             return self._get_obs(), 0, True,True, self._get_info()
 
@@ -117,7 +117,7 @@ class CircuitEnvTest_v5(gym.Env):
 
         if act[0]< act[1]:
             opt = 1
-        elif act[0]< act[1]:
+        elif act[0]> act[1]:
             opt = 0
         else :
             #act[0] == act[1]
