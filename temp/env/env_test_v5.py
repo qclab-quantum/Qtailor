@@ -13,6 +13,9 @@ from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
+from ray.rllib.env import EnvContext
+from ray.rllib.utils.typing import EnvConfigDict
+
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
@@ -26,9 +29,9 @@ v5 更新： 减小动作空间 提升模型效率
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v5(gym.Env):
-    def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
+    def __init__(self, render_mode=None):
         args = ConfigSingleton().get_config()
-        self.debug = kwargs.get('debug')
+        self.debug = args.debug
 
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
@@ -41,7 +44,7 @@ class CircuitEnvTest_v5(gym.Env):
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
-        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums,2])
+        self.action_space = MultiDiscrete([self.qubit_nums + 1 , self.qubit_nums + 1])
 
         self.max_step = 100
         self.max_edges=4
@@ -89,8 +92,6 @@ class CircuitEnvTest_v5(gym.Env):
                 or reward == self.stop_thresh \
                 or self.step_cnt==self.max_step :
             terminated = True
-
-
 
         return observation, reward, terminated,truncated, info
 
@@ -141,12 +142,16 @@ class CircuitEnvTest_v5(gym.Env):
             else:
                 #reward = self.stop_thresh
                 #要删除的边不存在，无法执行操作
+                if self.debug:
+                    print('要删除的边不存在，无法执行操作\n')
                 return self.stop_thresh / 10, self._get_obs()
         else:
             #超出最大连通分量，无法执行操作
             if len(self.graph.edges(act[0]))== self.max_edges or \
                     len(self.graph.edges(act[1]))== self.max_edges:
                 #reward = self.stop_thresh
+                if self.debug:
+                    print('超出最大连通分量，无法执行操作\n')
                 return self.stop_thresh , self._get_obs()
             else:
                 # 执行增加边的操作

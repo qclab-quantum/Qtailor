@@ -3,6 +3,7 @@ import multiprocessing
 import time
 import random
 
+import karateclub
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -180,7 +181,7 @@ class GraphUtil():
         adj_list = GraphUtil.get_adj_list(G)
         layout = list(range(len(circuit.qubits)))
         avr_rl = 0
-        avr_rl_qiskit = 0
+        avr_rl_mix = 0
         result = []
         repeat = 10
         for i in range(repeat):
@@ -191,18 +192,19 @@ class GraphUtil():
                 d2 = ct2.decompose().depth()
                 result.append([d1,d2])
                 avr_rl += d1
-                avr_rl_qiskit += d2
+                avr_rl_mix += d2
             except Exception as e:
                 print(e)
                 result.append([-1,-1])
 
             # print(ct.layout.initial_layout)
         avr_rl /= repeat
-        avr_rl_qiskit /= repeat
-        result.append([avr_rl,avr_rl_qiskit])
+        avr_rl_mix /= repeat
+        result.append([avr_rl,avr_rl_mix])
         return result
 
     @staticmethod
+    #将矩阵左下三角拉伸为一维矩阵
     def lower_triangle_to_1d_array( matrix):
         rows = len(matrix)
         cols = rows
@@ -215,6 +217,7 @@ class GraphUtil():
         return result
     @staticmethod
     #n = ( -1 + sqrt(1 + 8S) ) / 2
+    #将输出的一维 obs 恢复成 二维矩阵
     def restore_from_1d_array(array):
         length = int((math.sqrt(8 * len(array) +1) -1 ) / 2) + 1
         #length*length的矩阵
@@ -265,7 +268,15 @@ def test_tian():
         print(GraphUtil.restore_from_1d_array(array))
 
 if __name__ == '__main__':
-    array=[1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1]
-    GraphUtil.draw_1d_array(array)
+    from karateclub import EgoNetSplitter
+    wc =karateclub.WaveletCharacteristic(eval_points = 3)
+    g = nx.Graph()
+    g.add_nodes_from(range(3))
+    g.add_edge(0, 2)
+    g.add_edge(0, 1)
+    gc =karateclub.Graph2Vec()
 
+    #wc.fit(graphs=[g])
+    gc.fit(graphs=[g])
+    print(gc.get_embedding())
 

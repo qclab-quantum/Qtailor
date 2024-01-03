@@ -36,7 +36,7 @@ from utils.rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
 
 csv_path = ''
 text_path=''
-datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
+datetime_str =''
 tensorboard=''
 args = None
 def train_policy():
@@ -48,7 +48,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v5,env_config={"debug": False})
+        .environment(env = CircuitEnvTest_v5)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -188,24 +188,30 @@ def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
 
 def train():
     global csv_path
-    csv_path = new_csv(datetime_str)
+    global datetime_str
+    global text_path
+    global tensorboard
+    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
     qasms = get_qasm()
 
     smd = SharedMemoryDict(name='tokens', size=1024)
     sep = '/'
 
     for q in qasms:
+
         args.log_file_id = random.randint(1000, 9999)
         smd['qasm'] = q
-        global  text_path
-        global tensorboard
-        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result'  +sep +q+'_'+ datetime_str + '.txt'
+
+        datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
+        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q + '_' + datetime_str + '.txt'
+
         # Create a StringIO object to redirect the console output
         output = StringIO()
         with contextlib.redirect_stdout(output):
             results = train_policy()
 
         strings = output.getvalue()
+
         FileUtil.write(text_path, strings)
         tensorboard = parse_tensorboard(strings)
 
@@ -219,11 +225,11 @@ def train():
     smd.shm.close()
     smd.shm.unlink()
 def test():
-    checkpoint = r'C:/Users/Administrator/ray_results/PPO_2023-12-25_12-58-19/PPO_CircuitEnvTest_v4_39103_00000_0_2023-12-25_12-58-19/checkpoint_000000'
-    new_csv()
+    checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
+    new_csv(datetime_str)
 
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['qasm'] = 'qnn/qnn_indep_qiskit_3.qasm'
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
     try:
         test_result(checkpoint)
         smd.shm.close()
@@ -235,9 +241,9 @@ def test():
         smd.shm.unlink()
 def test_checkpoint():
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['qasm'] = 'qnn/qnn_indep_qiskit_3.qasm'
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
     try:
-        checkpoint = r'C:\Users\Administrator\AppData\Local\Temp\tmppvaizpqo'
+        checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
         algo = Algorithm.from_checkpoint(checkpoint)
         smd.shm.close()
         smd.shm.unlink()
@@ -254,6 +260,7 @@ if __name__ == "__main__":
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     #test()
+    #test_checkpoint()
     train()
 
 

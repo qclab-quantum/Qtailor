@@ -12,7 +12,7 @@ from shared_memory_dict import SharedMemoryDict
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, PrioritizedVectorReplayBuffer, VectorReplayBuffer
-from tianshou.env import DummyVectorEnv, MultiDiscreteToDiscrete, SubprocVectorEnv
+from tianshou.env import DummyVectorEnv, MultiDiscreteToDiscrete, SubprocVectorEnv,ShmemVectorEnv
 from tianshou.policy import RainbowPolicy
 from tianshou.trainer import OffpolicyTrainer
 from tianshou.utils import TensorboardLogger, WandbLogger
@@ -36,8 +36,8 @@ def train_rainbow(args=get_args()):
     env_fns2 = [lambda x=i: MultiDiscreteToDiscrete(gym.make(args.task)) for i in range(args.training_num)]
     # train_envs = SubprocVectorEnv(env_fns)
     # test_envs = SubprocVectorEnv(env_fns2)
-    train_envs = DummyVectorEnv(env_fns)
-    test_envs = DummyVectorEnv(env_fns2)
+    train_envs = ShmemVectorEnv(env_fns)
+    test_envs = ShmemVectorEnv(env_fns2)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -275,6 +275,10 @@ if __name__ == "__main__":
     smd = SharedMemoryDict(name='tokens', size=1024)
     smd['qasm'] = 'qftentangled/qftentangled_indep_qiskit_10.qasm'
     register_env()
+    # names: set[str] = {
+    #     env_spec.name for env_spec in registry.values() if env_spec.namespace == None
+    # }
+    # print(names)
     #print(registry.values())
     train_rainbow(get_args())
     #test_rainbow(get_args())

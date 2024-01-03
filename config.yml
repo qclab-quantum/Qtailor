@@ -1,4 +1,5 @@
 task: CircuitEnvTest-v5
+#task: CartPole-v1
 reward_threshold: 100
 seed: 1996
 buffer_size: 2048
@@ -64,7 +65,7 @@ no_tune: False
 local_mode: False
 framework: torch
 run: PPO
-num_rollout_workers: 4
+num_rollout_workers: 8
 checkpoint_frequency: 0
 checkpoint_at_end: True
 rllib_lr: 1e-3
@@ -78,4 +79,7 @@ checkpoint: None
 
 #the save path of check_point zip file
 check_point_zip_path: None
+
+
+debug: False
 #rllib ppo end
