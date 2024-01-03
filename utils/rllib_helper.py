@@ -77,7 +77,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
 def new_csv(time_str):
     sep = '/'
     csv_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + time_str + '.csv'
-    CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'mix', 'qiskit', 'result', 'iter','checkpoint','remark', ]])
+    CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit','mix', 'result', 'iter','checkpoint','remark', ]])
     return  csv_path
 
 def get_qasm():

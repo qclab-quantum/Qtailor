@@ -42,7 +42,7 @@ class Benchmark():
         #write to csv file
         data = []
         for i in range(len(b_1)):
-            data.append(['','',b_1[i][0],b_1[i][1],b_2[i]])
+            data.append(['','',b_1[i][0],b_2[i],b_1[i][1]])
         CSVUtil.append_data(file_path, data)
         if is_draw:
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
