@@ -29,7 +29,7 @@ v7 更新： 使用卷积处理obs space
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v7(gym.Env):
-    def __init__(self):
+    def __init__(self,render_mode=None,env_config=None):
         args = ConfigSingleton().get_config()
         smd = SharedMemoryDict(name='tokens', size=1024)
         self.debug = smd['debug']
@@ -53,7 +53,7 @@ class CircuitEnvTest_v7(gym.Env):
         self.stop_thresh = -2
 
     def _get_info(self):
-        return {'info':'this is info'}
+        return {'matrix':self.obs}
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
@@ -81,7 +81,7 @@ class CircuitEnvTest_v7(gym.Env):
 
         #early stop
         if action[2] == 1:
-            if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
+            if self.debug: print('early stop at %r total reward = %r \n obs = %r'% ( self.step_cnt,self.total_reward,self.obs))
             return self._get_obs(), 0, True,True, self._get_info()
 
         #assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
@@ -107,13 +107,10 @@ class CircuitEnvTest_v7(gym.Env):
 
 
     def _get_obs(self):
-        if self.evaluate:
-            return self.obs
-        else:
-            return ConvolutionUtil.conv(self.obs)
+        return ConvolutionUtil.conv(self.obs)
 
     def _get_info(self):
-        return {"info":"this is info"}
+        return {"matrix":self.obs}
 
 
     def get_criruit(self,name:str):
@@ -185,8 +182,8 @@ class CircuitEnvTest_v7(gym.Env):
         self.last_action = act
 
         self.obs = gu.get_adj_matrix(self.graph)
-        if self.debug:
-            print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(act,self.step_cnt,score,reward,self.obs))
+        # if self.debug:
+        #     print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(act,self.step_cnt,score,reward,self.obs))
 
         return reward,self._get_obs()
 

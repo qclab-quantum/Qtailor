@@ -144,16 +144,18 @@ def test_result(checkpoint):
             policy_id="default_policy",  # <- default value
         )
         # Send the computed action `a` to the env.
-        obs, reward, done, truncated, _ = env.step(a)
-        info  = 'done = %r, reward = %r \n' % (done, reward)
-        print(info)
+        obs, reward, done, truncated, info = env.step(a)
+        print('done = %r, reward = %r \n' % (done, reward))
         episode_reward += reward
 
         # Is the episode `done`? -> Reset.
         if done:
             # shape = int(math.sqrt(len(obs)))
             # reshape_obs = np.array(obs).reshape(shape, shape)
-            reshape_obs = GraphUtil.restore_from_1d_array(obs)
+           # reshape_obs = GraphUtil.restore_from_1d_array(obs)
+            print('info = ', info)
+            obs = info['matrix']
+            reshape_obs = info['matrix']
             print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
 
             print(f"Episode done: Total reward = {episode_reward}")
