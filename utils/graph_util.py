@@ -274,9 +274,8 @@ if __name__ == '__main__':
     g.add_nodes_from(range(3))
     g.add_edge(0, 2)
     g.add_edge(0, 1)
-    gc =karateclub.Graph2Vec()
+    karateclub.Graph2Vec
 
-    #wc.fit(graphs=[g])
-    gc.fit(graphs=[g])
-    print(gc.get_embedding())
+    wc.fit(graphs=[g])
+    print(wc.get_embedding())
 

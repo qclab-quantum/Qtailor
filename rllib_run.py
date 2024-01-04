@@ -3,27 +3,19 @@ import random
 import time
 import gymnasium as gym
 from gymnasium import register
-import numpy as np
 import os
 import ray
 from ray import air, tune
-from ray.air import CheckpointConfig
 from ray.rllib.algorithms import Algorithm
-from ray.rllib.env.env_context import EnvContext
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
-from ray.tune import ResultGrid
-from ray.tune.trainable import trainable
-from ray.tune.logger import pretty_print, UnifiedLogger
+from ray.tune.logger import pretty_print
 from ray.tune.registry import get_trainable_cls
-
-from typing import List, Optional, Dict, Union, Callable
 
 from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
-from temp.env.env_test_v3 import CircuitEnvTest_v3
-from temp.env.env_test_v4 import CircuitEnvTest_v4
 from temp.env.env_test_v5 import CircuitEnvTest_v5
+from temp.env.env_test_v7 import CircuitEnvTest_v7
 from utils.benchmark import Benchmark
 from utils.csv_util import CSVUtil
 from utils.file_util import FileUtil
@@ -32,7 +24,7 @@ from io import StringIO
 import contextlib
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
-from utils.rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
+from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
 
 csv_path = ''
 text_path=''
@@ -48,7 +40,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v5)
+        .environment(env = CircuitEnvTest_v7)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -127,6 +119,9 @@ def test_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
     env_id = "CircuitEnvTest-v"+str(args.env_version)
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['evaluate'] = True
+    smd['debug'] = True
     register(
         id=env_id,
         # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -163,7 +158,6 @@ def test_result(checkpoint):
 
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
-            smd = SharedMemoryDict(name='tokens', size=1024)
             rl,qiskit,mix = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
 
             if not isinstance(checkpoint,str):
@@ -174,6 +168,8 @@ def test_result(checkpoint):
             num_episodes += 1
             episode_reward = 0.0
 
+    smd.shm.close()
+    smd.shm.unlink()
     algo.stop()
 
 def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
@@ -195,6 +191,8 @@ def train():
     qasms = get_qasm()
 
     smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['evaluate'] = False
+    smd['debug'] = False
     sep = '/'
 
     for q in qasms:
@@ -239,19 +237,7 @@ def test():
     finally:
         smd.shm.close()
         smd.shm.unlink()
-def test_checkpoint():
-    smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
-    try:
-        checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
-        algo = Algorithm.from_checkpoint(checkpoint)
-        smd.shm.close()
-        smd.shm.unlink()
-    except Exception as e:
-        print(e)
-    finally:
-        smd.shm.close()
-        smd.shm.unlink()
+
 if __name__ == "__main__":
     args = ConfigSingleton().get_config()
     set_logger()
