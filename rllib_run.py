@@ -40,7 +40,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v7)
+        .environment(env = CircuitEnvTest_v5)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -151,11 +151,11 @@ def test_result(checkpoint):
         # Is the episode `done`? -> Reset.
         if done:
             # shape = int(math.sqrt(len(obs)))
-            # reshape_obs = np.array(obs).reshape(shape, shape)
-           # reshape_obs = GraphUtil.restore_from_1d_array(obs)
-            print('info = ', info)
-            obs = info['matrix']
-            reshape_obs = info['matrix']
+           #reshape_obs = np.array(obs).reshape(shape, shape)
+            reshape_obs = GraphUtil.restore_from_1d_array(obs)
+           #  print('info = ', info)
+           #  obs = info['matrix']
+           #  reshape_obs = info['matrix']
             print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
 
             print(f"Episode done: Total reward = {episode_reward}")
