@@ -222,8 +222,6 @@ def train():
         output.close()
 
         time.sleep(5)
-    smd.shm.close()
-    smd.shm.unlink()
 def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)
