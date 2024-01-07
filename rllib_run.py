@@ -191,14 +191,12 @@ def train():
     csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
     qasms = get_qasm()
 
-    smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['evaluate'] = False
-    smd['debug'] = False
     sep = '/'
 
     for q in qasms:
 
         args.log_file_id = random.randint(1000, 9999)
+        smd = SharedMemoryDict(name='tokens', size=1024)
         smd['qasm'] = q
 
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
