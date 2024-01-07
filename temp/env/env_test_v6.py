@@ -75,9 +75,9 @@ class CircuitEnvTest_v6(gym.Env):
         self.step_cnt+=1
 
         #early stop
-        if action[2] == 1:
-            if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
-            return self._get_obs(), 0, True,True, self._get_info()
+        # if action[2] == 1:
+        #     if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
+        #     return self._get_obs(), 0, True,True, self._get_info()
 
         #assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
