@@ -248,7 +248,11 @@ def test_adj_list(adj):
     circuit.cx(0, 4)
     print(CircutUtil.get_circuit_score1(circuit,adj=adj))
 
-
+@staticmethod
+    #调用 draw_adj_matrix 实现绘制拓扑图
+def draw_1d_array(array):
+    graph = GraphUtil.restore_from_1d_array(array)
+    GraphUtil.draw_adj_matrix(graph)
 
 #测试 Qiskit 在田字格上的编译结果
 def test_tian():
@@ -260,22 +264,18 @@ def test_tian():
     adj = PointsUtil.coordinate2adjacent(points)
     PointsUtil.plot_points(points)
 
-    @staticmethod
-    #调用 draw_adj_matrix 实现绘制拓扑图
-    def draw_1d_array(array):
-        graph = GraphUtil.restore_from_1d_array(array)
-        GraphUtil.draw_adj_matrix(graph)
-        print(GraphUtil.restore_from_1d_array(array))
+
 
 if __name__ == '__main__':
     from karateclub import EgoNetSplitter
-    wc =karateclub.WaveletCharacteristic(eval_points = 3)
-    g = nx.Graph()
-    g.add_nodes_from(range(3))
-    g.add_edge(0, 2)
-    g.add_edge(0, 1)
-    karateclub.Graph2Vec
-
-    wc.fit(graphs=[g])
-    print(wc.get_embedding())
+    # wc =karateclub.WaveletCharacteristic(eval_points = 3)
+    # g = nx.Graph()
+    # g.add_nodes_from(range(3))
+    # g.add_edge(0, 2)
+    # g.add_edge(0, 1)
+    # karateclub.Graph2Vec
+    #
+    # wc.fit(graphs=[g])
+    # print(wc.get_embedding())
+    draw_1d_array([1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1])
 

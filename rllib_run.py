@@ -108,11 +108,10 @@ def train_policy():
 
         )
         results = tuner.fit()
+
         #evaluate
         print("Training completed")
-        ray.shutdown()
-        return  results
-    ray.shutdown()
+        return results
 
 
 def test_result(checkpoint):

@@ -101,4 +101,4 @@ class CircutUtil:
         circuit = CircutUtil.get_from_qasm(qasm)
         circuit.draw('mpl').show()
 if __name__ == '__main__':
-    pass
+    CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')

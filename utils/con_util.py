@@ -1,4 +1,5 @@
 import math
+import time
 
 import torch
 import torch.nn as nn
@@ -15,9 +16,10 @@ class ConvolutionUtil():
         tm = torch.tensor(matrix)
         tm = tm.unsqueeze(0)
         tm = tm.float()
-
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # 创建Conv2d对象
         conv = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, stride=1, padding=1)
+        conv.to(device)
 
         # 创建ReLU对象
         relu = nn.ReLU()
@@ -53,4 +55,7 @@ if __name__ == '__main__':
               [0, 1, 0, 1, 1, 0, 1, 0],
               [1, 0, 1, 0, 0, 1, 0, 1],
               [1, 1, 0, 1, 1, 0, 0, 1]]
-    print(ConvolutionUtil.conv(matrix))
+    stime = time.time()
+    for i in range(10000):
+        ConvolutionUtil.conv(matrix)
+    print('time used ', time.time() - stime)
