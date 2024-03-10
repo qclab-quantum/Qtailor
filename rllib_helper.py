@@ -83,7 +83,6 @@ def new_csv(time_str):
 def get_qasm():
     qasm = [
        'qnn/qnn_indep_qiskit_8.qasm',
-       'qnn/qnn_indep_qiskit_9.qasm',
     ]
     return qasm
 

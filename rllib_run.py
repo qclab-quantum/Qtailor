@@ -15,6 +15,7 @@ from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
 from temp.env.env_test_v5 import CircuitEnvTest_v5
+from temp.env.env_test_v6 import CircuitEnvTest_v6
 from temp.env.env_test_v7 import CircuitEnvTest_v7
 from utils.benchmark import Benchmark
 from utils.csv_util import CSVUtil
@@ -40,7 +41,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v5)
+        .environment(env = CircuitEnvTest_v6)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -119,8 +120,9 @@ def test_result(checkpoint):
     algo = Algorithm.from_checkpoint(checkpoint)
     env_id = "CircuitEnvTest-v"+str(args.env_version)
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['evaluate'] = True
-    smd['debug'] = True
+    #smd['evaluate'] = True
+   # smd['debug'] = True
+
     register(
         id=env_id,
         # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -204,8 +206,8 @@ def train():
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
-        with contextlib.redirect_stdout(output):
-            results = train_policy()
+        #with contextlib.redirect_stdout(output):
+        results = train_policy()
 
         strings = output.getvalue()
 

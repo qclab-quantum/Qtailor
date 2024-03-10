@@ -3,11 +3,6 @@ import time
 
 import torch
 import torch.nn as nn
-
-
-
-
-
 class ConvolutionUtil():
     @staticmethod
     def conv(matrix):

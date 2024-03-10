@@ -73,7 +73,7 @@ class Benchmark():
 def test_result(qasm,matrix = None, array = None):
     #test rl and mix
     if matrix is None:
-        matrix =gu.restore_from_1d_array(matrix)
+        matrix =gu.restore_from_1d_array(array)
     res = gu.test_adj_matrix(matrix,qasm)
     mean = np.mean(res, axis=0)
     rl = mean[0]
@@ -89,14 +89,20 @@ def test_result(qasm,matrix = None, array = None):
     print('rl = %r,qiskit = %r , mix = %r:'%(rl,qiskit,mix))
 
 if __name__ == '__main__':
-    array  = [1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1]
-    matrix = [[0, 1, 0, 0, 1, 0, 1, 1],
-       [1, 0, 1, 0, 0, 1, 0, 1],
-       [0, 1, 0, 1, 1, 0, 1, 0],
-       [0, 0, 1, 0, 1, 1, 0, 1],
-       [1, 0, 1, 1, 0, 1, 0, 0],
-       [0, 1, 0, 1, 1, 0, 1, 0],
-       [1, 0, 1, 0, 0, 1, 0, 1],
-       [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'qnn/qnn_indep_qiskit_8.qasm'
-    test_result(matrix = matrix,array=None,qasm=qasm)
+    array  = \
+        [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+         1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 1]
+    # matrix = [[0, 1, 0, 0, 1, 0, 1, 1],
+    #    [1, 0, 1, 0, 0, 1, 0, 1],
+    #    [0, 1, 0, 1, 1, 0, 1, 0],
+    #    [0, 0, 1, 0, 1, 1, 0, 1],
+    #    [1, 0, 1, 1, 0, 1, 0, 0],
+    #    [0, 1, 0, 1, 1, 0, 1, 0],
+    #    [1, 0, 1, 0, 0, 1, 0, 1],
+    #    [1, 1, 0, 1, 0, 0, 1, 0]]
+    qasm = 'portfolio_vqe/portfoliovqe_indep_qiskit_16.qasm'
+    test_result(matrix = None,array=array,qasm=qasm)
+
+    #print(Benchmark.get_qiskit_depth('random/random_indep_qiskit_14.qasm'))
