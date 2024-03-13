@@ -32,9 +32,8 @@ class FileUtil:
         return root_dir
     @staticmethod
     def write(file,content):
-
         try:
-            directory = os.path.dirname(file)
+            directory = os.path.dirname(file)[:-5]
             if not os.path.exists(directory):
                 os.makedirs(directory)
             # Open file in write mode; if file doesn't exist, it will be created

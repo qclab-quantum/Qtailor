@@ -104,14 +104,13 @@ def generate_random_integer(n, mean, std=1):
     random_array = np.random.normal(mean, std, n)
     rounded_array = np.rint(random_array).astype(int)
     final_array = np.clip(rounded_array, 0, n)
-    print(final_array)
+    #print(final_array)
     return final_array
 
 
-def generate_circuit():
-    n = 10
+def generate_circuit(n,p):
     circuit = QuantumCircuit(n)
-    random_array = generate_random_integer(n=(4*n),mean=(n/2))
+    random_array = generate_random_integer(n=(p*n),mean=(n/2))
     i = 0
     while (i+1) < len(random_array):
         ctrl = random_array[i]
@@ -120,8 +119,13 @@ def generate_circuit():
         if ctrl == target:
             continue
         circuit.cx(ctrl,target)
-    print(circuit.qasm())
+
+    file_path = os.path.join(FileUtil.get_root_dir(),'benchmark','custom',str(n)+'_'+str(p * n)+'.qasm')
+    print('\''+'custom/',str(n)+'_'+str(p * n)+'.qasm'+'\',')
+    #FileUtil.write(file_path, circuit.qasm())
 
 if __name__ == '__main__':
     #CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
-    generate_circuit()
+    for i in [10,20,30,40,50]:
+        for j in [2,3,4,5,6]:
+            generate_circuit(i,j)
