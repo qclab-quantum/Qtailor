@@ -2,7 +2,7 @@ import csv
 import datetime
 import os
 
-from utils.file_util import FileUtil
+from utils.file.file_util import FileUtil
 
 
 class CSVUtil:
@@ -48,7 +48,7 @@ def test():
     for row in data:
         print(row)
 
-if __name__ == '__main__':
+def demo():
     current_datetime = datetime.datetime.now()
     formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H-%M')
     rootdir = FileUtil.get_root_dir()
@@ -56,3 +56,5 @@ if __name__ == '__main__':
     csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + formatted_datetime + '.csv'
     print(csv_path)
     CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'remark', 'checkpoint'] ])
+if __name__ == '__main__':
+    pass

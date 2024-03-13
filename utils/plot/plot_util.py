@@ -1,6 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+from pathlib import Path
 
+# Get the directory of the current script
+current_dir = Path(__file__).resolve().parent
+
+# Get the parent directory
+parent_dir = current_dir.parent
+
+# Add the parent directory to sys.path
+sys.path.append(str(parent_dir))
+
+# Now you can import the module from the parent directory
+from utils.file.csv_util import CSVUtil
 
 def plot_box_plot():
     #todo read from csv
@@ -60,11 +73,6 @@ def plot_bar():
 def plot_line():
     import seaborn as sns
     import matplotlib.pyplot as plt
-    import pandas as pd
-    from flatbuffers.builder import np
-
-    from utils.csv_util import CSVUtil
-
     # data = {'X': [1, 2, 3, 4, 5],
     #         'Z':[[1, 1, 1], [2, 8, 10], [7, 6,2], [9, 2, 1, 1], [12, 9, 7]],
     #         'Y': [[10, 12, 11], [9, 8, 10], [7, 6, 5], [9, 10, 11, 12], [8, 9, 7]]}
@@ -74,9 +82,9 @@ def plot_line():
         # data2 = CSVUtil.read_data('E:/benchmark/qnn6-10.csv')[1:]
         # data3= CSVUtil.read_data('E:/benchmark/qnn11-15_400iter.csv')[1:]
         # data4 = CSVUtil.read_data('E:/benchmark/qnn16-20_400iter.csv')[1:]
-        data1 = CSVUtil.read_data('E:/benchmark/portfolio_vqe_5-10.csv')[1:]
+        data1 = CSVUtil.read_data('D:/workspace/data/benchmark/portf/portfolio_vqe_5-10.csv')[1:]
         data1 = [row[:5] for row in data1]
-        data2 = CSVUtil.read_data('E:/benchmark/portfolio_vqe_11-18_300iter.csv')[1:]
+        data2 = CSVUtil.read_data('D:/workspace/data/benchmark/portf/portfolio_vqe_11-18_300iter.csv')[1:]
 
         # data = np.concatenate((data1, data2), axis=0)
         data = []
@@ -163,4 +171,5 @@ def plot_line():
     plt.show()
 if __name__ == '__main__':
     #plot_box_plot()
-    plot_bar()
+    #plot_bar()
+    plot_line()
