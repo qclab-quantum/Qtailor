@@ -156,6 +156,6 @@ def test_ppo(args=get_args()):
 
 
 if __name__ == "__main__":
-    #test_ppo()
-    space = MultiDiscrete([2,2,2,2,2,2,2,2,2,2], seed=42)
-    print(space.sample())
+    test_ppo()
+    #space = MultiDiscrete([2,2,2,2,2,2,2,2,2,2], seed=42)
+    #print(space.sample())

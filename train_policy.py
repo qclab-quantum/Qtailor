@@ -1,11 +1,14 @@
 import os
 import pprint
 import time
+
+from shared_memory_dict import SharedMemoryDict
 from tianshou.utils import WandbLogger
 import gymnasium as gym
 import numpy as np
 import torch
 from gymnasium.spaces import Box
+from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, VectorReplayBuffer, Batch
@@ -29,36 +32,36 @@ from tianshou.env import (
 
 from config import get_args
 
-kwargs = {
-    'debug': False
-}
 
 
 def train_ppo(args=get_args()):
-    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    env = MultiDiscreteToDiscrete(gym.make(args.task))
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
 
-    # train_envs = gym.make(args.task)
+    # train_envs = MultiDiscreteToDiscrete(gym.make(args.task))
 
     # you can also use tianshou.env.SubprocVectorEnv
-    train_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs) )for _ in range(args.training_num)])
-    # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
+    train_envs = DummyVectorEnv([lambda: gym.make(args.task )for _ in range(args.training_num)])
+    # test_envs = MultiDiscreteToDiscrete(gym.make(args.task))
+    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task)) for _ in range(args.test_num)])
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     train_envs.seed(args.seed)
     test_envs.seed(args.seed)
     # model
+    actor: nn.Module
+    critic: nn.Module
     net = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
+
     if torch.cuda.is_available():
         print('cuda is available \n')
         actor = DataParallelNet(Actor(net, args.action_shape, device=None).to(args.device))
         critic = DataParallelNet(Critic(net, device=None).to(args.device))
     else:
-        actor = Actor(net, args.action_shape, device=args.device).to(args.device)
-        critic = Critic(net, device=args.device).to(args.device)
+        actor = Actor(net, args.action_shape)
+        critic = Critic(net)
     actor_critic = ActorCritic(actor, critic)
     # orthogonal initialization
     for m in actor_critic.modules():
@@ -97,12 +100,12 @@ def train_ppo(args=get_args()):
     test_collector = Collector(policy, test_envs)
     # log
     log_path = os.path.join(args.logdir, args.task, "ppo")
-    # writer = SummaryWriter(log_path)
-    # logger = TensorboardLogger(writer)
+    writer = SummaryWriter(log_path)
+    logger = TensorboardLogger(writer)
 
     #wandb logger
-    logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.2204_ppo_1', run_id = 'ppo1')
-    logger.load(SummaryWriter(log_path))
+    # logger = WandbLogger(project = 'CircuitEnvTest_v3',name  = '2023.12.2204_ppo_1', run_id = 'ppo1')
+    # logger.load(SummaryWriter(log_path))
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
@@ -131,12 +134,11 @@ def train_ppo(args=get_args()):
     if __name__ == "__main__":
         #pprint.pprint(result)
         # Let's watch its performance!
-        env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+        env = MultiDiscreteToDiscrete(gym.make(args.task))
         policy.eval()
         collector = Collector(policy, env)
         result = collector.collect(n_episode=5, render=args.render)
-        rews, lens = result["rews"], result["lens"]
-        print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
+        print('eval result = \n',result)
         pprint.pprint(result)
 
 def register_env():
@@ -180,6 +182,11 @@ def register_env():
             entry_point='temp.env.env_test_v5:CircuitEnvTest_v5',
             max_episode_steps=4000000,
         )
+        register(
+            id='CircuitEnvTest-v7',
+            entry_point='temp.env.env_test_v7:CircuitEnvTest_v7',
+            max_episode_steps=4000000,
+        )
     except Exception as e:
         print('register error')
         print(e)
@@ -195,4 +202,6 @@ def train():
     print("Function runtime:", runtime, "seconds")
 if __name__ == "__main__":
     register_env()
-    #train()
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
+    train()

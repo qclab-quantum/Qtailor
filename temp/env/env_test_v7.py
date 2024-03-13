@@ -6,17 +6,14 @@ import numpy as np
 
 import qiskit
 from gymnasium import spaces, register
-from gymnasium.spaces import MultiBinary, MultiDiscrete, Discrete, Box
+from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from gymnasium.spaces.utils import flatten_space
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
-from ray.rllib.env import EnvContext
-
-from utils.con_util import  ConvolutionUtil
-from utils.graph_util import GraphUtil as gu
+from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
 os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
@@ -24,36 +21,33 @@ os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 from shared_memory_dict import SharedMemoryDict
 simulator = AerSimulator()
 '''
-v7 更新： 使用卷积处理obs space
+v7 更新：  action space 适配 dqn
 '''
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v7(gym.Env):
-    def __init__(self,render_mode=None,env_config=None):
+    def __init__(self, render_mode=None):
         args = ConfigSingleton().get_config()
-        smd = SharedMemoryDict(name='tokens', size=1024)
-        self.debug = smd['debug']
-        self.evaluate = smd['evaluate']
+        self.debug=True
 
-        # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
-
+        smd = SharedMemoryDict(name='tokens',size=1024)
         qasm = smd['qasm']
         self.circuit = self.get_criruit(qasm)
 
         self.qubit_nums = len(self.circuit.qubits)
-        # self.qr =self.circuit.qubits
 
-        #obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
-        self.observation_space =flatten_space(spaces.Box(0, 1, (1, 9), dtype=np.float32 ))
-        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums,2])
-
+        obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
+        self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
+        #self.action_space = flatten_space(MultiDiscrete([self.qubit_nums , self.qubit_nums,2]))
+        self.action_space =  flatten_space(spaces.Box(low = np.array([0, 0, 0]), high = np.array([self.qubit_nums, self.qubit_nums,1]),dtype=np.uint8))
+        self.max_action=8
         self.max_step = 100
         self.max_edges=4
         self.stop_thresh = -2
 
     def _get_info(self):
-        return {'matrix':self.obs}
+        return {'info':'this is info'}
 
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
@@ -78,11 +72,11 @@ class CircuitEnvTest_v7(gym.Env):
 
     def step(self, action):
         self.step_cnt+=1
-
+        print('step_cnt=%r, action=%r' % (self.step_cnt, action))
         #early stop
-        if action[2] == 1:
-            if self.debug: print('early stop at %r total reward = %r \n obs = %r'% ( self.step_cnt,self.total_reward,self.obs))
-            return self._get_obs(), 0, True,True, self._get_info()
+        # if action[2] == 1:
+        #     if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
+        #     return self._get_obs(), 0, True,True, self._get_info()
 
         #assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
@@ -107,10 +101,11 @@ class CircuitEnvTest_v7(gym.Env):
 
 
     def _get_obs(self):
-        return ConvolutionUtil.conv(self.obs)
+        #flattened_matrix = np.array(copy.deepcopy(self.obs)).flatten()
+        return GraphUtil.lower_triangle_to_1d_array(self.obs)
 
     def _get_info(self):
-        return {"matrix":self.obs}
+        return {"info":"this is info"}
 
 
     def get_criruit(self,name:str):
@@ -182,8 +177,8 @@ class CircuitEnvTest_v7(gym.Env):
         self.last_action = act
 
         self.obs = gu.get_adj_matrix(self.graph)
-        # if self.debug:
-        #     print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(act,self.step_cnt,score,reward,self.obs))
+        if self.debug:
+            print('action = %r,  step=%r , score=%r ,reward=%r  \n obs=%r,'%(act,self.step_cnt,score,reward,self.obs))
 
         return reward,self._get_obs()
 
@@ -195,5 +190,8 @@ class CircuitEnvTest_v7(gym.Env):
 
 if __name__ == '__main__':
     pass
-
+    # action_space = MultiDiscrete([8 , 8,2])
+    # print(action_space.shape)
+    # for i in range(10):
+    #     print(action_space.sample())
 

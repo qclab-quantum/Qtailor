@@ -1,4 +1,3 @@
-tianshou
 loguru
 gymnasium
 qiskit
@@ -18,5 +17,6 @@ gputil
 shutil
 zipfile
 seaborn
+shared-memory-dict
 
-pip install seaborn loguru gymnasium qiskit qiskit-aer matplotlib pyyaml munch pyvis scikit-image dm_tree lz4  tensorboard gputil shutil zipfile
+pip install seaborn loguru gymnasium qiskit qiskit-aer matplotlib pyyaml munch pyvis scikit-image dm_tree lz4  tensorboard gputil shutil zipfile shared-memory-dict

@@ -1,11 +1,10 @@
 import os
-import threading
-import networkx as nx
+
+import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
-import traceback
 
-from utils.file_util import FileUtil
+from utils.file.file_util import FileUtil
 
 simulator = AerSimulator()
 
@@ -100,5 +99,29 @@ class CircutUtil:
     def draw_circult(qasm):
         circuit = CircutUtil.get_from_qasm(qasm)
         circuit.draw('mpl').show()
+
+def generate_random_integer(n, mean, std=1):
+    random_array = np.random.normal(mean, std, n)
+    rounded_array = np.rint(random_array).astype(int)
+    final_array = np.clip(rounded_array, 0, n)
+    print(final_array)
+    return final_array
+
+
+def generate_circuit():
+    n = 10
+    circuit = QuantumCircuit(n)
+    random_array = generate_random_integer(n=(4*n),mean=(n/2))
+    i = 0
+    while (i+1) < len(random_array):
+        ctrl = random_array[i]
+        target = random_array[i+1]
+        i = i + 1
+        if ctrl == target:
+            continue
+        circuit.cx(ctrl,target)
+    print(circuit.qasm())
+
 if __name__ == '__main__':
-    CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
+    #CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
+    generate_circuit()

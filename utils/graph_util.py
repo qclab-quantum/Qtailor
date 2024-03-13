@@ -3,7 +3,6 @@ import multiprocessing
 import time
 import random
 
-import karateclub
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -267,15 +266,5 @@ def test_tian():
 
 
 if __name__ == '__main__':
-    from karateclub import EgoNetSplitter
-    # wc =karateclub.WaveletCharacteristic(eval_points = 3)
-    # g = nx.Graph()
-    # g.add_nodes_from(range(3))
-    # g.add_edge(0, 2)
-    # g.add_edge(0, 1)
-    # karateclub.Graph2Vec
-    #
-    # wc.fit(graphs=[g])
-    # print(wc.get_embedding())
     draw_1d_array([1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1])
 

@@ -1,3 +1,4 @@
+import contextlib
 import datetime
 import random
 import time
@@ -14,15 +15,15 @@ from ray.tune.registry import get_trainable_cls
 from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
-from temp.env.env_test_v5 import CircuitEnvTest_v5
 from temp.env.env_test_v6 import CircuitEnvTest_v6
-from temp.env.env_test_v7 import CircuitEnvTest_v7
 from utils.benchmark import Benchmark
-from utils.csv_util import CSVUtil
-from utils.file_util import FileUtil
+
+from utils.file.csv_util import CSVUtil
+from utils.file.file_util import FileUtil
+
 from utils.graph_util import GraphUtil
 from io import StringIO
-import contextlib
+
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
@@ -206,21 +207,21 @@ def train():
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
-        #with contextlib.redirect_stdout(output):
-        results = train_policy()
+        with contextlib.redirect_stdout(output):
+            results = train_policy()
 
-        strings = output.getvalue()
+            strings = output.getvalue()
 
-        FileUtil.write(text_path, strings)
-        tensorboard = parse_tensorboard(strings)
+            FileUtil.write(text_path, strings)
+            tensorboard = parse_tensorboard(strings)
 
-        checkpoint = results.get_best_result().checkpoint
-        test_result(checkpoint)
+            checkpoint = results.get_best_result().checkpoint
+            test_result(checkpoint)
 
-        output.truncate(0)
-        output.close()
+            output.truncate(0)
+            output.close()
 
-        time.sleep(5)
+        time.sleep(1)
 def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)

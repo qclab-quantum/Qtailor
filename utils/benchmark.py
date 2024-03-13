@@ -5,7 +5,7 @@ from qiskit import transpile
 from qiskit_aer import AerSimulator
 
 from utils.circuit_util import CircutUtil as cu
-from utils.csv_util import CSVUtil
+from utils.file.csv_util import CSVUtil
 from utils.graph_util import GraphUtil as gu
 from utils.points_util import PointsUtil as pu
 
@@ -75,25 +75,17 @@ def test_result(qasm,matrix = None, array = None):
     if matrix is None:
         matrix =gu.restore_from_1d_array(array)
     res = gu.test_adj_matrix(matrix,qasm)
+    print(res)
     mean = np.mean(res, axis=0)
     rl = mean[0]
     mix = mean[1]
-    # l = len(res)
-    # for i  in range(l):
-    #     rl += res[i][0]
-    #     mix += res[i][1]
-    # rl /= l
-    # mix /=l
-    #test qiskit
     qiskit = np.mean(Benchmark.get_qiskit_depth(qasm))
     print('rl = %r,qiskit = %r , mix = %r:'%(rl,qiskit,mix))
 
 if __name__ == '__main__':
     array  = \
-        [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-         1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, 1]
+        [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+
     # matrix = [[0, 1, 0, 0, 1, 0, 1, 1],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [0, 1, 0, 1, 1, 0, 1, 0],
@@ -102,7 +94,7 @@ if __name__ == '__main__':
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'portfolio_vqe/portfoliovqe_indep_qiskit_16.qasm'
+    qasm = 'su2/su2random_indep_qiskit_14.qasm'
     test_result(matrix = None,array=array,qasm=qasm)
 
     #print(Benchmark.get_qiskit_depth('random/random_indep_qiskit_14.qasm'))

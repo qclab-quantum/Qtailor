@@ -7,6 +7,7 @@ import gymnasium as gym
 import numpy as np
 import torch
 from gymnasium.spaces import Box
+from shared_memory_dict import SharedMemoryDict
 from tianshou.exploration import GaussianNoise
 from torch.utils.tensorboard import SummaryWriter
 
@@ -30,12 +31,11 @@ from tianshou.env import (
 
 from config import get_args
 kwargs = {
-    'debug': True
 }
 
 def test_policy():
     args = get_args()
-    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    env = gym.make(args.task)
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     print(args.reward_threshold)
@@ -44,9 +44,9 @@ def test_policy():
 
     # you can also use tianshou.env.SubprocVectorEnv
     train_envs = DummyVectorEnv(
-        [lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.training_num)])
+        [lambda: gym.make(args.task) for _ in range(args.training_num)])
     # test_envs = gym.make(args.task)
-    test_envs = DummyVectorEnv([lambda: MultiDiscreteToDiscrete(gym.make(args.task,**kwargs)) for _ in range(args.test_num)])
+    test_envs = DummyVectorEnv([lambda: gym.make(args.task) for _ in range(args.test_num)])
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -93,7 +93,7 @@ def test_policy():
     log_path = os.path.join(args.logdir, args.task, "ppo")
    # log_path = 'D:\workspace\data\ppo-45757ec95dc51bc5a97fbaca44955c04c370ffc6'
     policy.load_state_dict(torch.load(log_path+"\\policy.pth",map_location=torch.device('cpu')))
-    env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    env = gym.make(args.task)
     policy.eval()
     collector = Collector(policy, env)
     result = collector.collect(n_episode=10, render=args.render)
@@ -102,15 +102,12 @@ def test_policy():
 if __name__ == '__main__':
     # 代码精简，action space 和 obs space 重构
     register(
-        id='CircuitEnvTest-v3',
+        id='CircuitEnvTest-v7',
         # entry_point='core.envs.circuit_env:CircuitEnv',
-        entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
+        entry_point='temp.env.env_test_v7:CircuitEnvTest_v7',
         max_episode_steps=4000000,
     )
     args = get_args()
-    kwargs = {
-        'debug':True
-    }
-
-    #env = MultiDiscreteToDiscrete(gym.make(args.task,**kwargs))
+    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
     test_policy()

@@ -32,3 +32,10 @@ class EnvManager:
             entry_point='temp.env.env_test_v3:CircuitEnvTest_v3',
             max_episode_steps=4000000,
         )
+
+        register(
+            id='CircuitEnvTest-v7',
+            # entry_point='core.envs.circuit_env:CircuitEnv',
+            entry_point='temp.env.env_test_v7:CircuitEnvTest_v7',
+            max_episode_steps=4000000,
+        )

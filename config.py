@@ -4,7 +4,7 @@ from munch import Munch
 import torch
 import yaml
 
-from utils.file_util import FileUtil
+from utils.file.file_util import FileUtil
 
 def get_args():
     config = None
