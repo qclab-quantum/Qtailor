@@ -33,7 +33,7 @@ class FileUtil:
     @staticmethod
     def write(file,content):
         try:
-            directory = os.path.dirname(file)[:-5]
+            directory = os.path.dirname(file)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             # Open file in write mode; if file doesn't exist, it will be created
