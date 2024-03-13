@@ -3,17 +3,8 @@ import numpy as np
 import sys
 from pathlib import Path
 
-# Get the directory of the current script
-current_dir = Path(__file__).resolve().parent
-
-# Get the parent directory
-parent_dir = current_dir.parent
-
-# Add the parent directory to sys.path
-sys.path.append(str(parent_dir))
-
-# Now you can import the module from the parent directory
 from utils.file.csv_util import CSVUtil
+# Now you can import the module from the parent directory
 
 def plot_box_plot():
     #todo read from csv
