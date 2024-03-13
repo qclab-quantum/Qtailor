@@ -28,7 +28,7 @@ class FileUtil:
         # root_dir = os.path.dirname(current_dir)
         #方法二
         root_dir = os.path.dirname(os.path.abspath(__file__))
-        root_dir = root_dir[:-6]
+        root_dir = root_dir[:-11]
         return root_dir
     @staticmethod
     def write(file,content):
