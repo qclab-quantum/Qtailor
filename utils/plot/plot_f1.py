@@ -5,7 +5,7 @@ import re
 from utils.file.excel_util import ExcelUtil
 mpl.rcParams['font.family'] = ['Arial']
 mpl.rcParams['font.size'] = 12
-# 假设我们有9组数据，每组都有两个子组
+# 假设有9组数据，每组都有两个子组
 # data = {
 #     'Group1': ([12, 30, 1, 8, 22], [28, 6, 16, 5, 10]),
 #     'Group2': ([15, 29, 2, 6, 25], [26, 7, 14, 8, 11]),
@@ -71,9 +71,9 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 设置横轴的标签
     ax.set_xticks(index + bar_width / 1)
     ax.set_xticklabels(labels_2d[i])
-    if i ==0 or i==3:
+    if i % 3 ==0:
         ax.set_ylabel('Depth')
-    if i in range(6,8):
+    if i in range(6,9):
         ax.set_xlabel('bits')
     # 设置图表的标题
     ax.set_title(f'{group_name}')
@@ -81,6 +81,6 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     ax.grid(True, which='both', axis='y', linestyle='--', linewidth=0.5)
 # 调整子图之间的间距
 #plt.tight_layout()
-
+plt.savefig('fig2.png',dpi=300)
 # 显示图表
 plt.show()
