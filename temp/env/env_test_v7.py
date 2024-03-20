@@ -13,6 +13,7 @@ from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
+from utils.concurrent_set import ConcurrentMap
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
@@ -21,27 +22,29 @@ os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 from shared_memory_dict import SharedMemoryDict
 simulator = AerSimulator()
 '''
-v7 更新：  action space 适配 dqn
+7 更新：使用memory 记忆action 对应的 reward
 '''
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
-class CircuitEnvTest_v7(gym.Env):
-    def __init__(self, render_mode=None):
+class CircuitEnvTest_v6(gym.Env):
+    def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
-        self.debug=True
-
+        self.debug = kwargs.get('debug')
+        self.mem = ConcurrentMap()
+        self.mem_cnt = 0
+        # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         smd = SharedMemoryDict(name='tokens',size=1024)
         qasm = smd['qasm']
         self.circuit = self.get_criruit(qasm)
 
         self.qubit_nums = len(self.circuit.qubits)
+        # self.qr =self.circuit.qubits
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
-        #self.action_space = flatten_space(MultiDiscrete([self.qubit_nums , self.qubit_nums,2]))
-        self.action_space =  flatten_space(spaces.Box(low = np.array([0, 0, 0]), high = np.array([self.qubit_nums, self.qubit_nums,1]),dtype=np.uint8))
-        self.max_action=8
+        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums,2])
+
         self.max_step = 100
         self.max_edges=4
         self.stop_thresh = -2
@@ -72,13 +75,6 @@ class CircuitEnvTest_v7(gym.Env):
 
     def step(self, action):
         self.step_cnt+=1
-        print('step_cnt=%r, action=%r' % (self.step_cnt, action))
-        #early stop
-        # if action[2] == 1:
-        #     if self.debug: print('early stop at %r total reward = %r'% ( self.step_cnt,self.total_reward))
-        #     return self._get_obs(), 0, True,True, self._get_info()
-
-        #assert self.action_space.contains(action), f"{action!r} ({type(action)}) invalid"
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
@@ -88,7 +84,7 @@ class CircuitEnvTest_v7(gym.Env):
                 or reward == self.stop_thresh \
                 or self.step_cnt==self.max_step :
             terminated = True
-
+            print('self.memcnt = ',self.mem_cnt)
 
 
         return observation, reward, terminated,truncated, info
@@ -145,13 +141,16 @@ class CircuitEnvTest_v7(gym.Env):
             #超出最大连通分量，无法执行操作
             if len(self.graph.edges(act[0]))== self.max_edges or \
                     len(self.graph.edges(act[1]))== self.max_edges:
-                #reward = self.stop_thresh
                 return self.stop_thresh , self._get_obs()
             else:
                 # 执行增加边的操作
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
-                score = cu.get_circuit_score(self.circuit, self.adj)
+                if self.mem.get(act) is not None:
+                    score = self.mem.get(act)
+                    self.mem_cnt += 1
+                else:
+                    score = cu.get_circuit_score(self.circuit, self.adj)
 
 
         if score is not None :
@@ -190,8 +189,5 @@ class CircuitEnvTest_v7(gym.Env):
 
 if __name__ == '__main__':
     pass
-    # action_space = MultiDiscrete([8 , 8,2])
-    # print(action_space.shape)
-    # for i in range(10):
-    #     print(action_space.sample())
+
 
