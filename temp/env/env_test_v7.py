@@ -186,6 +186,7 @@ class CircuitEnvTest_v7(gym.Env):
 
     def _close_env(self):
         print('mem=',self.mem)
+        print('mem_cnt=',self.mem_cnt)
         print('all step =',self.all_cnt)
         logger.info('_close_env')
 
