@@ -146,11 +146,14 @@ class CircuitEnvTest_v7(gym.Env):
                 # 执行增加边的操作
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
-                if self.mem.get(act) is not None:
-                    score = self.mem.get(act)
+
+                tact = tuple(act)
+                if self.mem.get(tact) is not None:
+                    score = self.mem.get(tact)
                     self.mem_cnt += 1
                 else:
                     score = cu.get_circuit_score(self.circuit, self.adj)
+                    self.mem.insert(tact,score)
 
 
         if score is not None :
