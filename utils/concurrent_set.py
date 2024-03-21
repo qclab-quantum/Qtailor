@@ -22,16 +22,19 @@ class ConcurrentMap(metaclass=Singleton):
         self.hit =0
 
     def insert(self, key, value):
-        with self.lock:
-            self.map[key] = value
+        self.map[key] = value
 
     def get(self, key):
-        with self.lock:
-            self.visit += 1
-            v = self.map.get(key)
-            if v is not None:
-                self.hit += 1
-            return v
+        self.visit += 1
+        v = self.map.get(key)
+        if v is not None:
+            self.hit += 1
+        return v
+    def __sizeof__(self):
+        return len(self.map)
+
+    def __str__(self):
+        return str(self.map)
 
 if __name__ == '__main__':
     c = ConcurrentMap()
@@ -52,6 +55,7 @@ if __name__ == '__main__':
         c.insert(adj_list_str,1)
         c.get(adj_list_str)
     print(time.time()-start_time)
+    print(c)
 
 
 

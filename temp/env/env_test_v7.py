@@ -32,6 +32,7 @@ class CircuitEnvTest_v7(gym.Env):
         self.debug = kwargs.get('debug')
         self.mem = ConcurrentMap()
         self.mem_cnt = 0
+        self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         smd = SharedMemoryDict(name='tokens',size=1024)
@@ -43,7 +44,7 @@ class CircuitEnvTest_v7(gym.Env):
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
-        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums,2])
+        self.action_space = MultiDiscrete([self.qubit_nums , self.qubit_nums])
 
         self.max_step = 100
         self.max_edges=4
@@ -74,7 +75,8 @@ class CircuitEnvTest_v7(gym.Env):
         return self._get_obs(), info
 
     def step(self, action):
-        self.step_cnt+=1
+        self.step_cnt += 1
+        self.all_cnt += 1
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
@@ -84,8 +86,6 @@ class CircuitEnvTest_v7(gym.Env):
                 or reward == self.stop_thresh \
                 or self.step_cnt==self.max_step :
             terminated = True
-            print('self.memcnt = ',self.mem_cnt)
-
 
         return observation, reward, terminated,truncated, info
 
@@ -147,13 +147,13 @@ class CircuitEnvTest_v7(gym.Env):
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
 
-                tact = tuple(act)
-                if self.mem.get(tact) is not None:
-                    score = self.mem.get(tact)
+                if self.mem.get(tuple(act)) is not None:
+                    self.obs = gu.get_adj_matrix(self.graph)
+                    return reward, self._get_obs()
                     self.mem_cnt += 1
                 else:
                     score = cu.get_circuit_score(self.circuit, self.adj)
-                    self.mem.insert(tact,score)
+
 
 
         if score is not None :
@@ -170,7 +170,7 @@ class CircuitEnvTest_v7(gym.Env):
         else:
             reward = self.stop_thresh
 
-
+        self.mem.insert(tuple(act), reward)
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
@@ -185,6 +185,8 @@ class CircuitEnvTest_v7(gym.Env):
         return reward,self._get_obs()
 
     def _close_env(self):
+        print('mem=',self.mem)
+        print('all step =',self.all_cnt)
         logger.info('_close_env')
 
     #取矩阵的左下三角
