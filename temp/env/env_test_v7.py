@@ -26,7 +26,7 @@ simulator = AerSimulator()
 '''
 from utils.circuit_util import CircutUtil as cu
 warnings.filterwarnings("ignore")
-class CircuitEnvTest_v6(gym.Env):
+class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')

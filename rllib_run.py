@@ -16,6 +16,8 @@ from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
 from temp.env.env_test_v6 import CircuitEnvTest_v6
+from temp.env.env_test_v7 import CircuitEnvTest_v7
+
 from utils.benchmark import Benchmark
 
 from utils.file.csv_util import CSVUtil
@@ -42,7 +44,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v6)
+        .environment(env = CircuitEnvTest_v7)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   #,num_envs_per_worker=5
@@ -227,7 +229,7 @@ def test():
     new_csv(datetime_str)
 
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd['qasm'] = 'qnn/qnn_indep_qiskit_8.qasm'
+    smd['qasm'] = 'cumtom/10_20.qasm'
     try:
         test_result(checkpoint)
         smd.shm.close()
