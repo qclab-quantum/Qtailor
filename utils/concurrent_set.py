@@ -38,24 +38,12 @@ class ConcurrentMap(metaclass=Singleton):
 
 if __name__ == '__main__':
     c = ConcurrentMap()
-    g1 = GraphUtil.get_new_graph(3)
-    #g1.add_edge(0,1)
-    # g2=  GraphUtil.get_new_graph(3)
-    # g2.add_edge(0, 1)
-    # g3 = GraphUtil.get_new_graph(2)
-    # g4 = GraphUtil.get_new_graph(3)
-    # g5 = GraphUtil.get_new_graph(4)
-    start_time = time.time()
-    for i in range(10000):
-        adj_list=nx.to_dict_of_lists(g1)
-        print(adj_list)
-        adj_list_str = ''
-        for key, value in adj_list.items():
-            adj_list_str += f"{key}:{','.join(map(str, value))} "
-        c.insert(adj_list_str,1)
-        c.get(adj_list_str)
-    print(time.time()-start_time)
-    print(c)
+    d1=[1,2]
+    d3 = [1, 2]
+    d2=[1,2]
+    c.insert(tuple(d1),1)
+    c.insert(tuple(d2),2)
+    print(c.get(tuple(d3)))
 
 
 
