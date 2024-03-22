@@ -56,7 +56,8 @@ class CircuitEnvTest_v7(gym.Env):
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-        print('mem=',self.mem)
+        print('mem=',str(self.mem))
+        print('mem_id=',self.mem.get_id())
         print('mem_cnt=',self.mem_cnt)
         print('all step =',self.all_cnt)
         self.graph = gu.get_new_graph(self.qubit_nums)
@@ -148,10 +149,13 @@ class CircuitEnvTest_v7(gym.Env):
                 # 执行增加边的操作
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
-                if self.mem.get(tuple(act)) is not None:
+
+                reward = self.mem.get(tuple(act))
+                if reward is not None:
                     self.obs = gu.get_adj_matrix(self.graph)
                     return reward, self._get_obs()
                     self.mem_cnt += 1
+                    print('hit')
                 else:
                     score = cu.get_circuit_score(self.circuit, self.adj)
 
