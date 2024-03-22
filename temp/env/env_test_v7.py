@@ -13,7 +13,7 @@ from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
-from utils.concurrent_set import ConcurrentMap
+from utils.concurrent_set import  SingletonMap
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
@@ -30,7 +30,7 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self.mem = ConcurrentMap()
+        self.mem = SingletonMap()
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
@@ -56,7 +56,9 @@ class CircuitEnvTest_v7(gym.Env):
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-
+        print('mem=',self.mem)
+        print('mem_cnt=',self.mem_cnt)
+        print('all step =',self.all_cnt)
         self.graph = gu.get_new_graph(self.qubit_nums)
         self.adj = gu.get_adj_list(self.graph)
         self.obs = gu.get_adj_matrix(self.graph)
@@ -146,7 +148,6 @@ class CircuitEnvTest_v7(gym.Env):
                 # 执行增加边的操作
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
-
                 if self.mem.get(tuple(act)) is not None:
                     self.obs = gu.get_adj_matrix(self.graph)
                     return reward, self._get_obs()
@@ -185,9 +186,6 @@ class CircuitEnvTest_v7(gym.Env):
         return reward,self._get_obs()
 
     def _close_env(self):
-        print('mem=',self.mem)
-        print('mem_cnt=',self.mem_cnt)
-        print('all step =',self.all_cnt)
         logger.info('_close_env')
 
     #取矩阵的左下三角
