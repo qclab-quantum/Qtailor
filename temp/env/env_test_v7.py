@@ -17,6 +17,9 @@ from utils.concurrent_set import  SingletonMap
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
+
+from utils.reids import RedisThreadPool as redis
+
 os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
 from shared_memory_dict import SharedMemoryDict
@@ -30,7 +33,7 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self.mem = SingletonMap()
+        self._map = {}
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
@@ -56,8 +59,7 @@ class CircuitEnvTest_v7(gym.Env):
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-        print('mem=',str(self.mem))
-        print('mem_id=',self.mem.get_id())
+        print(f"mem_size={len(self._map)}")
         print('mem_cnt=',self.mem_cnt)
         print('all step =',self.all_cnt)
         self.graph = gu.get_new_graph(self.qubit_nums)
@@ -150,7 +152,7 @@ class CircuitEnvTest_v7(gym.Env):
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
 
-                reward = self.mem.get(tuple(act))
+                reward = self._map.get(str(act))
                 if reward is not None:
                     self.obs = gu.get_adj_matrix(self.graph)
                     return reward, self._get_obs()
@@ -175,7 +177,7 @@ class CircuitEnvTest_v7(gym.Env):
         else:
             reward = self.stop_thresh
 
-        self.mem.insert(tuple(act), reward)
+        self._map[str(act)] = reward
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
