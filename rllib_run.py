@@ -254,6 +254,7 @@ if __name__ == "__main__":
     #test()
     #test_checkpoint()
     smd = SharedMemoryDict(name='tokens', size=10240)
+    smd.clear()
     try:
         train()
     except Exception as e:
