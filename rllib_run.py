@@ -178,7 +178,6 @@ def test_result(checkpoint):
 
     smd.shm.close()
     smd.shm.unlink()
-    smd.cleanup()
     algo.stop()
 
 def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
@@ -257,10 +256,9 @@ if __name__ == "__main__":
     smd = SharedMemoryDict(name='tokens', size=10240)
     try:
         train()
+    except Exception as e:
         smd.shm.close()
         smd.shm.unlink()
-    except Exception as e:
-        print(e)
     finally:
         smd.shm.close()
         smd.shm.unlink()
