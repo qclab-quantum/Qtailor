@@ -116,7 +116,7 @@ class CircuitEnvTest_v7(gym.Env):
         return circuit
 
     def _get_rewards(self,act):
-
+        key = int(str(act[0]) + str(act[1]))
         if act[0]< act[1]:
             opt = 1
         elif act[0] > act[1]:
@@ -154,7 +154,8 @@ class CircuitEnvTest_v7(gym.Env):
                 self.graph.add_edge(act[0],act[1])
                 self.adj = gu.get_adj_list(self.graph)
 
-                reward = self._map.get(str(act[0])+ str(act[1]))
+
+                reward = self._map.get(key)
                 if reward is not None:
                     self.obs = gu.get_adj_matrix(self.graph)
                     return reward, self._get_obs()
@@ -179,7 +180,8 @@ class CircuitEnvTest_v7(gym.Env):
         else:
             reward = self.stop_thresh
 
-        self._map[str(act[0])+ str(act[1])] = reward
+        self._map[key] = reward
+        print(f"key: {key}, reward: {reward}")
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
