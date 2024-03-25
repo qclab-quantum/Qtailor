@@ -1,4 +1,5 @@
 import math
+import uuid
 
 import gymnasium as gym
 import numpy
@@ -33,7 +34,7 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self._map = {}
+        self._map =  SharedMemoryDict(name='env', size=10240)
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
@@ -62,6 +63,8 @@ class CircuitEnvTest_v7(gym.Env):
         print(f"mem_size={len(self._map)}")
         print('mem_cnt=',self.mem_cnt)
         print('all step =',self.all_cnt)
+        print('id=',self._map['id'])
+
         self.graph = gu.get_new_graph(self.qubit_nums)
         self.adj = gu.get_adj_list(self.graph)
         self.obs = gu.get_adj_matrix(self.graph)
