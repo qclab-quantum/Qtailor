@@ -63,7 +63,6 @@ class CircuitEnvTest_v7(gym.Env):
         print(f"mem_size={len(self._map)}")
         print('mem_cnt=',self.mem_cnt)
         print('all step =',self.all_cnt)
-        print('id=',self._map['id'])
 
         self.graph = gu.get_new_graph(self.qubit_nums)
         self.adj = gu.get_adj_list(self.graph)
