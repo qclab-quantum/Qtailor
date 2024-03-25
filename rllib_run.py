@@ -26,6 +26,8 @@ from utils.file.file_util import FileUtil
 from utils.graph_util import GraphUtil
 from io import StringIO
 
+from utils.reids import RedisThreadPool
+
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
@@ -122,7 +124,7 @@ def test_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
     env_id = "CircuitEnvTest-v"+str(args.env_version)
-    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd = SharedMemoryDict(name='tokens', size=10240)
     #smd['evaluate'] = True
    # smd['debug'] = True
 
@@ -176,6 +178,7 @@ def test_result(checkpoint):
 
     smd.shm.close()
     smd.shm.unlink()
+    smd.cleanup()
     algo.stop()
 
 def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
@@ -183,7 +186,7 @@ def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
     # sep =os.path.sep
     # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
     # FileUtil.write(path, content)
-    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd = SharedMemoryDict(name='tokens', size=10240)
     data = [datetime_str,smd['qasm'],rl, qiskit, mix,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
 
@@ -201,7 +204,7 @@ def train():
     for q in qasms:
 
         args.log_file_id = random.randint(1000, 9999)
-        smd = SharedMemoryDict(name='tokens', size=1024)
+        smd = SharedMemoryDict(name='tokens', size=10240)
         smd['qasm'] = q
 
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
@@ -223,12 +226,12 @@ def train():
             output.truncate(0)
             output.close()
 
-        time.sleep(1)
+            time.sleep(1)
 def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)
 
-    smd = SharedMemoryDict(name='tokens', size=1024)
+    smd = SharedMemoryDict(name='tokens', size=10240)
     smd['qasm'] = 'cumtom/10_20.qasm'
     try:
         test_result(checkpoint)
@@ -241,6 +244,8 @@ def test():
         smd.shm.unlink()
 
 if __name__ == "__main__":
+   # RedisThreadPool.initialize()
+    time.sleep(1)
     args = ConfigSingleton().get_config()
     set_logger()
     # 设置环境变量
@@ -249,7 +254,17 @@ if __name__ == "__main__":
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     #test()
     #test_checkpoint()
-    train()
+    smd = SharedMemoryDict(name='tokens', size=10240)
+    try:
+        train()
+        smd.shm.close()
+        smd.shm.unlink()
+    except Exception as e:
+        print(e)
+    finally:
+        smd.shm.close()
+        smd.shm.unlink()
+
 
 
 
