@@ -35,7 +35,7 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self._map =  SharedMemoryDict(name='tokens',size=10240)
+        self._map =  SharedMemoryDict(name='tokens',size=1024)
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，

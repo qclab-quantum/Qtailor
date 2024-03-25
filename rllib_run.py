@@ -124,7 +124,7 @@ def test_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
     env_id = "CircuitEnvTest-v"+str(args.env_version)
-    smd = SharedMemoryDict(name='tokens', size=10240)
+    smd = SharedMemoryDict(name='tokens', size=1024)
     #smd['evaluate'] = True
    # smd['debug'] = True
 
@@ -185,7 +185,7 @@ def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
     # sep =os.path.sep
     # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
     # FileUtil.write(path, content)
-    smd = SharedMemoryDict(name='tokens', size=10240)
+    smd = SharedMemoryDict(name='tokens', size=1024)
     data = [datetime_str,smd['qasm'],rl, qiskit, mix,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
 
@@ -203,7 +203,7 @@ def train():
     for q in qasms:
 
         args.log_file_id = random.randint(1000, 9999)
-        smd = SharedMemoryDict(name='tokens', size=10240)
+        smd = SharedMemoryDict(name='tokens', size=1024)
         smd['qasm'] = q
 
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
@@ -230,7 +230,7 @@ def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)
 
-    smd = SharedMemoryDict(name='tokens', size=10240)
+    smd = SharedMemoryDict(name='tokens', size=1024)
     smd['qasm'] = 'cumtom/10_20.qasm'
     try:
         test_result(checkpoint)
@@ -253,7 +253,7 @@ if __name__ == "__main__":
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     #test()
     #test_checkpoint()
-    smd = SharedMemoryDict(name='tokens', size=10240)
+    smd = SharedMemoryDict(name='tokens', size=1024)
     smd.clear()
     try:
         train()
