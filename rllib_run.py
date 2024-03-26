@@ -211,19 +211,19 @@ def train():
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
-        #with contextlib.redirect_stdout(output):
-        results = train_policy()
+        with contextlib.redirect_stdout(output):
+            results = train_policy()
 
-        strings = output.getvalue()
+            strings = output.getvalue()
 
-        FileUtil.write(text_path, strings)
-        tensorboard = parse_tensorboard(strings)
+            FileUtil.write(text_path, strings)
+            tensorboard = parse_tensorboard(strings)
 
-        checkpoint = results.get_best_result().checkpoint
-        test_result(checkpoint)
+            checkpoint = results.get_best_result().checkpoint
+            test_result(checkpoint)
 
-        output.truncate(0)
-        output.close()
+            output.truncate(0)
+            output.close()
 
         time.sleep(1)
 def test():

@@ -35,7 +35,7 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self._map =  SharedMemoryDict(name='env',size=1024)
+        self._map =  SingletonMap()
 
         self.mem_cnt = 0
         self.all_cnt=0
@@ -144,7 +144,7 @@ class CircuitEnvTest_v7(gym.Env):
                 self.obs = gu.get_adj_matrix(self.graph)
                 self.mem_cnt += 1
                 #forget
-                self._map[key] = None
+                self._map.insert(key, None)
                 return reward, self._get_obs()
             else:
                 #print(f'key{key} is None,map = {sorted(list(self._map.keys()))}')
@@ -167,7 +167,7 @@ class CircuitEnvTest_v7(gym.Env):
         else:
             reward = self.stop_thresh
 
-        self._map[key] = reward
+        self._map.insert(key, reward)
         #print(f" add key: {key}, with reward: {reward}")
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
