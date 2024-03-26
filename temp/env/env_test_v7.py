@@ -36,6 +36,7 @@ class CircuitEnvTest_v7(gym.Env):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
         self._map =  SharedMemoryDict(name='env',size=1024)
+
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
@@ -67,7 +68,6 @@ class CircuitEnvTest_v7(gym.Env):
         self.step_cnt = 0
         self.total_reward = 0
 
-
         # 上个动作获取到的score
         self.default_score = cu.get_circuit_score(self.circuit, self.adj)
         self.last_score = self.default_score
@@ -80,6 +80,9 @@ class CircuitEnvTest_v7(gym.Env):
     def step(self, action):
         self.step_cnt += 1
         self.all_cnt += 1
+        if self.all_cnt % 100 ==0:
+            print(f"hit rate = {self.mem_cnt/self.all_cnt}")
+
         reward,observation = self._get_rewards(action)
         info = self._get_info()
 
@@ -135,16 +138,17 @@ class CircuitEnvTest_v7(gym.Env):
             self.graph.add_edge(act[0], act[1])
             self.adj = gu.get_adj_list(self.graph)
 
-            time.sleep(1)
-            if key in self._map.keys():
+            reward = self._map.get(key)
+            if reward is not None:
                 reward = self._map.get(key)
                 self.obs = gu.get_adj_matrix(self.graph)
-                return reward, self._get_obs()
                 self.mem_cnt += 1
-                print(f'hit {key}')
+                #forget
+                self._map[key] = None
+                return reward, self._get_obs()
             else:
-                print(f'key{key} is None,map = {sorted(list(self._map.keys()))}')
-                print(key in self._map.keys())
+                #print(f'key{key} is None,map = {sorted(list(self._map.keys()))}')
+                #print(key in self._map.keys())
                 score = cu.get_circuit_score(self.circuit, self.adj)
 
 
@@ -164,7 +168,7 @@ class CircuitEnvTest_v7(gym.Env):
             reward = self.stop_thresh
 
         self._map[key] = reward
-        print(f" add key: {key}, with reward: {reward}")
+        #print(f" add key: {key}, with reward: {reward}")
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99
