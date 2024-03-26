@@ -1,4 +1,5 @@
 import math
+import time
 import uuid
 
 import gymnasium as gym
@@ -25,7 +26,6 @@ os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
 from shared_memory_dict import SharedMemoryDict
 simulator = AerSimulator()
-
 '''
 7 更新：使用memory 记忆action 对应的 reward
 '''
@@ -35,12 +35,12 @@ class CircuitEnvTest_v7(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
         args = ConfigSingleton().get_config()
         self.debug = kwargs.get('debug')
-        self._map =  SharedMemoryDict(name='tokens',size=1024)
+        self._map =  SharedMemoryDict(name='env',size=1024)
         self.mem_cnt = 0
         self.all_cnt=0
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
-        qasm = self._map['qasm']
+        qasm = SharedMemoryDict(name='tokens',size=1024).get('qasm')
         self.circuit = self.get_criruit(qasm)
 
         self.qubit_nums = len(self.circuit.qubits)
@@ -57,13 +57,9 @@ class CircuitEnvTest_v7(gym.Env):
     def _get_info(self):
         return {'info':'this is info'}
 
-    def reset(self, seed=None, options=None):
+    def reset(self, *, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-        print(f"mem_size={len(self._map)}")
-        print('mem_cnt=',self.mem_cnt)
-        print('all step =',self.all_cnt)
-
         self.graph = gu.get_new_graph(self.qubit_nums)
         self.adj = gu.get_adj_list(self.graph)
         self.obs = gu.get_adj_matrix(self.graph)
@@ -116,14 +112,11 @@ class CircuitEnvTest_v7(gym.Env):
         return circuit
 
     def _get_rewards(self,act):
+
         key = int(str(act[0]) + str(act[1]))
-        if act[0]< act[1]:
-            opt = 1
-        elif act[0] > act[1]:
-            opt = 0
-        else :
-            #act[0] == act[1]
-            return self.stop_thresh/10, self._get_obs()
+
+        if act[0] == act[1]:
+            return self.stop_thresh/5, self._get_obs()
 
         reward = self.stop_thresh
         #防止出现相同的动作（原地摇摆）
@@ -133,36 +126,26 @@ class CircuitEnvTest_v7(gym.Env):
             return self.stop_thresh/5, self._get_obs()
 
         score = None
-        #执行动作
-        if opt==1:
-            # 执行删除边的操作
-            if self.graph.has_edge(act[0], act[1]):
-                self.graph.remove_edge(act[0], act[1])
-                self.adj = gu.get_adj_list(self.graph)
-                score = cu.get_circuit_score(self.circuit, self.adj)
-            else:
-                #reward = self.stop_thresh
-                #要删除的边不存在，无法执行操作
-                return self.stop_thresh / 10, self._get_obs()
+        # 超出最大连通分量，无法执行操作
+        if len(self.graph.edges(act[0])) == self.max_edges or \
+                len(self.graph.edges(act[1])) == self.max_edges:
+            return self.stop_thresh, self._get_obs()
         else:
-            #超出最大连通分量，无法执行操作
-            if len(self.graph.edges(act[0]))== self.max_edges or \
-                    len(self.graph.edges(act[1]))== self.max_edges:
-                return self.stop_thresh , self._get_obs()
-            else:
-                # 执行增加边的操作
-                self.graph.add_edge(act[0],act[1])
-                self.adj = gu.get_adj_list(self.graph)
+            # 执行增加边的操作
+            self.graph.add_edge(act[0], act[1])
+            self.adj = gu.get_adj_list(self.graph)
 
-
+            time.sleep(1)
+            if key in self._map.keys():
                 reward = self._map.get(key)
-                if reward is not None:
-                    self.obs = gu.get_adj_matrix(self.graph)
-                    return reward, self._get_obs()
-                    self.mem_cnt += 1
-                    print('hit')
-                else:
-                    score = cu.get_circuit_score(self.circuit, self.adj)
+                self.obs = gu.get_adj_matrix(self.graph)
+                return reward, self._get_obs()
+                self.mem_cnt += 1
+                print(f'hit {key}')
+            else:
+                print(f'key{key} is None,map = {sorted(list(self._map.keys()))}')
+                print(key in self._map.keys())
+                score = cu.get_circuit_score(self.circuit, self.adj)
 
 
 
@@ -181,7 +164,7 @@ class CircuitEnvTest_v7(gym.Env):
             reward = self.stop_thresh
 
         self._map[key] = reward
-        print(f"key: {key}, reward: {reward}")
+        print(f" add key: {key}, with reward: {reward}")
         #每多走一步惩罚一次
         #reward = reward-(0.01 * self.step_cnt)
         self.total_reward*=0.99

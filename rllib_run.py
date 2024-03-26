@@ -49,7 +49,7 @@ def train_policy():
         .environment(env = CircuitEnvTest_v7)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
-                  #,num_envs_per_worker=5
+                  ,num_envs_per_worker=1
                   #,remote_worker_envs=True
                   )
         .resources(num_gpus=1)
@@ -211,21 +211,21 @@ def train():
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
-        with contextlib.redirect_stdout(output):
-            results = train_policy()
+        #with contextlib.redirect_stdout(output):
+        results = train_policy()
 
-            strings = output.getvalue()
+        strings = output.getvalue()
 
-            FileUtil.write(text_path, strings)
-            tensorboard = parse_tensorboard(strings)
+        FileUtil.write(text_path, strings)
+        tensorboard = parse_tensorboard(strings)
 
-            checkpoint = results.get_best_result().checkpoint
-            test_result(checkpoint)
+        checkpoint = results.get_best_result().checkpoint
+        test_result(checkpoint)
 
-            output.truncate(0)
-            output.close()
+        output.truncate(0)
+        output.close()
 
-            time.sleep(1)
+        time.sleep(1)
 def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)
@@ -254,6 +254,7 @@ if __name__ == "__main__":
     #test()
     #test_checkpoint()
     smd = SharedMemoryDict(name='tokens', size=1024)
+    smd = SharedMemoryDict(name='env', size=1024)
     smd.clear()
     try:
         train()
