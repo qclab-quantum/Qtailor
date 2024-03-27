@@ -1,61 +1,14 @@
-task: CircuitEnvTest-v5
-#task: CartPole-v1
-reward_threshold: 100
-seed: 1996
-buffer_size: 2048
-lr: 0.0001
-gamma: 0.99
-epoch: 300
-step_per_epoch: 1000
-step_per_collect: 1000
-repeat_per_collect: 20
-batch_size: 1024
-#hidden_sizes: [ 128,256,512,1024,512,512]
-hidden_sizes: [ 256,256]
-training_num: 2
-test_num: 5
-logdir: log
-render: 0.0
-device: cuda
 
-# ppo special
-vf_coef: 0.5
-ent_coef: 0.0
-eps_clip: 0.2
-max_grad_norm: 0.5
-gae_lambda: 0.95
-rew_norm: 0
-norm_adv: 0
-recompute_adv: 0
-dual_clip: null
-value_clip: 0
-actor_lr: 0.0001
-critic_lr: 0.0001
-tau: 0.005
-exploration_noise: 0.2
-max_epoch: 3
-n_step: 1024
 
-#rainbowDQN
-#num_atoms : 51
-#v_min: -10.0
-#v_max: 10.0
-#noisy_std: 0.1
-#target_update_freq: 32
-#prioritized_replay: True
-#beta_final: 1.0
-#beta: 0.4
-#resume: false
-#alpha: 0.6
-#update_per_step: 0.125
-#eps_test: 0.05
-#eps_train: 0.1
-
-env_version: 5
+env_version: 7
 
 #rllib ppo start
 ###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
-stop_iters: 3
+stop_iters: 100
+
+iters_arr:
+  - 2
+  - 3
 ##One call to env.step() is one timestep.
 stop_timesteps: 10000000
 
@@ -74,7 +27,7 @@ log_file_id: 0
 as_test: False
 
 #
-resume: False
+#resume: False
 checkpoint: None
 
 #the save path of check_point zip file
