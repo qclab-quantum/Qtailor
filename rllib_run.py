@@ -256,8 +256,13 @@ if __name__ == "__main__":
     smd = SharedMemoryDict(name='tokens', size=1024)
     smd = SharedMemoryDict(name='env', size=1024)
     smd.clear()
+
+    iters_arr = args.iters_arr
     try:
-        train()
+        for iter in iters_arr:
+            args.stop_iters = iter
+            train()
+            time.sleep(5)
     except Exception as e:
         smd.shm.close()
         smd.shm.unlink()
