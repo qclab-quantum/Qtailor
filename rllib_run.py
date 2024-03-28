@@ -191,23 +191,19 @@ def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
 
 
 def train():
-    global csv_path
     global datetime_str
     global text_path
     global tensorboard
-    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
     qasms = get_qasm()
-
     sep = '/'
 
     for q in qasms:
-
         args.log_file_id = random.randint(1000, 9999)
         smd = SharedMemoryDict(name='tokens', size=1024)
         smd['qasm'] = q
 
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
-        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q + '_' + datetime_str + '.txt'
+        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q +'_'+str(args.stop_iters)+ '_' + datetime_str + '.txt'
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
@@ -251,12 +247,8 @@ if __name__ == "__main__":
     #os.environ['TUNE_RESULT_DIR'] = 'd:/tensorboard'
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
-    #test()
-    #test_checkpoint()
     smd = SharedMemoryDict(name='tokens', size=1024)
-    smd = SharedMemoryDict(name='env', size=1024)
-    smd.clear()
-
+    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
     iters_arr = args.iters_arr
     try:
         for iter in iters_arr:
@@ -264,6 +256,7 @@ if __name__ == "__main__":
             train()
             time.sleep(5)
     except Exception as e:
+        print(e)
         smd.shm.close()
         smd.shm.unlink()
     finally:
