@@ -27,12 +27,10 @@ from utils.graph_util import GraphUtil
 from io import StringIO
 
 from utils.notice.email_notifier import Notifier
-from utils.reids import RedisThreadPool
+from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
 
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
-from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
-
 csv_path = ''
 text_path=''
 datetime_str =''
@@ -255,7 +253,7 @@ if __name__ == "__main__":
             args.stop_iters = iter
             train()
             time.sleep(5)
-            Notifier().on_experiment_finsh(subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
+        Notifier().on_experiment_finsh(subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
     except Exception as e:
         print(e)
         smd.shm.close()

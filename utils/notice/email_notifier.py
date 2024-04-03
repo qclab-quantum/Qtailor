@@ -38,7 +38,6 @@ class EmailNotifier:
             server.login(self.sender_email, self.password)
             text = msg.as_string()
             server.sendmail(self.sender_email, recipient_email, text)
-            print(f"邮件已发送至 {recipient_email}")
 
 def demo():
     SMTP_SERVER = "smtp.163.com"
