@@ -38,8 +38,7 @@ tensorboard=''
 args = None
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
-    ray.shutdown()
-    ray.init(num_gpus = 1,local_mode=args.local_mode)
+
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
@@ -116,7 +115,6 @@ def train_policy():
         #evaluate
         print("Training completed")
         return results
-
 
 def test_result(checkpoint):
 
@@ -249,7 +247,9 @@ if __name__ == "__main__":
     csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
     iters_arr = args.iters_arr
     try:
+        ray.init(num_gpus=1, local_mode=args.local_mode)
         for iter in iters_arr:
+            #print(f'training on iter {iter}')
             args.stop_iters = iter
             train()
             time.sleep(5)
