@@ -29,6 +29,9 @@ from io import StringIO
 from utils.notice.email_notifier import Notifier
 from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
 
+import logging
+logger = logging.getLogger('rllibRun')
+
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 csv_path = ''
@@ -255,7 +258,7 @@ if __name__ == "__main__":
             time.sleep(5)
         Notifier().on_experiment_finsh(subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
     except Exception as e:
-        print(e)
+        logger.error(str(e))
         smd.shm.close()
         smd.shm.unlink()
 
