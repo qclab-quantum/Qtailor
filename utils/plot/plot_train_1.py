@@ -9,8 +9,8 @@ import matplotlib.ticker as ticker
 
 
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 18
-line_width = 2.2
+mpl.rcParams['font.size'] = 12
+line_width = 2.0
 v6=[]
 v7=[]
 dpi = 500
@@ -42,8 +42,8 @@ def plot1():
     ax = axs[0][0]
     xv6,yv6,xv7,yv7 = get_data('mean_kl_loss',x_index = 'relative')
     # 创建折线图
-    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width)
-    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width)
+    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
+    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width, label='RR-PPO')
 
     # 设置y轴为对数刻度
     #ax.set_yscale('log',base=10)
@@ -59,6 +59,7 @@ def plot1():
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
+    ax.legend(loc='upper right',fontsize='medium')
 
 
 
@@ -67,8 +68,8 @@ def plot2():
     ax = axs[0][1]
     xv6,yv6,xv7,yv7 = get_data('total_loss',x_index = 'relative')
     # 创建折线图
-    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width)
-    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width)
+    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
+    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width, label='RR-PPO')
 
 
     y_min, y_max =  ax.get_ylim()
@@ -82,53 +83,60 @@ def plot2():
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
+    ax.legend(loc='upper right', fontsize='medium')
 
 # sample_steps
 ##The throughput of sampled environmental steps per second,
 def plot3():
     ax = axs[1][0]
-    xv6,yv6,xv7,yv7 = get_data('sample_steps',x_index = 'Step')
+    xv6,yv6,xv7,yv7 = get_data('sample_time_s',x_index = 'Step')
     # 创建折线图
-    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width)
-    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width)
+    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
+    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width, label='RR-PPO')
+    ax.set_ylim(bottom=85)
+    ax.set_ylim(top=190)
 
     y_min, y_max =  ax.get_ylim()
     #循环遍历 y 轴坐标值，为每个 y 坐标值添加参考线
-    for y_coord in np.arange(y_min, y_max, 3):
+    for y_coord in np.arange(y_min, y_max, 10):
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0 )
 
     #plt.title('amplitude_estimation')
-    ax.set_xlabel('Training Steps')
-    ax.set_ylabel('Throughput ( sample/sec )')
+    ax.set_xlabel('Steps')
+    ax.set_ylabel('Sample Time (s)')
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
 
     ax.xaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+    ax.legend(loc='upper right', fontsize='medium')
 
 #Time in seconds this iteration took to run
 def plot4():
     ax = axs[1][1]
-    xv6, yv6, xv7, yv7 = get_data('iter_secs', x_index='Step')
+    xv6, yv6, xv7, yv7 = get_data('train_iter_s', x_index='Step')
     # 创建折线图
-    ax.plot(xv6, yv6, color='#1565c0', linewidth=line_width)
-    ax.plot(xv7, yv7, color='#df6172', linewidth=line_width)
-
+    ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
+    ax.plot(xv7, yv7,color='#df6172',linewidth=line_width, label='RR-PPO')
+    ax.set_ylim(bottom=85)
+    ax.set_ylim(top=190)
     y_min, y_max = ax.get_ylim()
     # 循环遍历 y 轴坐标值，为每个 y 坐标值添加参考线
-    for y_coord in np.arange(y_min, y_max, 20):
+    for y_coord in np.arange(y_min, y_max, 10):
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0)
 
     # plt.title('amplitude_estimation')
-    ax.set_xlabel('Training Steps')
-    ax.set_ylabel('Time Cost ( seconds) ')
+    ax.set_xlabel('Steps')
+    ax.set_ylabel('Iteration Time (s) ')
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
 
     ax.xaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
     ax.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+    ax.legend(loc='upper right', fontsize='medium')
+
 if __name__ == '__main__':
     plot1()
     plot2()
