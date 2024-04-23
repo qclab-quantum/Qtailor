@@ -1,29 +1,29 @@
+import time
 import traceback
+from collections import OrderedDict
 
+import networkx as nx
 import numpy as np
 from qiskit import transpile
 from qiskit_aer import AerSimulator
 
-from utils.circuit_util import CircutUtil as cu
+from fidelity import circuit_fidelity_benchmark
+from utils.circuit_util import CircutUtil as cu, CircutUtil
 from utils.file.csv_util import CSVUtil
-from utils.graph_util import GraphUtil as gu
+from utils.graph_util import GraphUtil as gu, GraphUtil
 from utils.points_util import PointsUtil as pu
+from qiskit.converters import circuit_to_dag, dag_to_circuit
+#15*15 的点阵
+points  = [(x, y) for x in range(15) for y in range(15)]
 
-points = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9),
-          (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9),
-          (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9),
-          (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9),
-          (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 7), (4, 8), (4, 9),
-          (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9),
-          (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (6, 8), (6, 9),
-          (7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6), (7, 7), (7, 8), (7, 9),
-          (8, 0), (8, 1), (8, 2), (8, 3), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8), (8, 9),
-          (9, 0), (9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)]
+# points = [(0, 0), (0, 1), (0, 2), (0, 3),
+#           (1, 0), (1, 1), (1, 2), (1, 3),
+#           (2, 0), (2, 1), (2, 2), (2, 3),
+#           (3, 0), (3, 1), (3, 2), (3, 3)]
 class Benchmark():
 
     def __init__(self,qasm ):
         self.qasm = qasm
-
 
     @staticmethod
     def depth_benchmark(file_path,matrix:np.ndarray,qasm:str,is_draw=False):
@@ -69,22 +69,128 @@ class Benchmark():
         result.append(avr/repeat)
         return  result
 
-#用于测试模型运行后的结果
-def test_result(qasm,matrix = None, array = None):
-    #test rl and mix
-    if matrix is None:
-        matrix =gu.restore_from_1d_array(array)
-    res = gu.test_adj_matrix(matrix,qasm)
-    print(res)
-    mean = np.mean(res, axis=0)
-    rl = mean[0]
-    mix = mean[1]
-    qiskit = np.mean(Benchmark.get_qiskit_depth(qasm))
-    print('rl = %r,qiskit = %r , mix = %r:'%(rl,qiskit,mix))
+    @staticmethod
+    def get_qiskit_fidelity(qasm:str):
+        adj_list = pu.coordinate2adjacent(points)
+        circuit = cu.get_from_qasm(qasm)
+        fidelity = 0
+        for i in range(10):
+            fidelity += circuit_fidelity_benchmark(circuit=circuit,coupling_map=adj_list,type='qiskit')
+        return fidelity/10
+
+    @staticmethod
+    def get_fidelity(qasm:str,matrix):
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj_list = GraphUtil.get_adj_list(G)
+        init_layout = list(range(len(circuit.qubits)))
+        fidelity = 0
+        for i in range(10):
+            fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',initial_layout = init_layout)
+        return fidelity/10
+    #用于测试模型运行后的结果
+    @staticmethod
+    def test_result(qasm,matrix = None, array = None):
+        #test rl and mix
+        if matrix is None:
+            matrix =gu.restore_from_1d_array(array)
+        res = gu.test_adj_matrix(matrix,qasm)
+        print(res)
+        mean = np.mean(res, axis=0)
+        rl = mean[0]
+        mix = mean[1]
+        qiskit = np.mean(Benchmark.get_qiskit_depth(qasm))
+        print('rl = %r,qiskit = %r , mix = %r:'%(rl,qiskit,mix))
+
+    #比较保真度
+    @staticmethod
+    def test_fidelity(qasm,matrix = None, array = None):
+        if matrix is None:
+            matrix =gu.restore_from_1d_array(array)
+        #qiskit
+        f1= Benchmark.get_qiskit_fidelity(qasm)
+        #rl
+        f2= Benchmark.get_fidelity(qasm,matrix)
+        print(f"q_fidelity={f1}\nr_fidelity={f2}")
+
+
+    @staticmethod
+    def compare_gates(qasm,matrix = None, array = None,bits=0):
+        data = [qasm]
+        circuit = cu.get_from_qasm(qasm)
+        simulator = AerSimulator()
+        qt = transpile(circuits=circuit, coupling_map=pu.coordinate2adjacent(points), optimization_level=3, backend=simulator)
+        qt = remove_idle_qwires(qt)
+        #qt.decompose().draw('mpl').show()
+        qiskit_opts = qt.decompose().count_ops()
+        depth = qt.decompose().depth()
+        #print(sorted(qiskit_opts.items()))
+
+        gates_cnt= sum(qiskit_opts.values())
+        q_idle_rate= (1-gates_cnt/(bits*depth)).__round__(4)
+        data.append(gates_cnt)
+        data.append(depth)
+        data.append(q_idle_rate)
+        print(f'qiskit_depth={depth}, q_idle_rate = {q_idle_rate}')
+        ###################
+
+        if matrix is None:
+            matrix =gu.restore_from_1d_array(array)
+        circuit = cu.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if matrix[i][j] == 1:
+                    G.add_edge(i, j)
+        layout = list(range(len(circuit.qubits)))
+        rt = transpile(circuits=circuit, coupling_map=GraphUtil.get_adj_list(G), initial_layout=layout, optimization_level=3, backend=simulator)
+        #rt.decompose().draw('mpl').show()
+        rl_opts = rt.decompose().count_ops()
+        depth = rt.decompose().depth()
+        gates_cnt = sum(rl_opts.values())
+        r_idle_rate = (1 - (gates_cnt / (bits * depth))).__round__(4)
+
+        data.append(gates_cnt)
+        data.append(depth)
+        data.append(r_idle_rate)
+        print(f'rl_depth={depth},r_idle_rate = {r_idle_rate}')
+
+        #write data
+        CSVUtil.append_data(r'D:\workspace\data\benchmark\idle_reate.csv',[data])
+
+def remove_idle_qwires(circ):
+    dag = circuit_to_dag(circ)
+
+    idle_wires = list(dag.idle_wires())
+    for w in idle_wires:
+        dag._remove_idle_wire(w)
+        dag.qubits.remove(w)
+
+    dag.qregs = OrderedDict()
+    return dag_to_circuit(dag)
 
 if __name__ == '__main__':
-    array  = \
-        [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    array  =[1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+
+
+
+
 
     # matrix = [[0, 1, 0, 0, 1, 0, 1, 1],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
@@ -94,7 +200,8 @@ if __name__ == '__main__':
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'su2/su2random_indep_qiskit_14.qasm'
-    test_result(matrix = None,array=array,qasm=qasm)
-
+    qasm = 'amplitude_estimation/ae_indep_qiskit_30.qasm'
+    #Benchmark.test_result(matrix = None,array=array,qasm=qasm)
+    #Benchmark.test_fidelity(qasm,array=array,matrix=None)
     #print(Benchmark.get_qiskit_depth('random/random_indep_qiskit_14.qasm'))
+    Benchmark.compare_gates(qasm=qasm,array=array,bits = 30)
