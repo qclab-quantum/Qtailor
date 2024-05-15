@@ -4,7 +4,7 @@ import numpy as np
 import re
 from utils.file.excel_util import ExcelUtil
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 12
+mpl.rcParams['font.size'] = 14
 #9个柱状图
 
 data={}
@@ -19,7 +19,7 @@ for sheet in sheets:
     circuits = df['circuit']
     # 从字符串中提取出该线路的比特数量 qnn/qnn_indep_qiskit_5.qasm-> 5
     labels = list(map(lambda x: ''.join(re.findall(r'\d', x)), circuits))
-    print(labels)
+    #print(labels)
     labels_2d.append(labels)
     rl = df['rl']
     qiskit = df['qiskit']
@@ -39,10 +39,22 @@ fig, axes = plt.subplots(3, 3, figsize=(15, 10))  # figsize可以根据需要调
 
 plt.subplots_adjust(hspace=0.4,wspace = 0.2)
 # 遍历数据和子图网格，绘制柱状图
+cnt = 0
+all = 0
 for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 计算子图的行和列索引
     row = i // 3
     col = i % 3
+
+    g1=group1.values
+    g2 = group2.values
+    res = 1-(g1/g2)
+    for v in res:
+        all+=1
+        if v> 0.2:
+            cnt+=1
+        print(v)
+    #print(1-(g1/g2))
 
     # 获取当前子图的axes对象
     ax = axes[row, col]
@@ -51,25 +63,26 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     ax.bar(index, group1,  bar_width,color = '#5370c4',label=f'{group_name} 1',hatch='-', edgecolor='black')
 
     # 绘制第二组数据的柱状图
-    ax.bar(index + bar_width, group2, bar_width,color = '#f16569', label=f'{group_name} 2',hatch='.', edgecolor='black')
-    ax.bar(index + bar_width*2, group3, bar_width,color = '#95c978', label=f'{group_name} 3',hatch='//', edgecolor='black')
+    ax.bar(index + bar_width, group2, bar_width,color = '#f16569', label=f'{group_name} 2',hatch='/', edgecolor='black')
+    #ax.bar(index + bar_width*2, group3, bar_width,color = '#95c978', label=f'{group_name} 3',hatch='//', edgecolor='black')
 
     # 添加图例
-    ax.legend(['Reinforce','Qiskit','Mix'], loc='upper left')
+    ax.legend(['Qtailor','Qiskit'], loc='upper left')
 
     # 设置横轴的标签
     ax.set_xticks(index + bar_width / 1)
     ax.set_xticklabels(labels_2d[i])
     if i % 3 ==0:
-        ax.set_ylabel('Depth')
+        ax.set_ylabel('Depth', fontsize = 16)
     if i in range(6,9):
-        ax.set_xlabel('bits')
+        ax.set_xlabel('Qubits' ,fontsize = 16)
     # 设置图表的标题
     ax.set_title(f'{group_name}')
     # 显示背景网格
     ax.grid(True, which='both', axis='y', linestyle='--', linewidth=0.5)
+print(cnt/all)
 # 调整子图之间的间距
-#plt.tight_layout()
-plt.savefig('fig2.png',dpi=300)
+plt.tight_layout()
+plt.savefig('benchmarkBar.png',dpi=300)
 # 显示图表
 plt.show()

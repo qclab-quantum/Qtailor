@@ -15,8 +15,7 @@ from ray.tune.registry import get_trainable_cls
 from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
-from temp.env.env_test_v6 import CircuitEnvTest_v6
-from temp.env.env_test_v7 import CircuitEnvTest_v7
+from core.env.env_test_v7 import CircuitEnvTest_v7
 
 from utils.benchmark import Benchmark
 

@@ -21,7 +21,7 @@ class ExcelUtil:
         #print(data['qnn'])
         return  sheet_names,data
 
-if __name__ == '__main__':
+def demo():
     # get data
     sheets,dfs = ExcelUtil.read_by_sheet('d:/temp.xlsx')
     # pharse data
@@ -35,3 +35,6 @@ if __name__ == '__main__':
         rl = df['rl']
         qiskit = df['qiskit']
         mix= df['mix']
+
+if __name__ == '__main__':
+    pass

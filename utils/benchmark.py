@@ -60,8 +60,8 @@ class Benchmark():
         avr = 0
         for i in range(repeat):
             try:
-                ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=3,backend=simulator)
-                d = ct.decompose().depth()
+                ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=1,backend=simulator)
+                d = ct.depth()
                 avr += d
                 result.append(d)
             except Exception as e:
@@ -136,12 +136,12 @@ class Benchmark():
         depth = qt.decompose().depth()
         #print(sorted(qiskit_opts.items()))
 
-        gates_cnt= sum(qiskit_opts.values())
-        q_idle_rate= (1-gates_cnt/(bits*depth)).__round__(4)
-        data.append(gates_cnt)
+        qgates_cnt= sum(qiskit_opts.values())
+        q_idle_rate= (1-qgates_cnt/(bits*depth)).__round__(4)
+        data.append(qgates_cnt)
         data.append(depth)
         data.append(q_idle_rate)
-        print(f'qiskit_depth={depth}, q_idle_rate = {q_idle_rate}')
+        print(f'qiskit gates = {qgates_cnt},qiskit_depth={depth}, q_idle_rate = {q_idle_rate}')
         ###################
 
         if matrix is None:
@@ -168,11 +168,13 @@ class Benchmark():
         data.append(gates_cnt)
         data.append(depth)
         data.append(r_idle_rate)
-        print(f'rl_depth={depth},r_idle_rate = {r_idle_rate}')
+        print(f'rl gates = {gates_cnt}rl_depth={depth},r_idle_rate = {r_idle_rate}')
 
         #write data
-        CSVUtil.append_data(r'D:\workspace\data\benchmark\idle_reate.csv',[data])
-
+        #CSVUtil.append_data(r'D:\workspace\data\benchmark\idle_reate.csv',[data])
+        improvement = ((q_idle_rate-r_idle_rate)/q_idle_rate).__round__(4)*100
+        improvement = improvement.__round__(2)
+        print(f'& {data[1]} & {data[2]} & {data[3]}  & {data[4]}  & {data[5]}  & {data[6]}  & {improvement} $\downarrow$ ')
 def remove_idle_qwires(circ):
     dag = circuit_to_dag(circ)
 
@@ -185,23 +187,20 @@ def remove_idle_qwires(circ):
     return dag_to_circuit(dag)
 
 if __name__ == '__main__':
-    array  =[1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    array  =[1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
 
 
-
-
-
-
-    # matrix = [[0, 1, 0, 0, 1, 0, 1, 1],
-    #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [0, 0, 1, 0, 1, 1, 0, 1],
     #    [1, 0, 1, 1, 0, 1, 0, 0],
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'amplitude_estimation/ae_indep_qiskit_30.qasm'
-    #Benchmark.test_result(matrix = None,array=array,qasm=qasm)
+    qasm = 'real_amp/realamprandom_indep_qiskit_9qasm'
+    # start_time = time.time()
+    # for i in range(3):
+    #     Benchmark.test_result(matrix = None,array=array,qasm=qasm)
+    # print(time.time() - start_time)
     #Benchmark.test_fidelity(qasm,array=array,matrix=None)
     #print(Benchmark.get_qiskit_depth('random/random_indep_qiskit_14.qasm'))
-    Benchmark.compare_gates(qasm=qasm,array=array,bits = 30)
+    Benchmark.compare_gates(qasm=qasm,array=array,bits = 10)

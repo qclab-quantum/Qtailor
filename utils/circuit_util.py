@@ -40,10 +40,12 @@ class CircutUtil:
             return None
 
     @staticmethod
-    #获取操作数量之和（包括所有类型） #1W 次compiled_circuit.decompose().depth() 在 笔记本上大概需要 50s
-    def ops_cnt(circuit:QuantumCircuit,adj:list,initial_layout: list):
+
+    def get_gates(circuit:QuantumCircuit,adj:list,initial_layout: list):
         try:
-            compiled_circuit = transpile(circuits=circuit, coupling_map=adj, initial_layout=initial_layout,
+            compiled_circuit = transpile(circuits=circuit,
+                                         coupling_map=adj,
+                                         initial_layout=initial_layout,
                                          backend=simulator)
             ops = compiled_circuit.count_ops()
             return  sum(ops.values())
@@ -107,7 +109,7 @@ def generate_random_integer(n, mean, std=1):
     #print(final_array)
     return final_array
 
-
+#生成随机线路
 def generate_circuit(n,p):
     circuit = QuantumCircuit(n)
     random_array = generate_random_integer(n=(p*n),mean=(n/2))
@@ -122,10 +124,11 @@ def generate_circuit(n,p):
 
     file_path = os.path.join(FileUtil.get_root_dir(),'benchmark','custom',str(n)+'_'+str(p * n)+'.qasm')
     print('\''+'custom/',str(n)+'_'+str(p * n)+'.qasm'+'\',')
-    #FileUtil.write(file_path, circuit.qasm())
+    FileUtil.write(file_path, circuit.qasm())
+
 
 if __name__ == '__main__':
     #CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
-    for i in [10,20,30,40,50]:
-        for j in [2,3,4,5,6]:
+    for i in [50,60,70,80,90,100]:
+        for j in [10]:
             generate_circuit(i,j)

@@ -4,7 +4,8 @@ import os
 
 from utils.file.file_util import FileUtil
 
-
+sep = '/'
+rootdir = FileUtil.get_root_dir()
 class CSVUtil:
     @staticmethod
     def write_data(file_path, data):
@@ -34,6 +35,20 @@ class CSVUtil:
                 data.append(row)
         return data
 
+    @staticmethod
+    def to_dataframe(abs_path=None, relative_path=None):
+        import pandas as pd
+        path=''
+        if  abs_path:
+            path=abs_path
+        else :
+            path=rootdir+sep+relative_path
+
+        df = pd.read_csv(path)
+        # Display the dataframe
+        return  df
+
+
 def test():
     # 写入数据
     data = [['Name', 'Age'], ['Alice', 25], ['Bob', 30]]
@@ -57,4 +72,5 @@ def demo():
     print(csv_path)
     CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'remark', 'checkpoint'] ])
 if __name__ == '__main__':
-    pass
+
+    CSVUtil.to_dataframe(relative_path=r'data/train_demo/ae40/env6.csv')

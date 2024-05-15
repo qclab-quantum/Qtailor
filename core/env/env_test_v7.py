@@ -1,26 +1,24 @@
 import math
-import time
-import uuid
+import datetime
 
 import gymnasium as gym
 import numpy
 import numpy as np
 
-import qiskit
 from gymnasium import spaces, register
 from gymnasium.spaces import MultiBinary, MultiDiscrete,Discrete
 from gymnasium.spaces.utils import flatten_space
-from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from loguru import logger
 import warnings
 
 from utils.concurrent_set import  SingletonMap
+from utils.file.csv_util import CSVUtil
+from utils.file.file_util import FileUtil
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
 
-from utils.reids import RedisThreadPool as redis
 
 os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
@@ -39,6 +37,7 @@ class CircuitEnvTest_v7(gym.Env):
 
         self.mem_cnt = 0
         self.all_cnt=0
+        self.hit_rate=[]
         # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         qasm = SharedMemoryDict(name='tokens',size=1024).get('qasm')
@@ -80,8 +79,9 @@ class CircuitEnvTest_v7(gym.Env):
     def step(self, action):
         self.step_cnt += 1
         self.all_cnt += 1
-        if self.all_cnt % 100 ==0:
-            print(f"hit rate = {self.mem_cnt/self.all_cnt}")
+        # print(self.all_cnt)
+        # if self.all_cnt % 2 == 0:
+        #     self.hit_rate.append([self.step_cnt,round(self.mem_cnt/self.all_cnt,2)])
 
         reward,observation = self._get_rewards(action)
         info = self._get_info()
@@ -182,8 +182,17 @@ class CircuitEnvTest_v7(gym.Env):
 
         return reward,self._get_obs()
 
+    def log_hit_rate(self):
+        current_datetime = datetime.datetime.now()
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H-%M')
+        rootdir = FileUtil.get_root_dir()
+        sep = '/'
+        csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + formatted_datetime +'hit_rate' + '.csv'
+        print(self.hit_rate)
+        CSVUtil.write_data(csv_path, self.hit_rate)
     def _close_env(self):
         logger.info('_close_env')
+        self.log_hit_rate()
 
     #取矩阵的左下三角
 

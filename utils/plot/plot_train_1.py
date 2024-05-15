@@ -9,7 +9,8 @@ import matplotlib.ticker as ticker
 
 
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 12
+mpl.rcParams['font.size'] = 16
+label_size = 16
 line_width = 2.0
 v6=[]
 v7=[]
@@ -34,7 +35,7 @@ def get_data(folder,x_index):
 
     return xv6,yv6,xv7,yv7
 
-# 创建一个3x1的子图
+# 创建一个2x1的子图
 fig, axs = plt.subplots(2, 2, figsize=(12, 8))
 
 #mean kl loss
@@ -54,8 +55,8 @@ def plot1():
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0 )
 
     #plt.title('amplitude_estimation')
-    ax.set_xlabel('Training Time')
-    ax.set_ylabel('KL Loss')
+    ax.set_xlabel('Training Time',fontsize = label_size)
+    ax.set_ylabel('KL Loss',fontsize = label_size)
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
@@ -78,8 +79,8 @@ def plot2():
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0 )
 
     #plt.title('amplitude_estimation')
-    ax.set_xlabel('Training Time')
-    ax.set_ylabel('Total Loss')
+    ax.set_xlabel('Training Time',fontsize = label_size)
+    ax.set_ylabel('Total Loss',fontsize = label_size)
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
@@ -102,8 +103,8 @@ def plot3():
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0 )
 
     #plt.title('amplitude_estimation')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Sample Time (s)')
+    ax.set_xlabel('Steps',fontsize = label_size)
+    ax.set_ylabel('Sample Time (s)',fontsize = label_size)
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
@@ -127,8 +128,8 @@ def plot4():
         ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0)
 
     # plt.title('amplitude_estimation')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Iteration Time (s) ')
+    ax.set_xlabel('Steps',fontsize = label_size)
+    ax.set_ylabel('Iteration Time (s) ',fontsize = label_size)
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
