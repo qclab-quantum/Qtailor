@@ -1,4 +1,4 @@
-AI-Powered Algorithm-Centric Quantum Processor Topology Design
+**AI-Powered Algorithm-Centric Quantum Processor Topology Design**
 
 We are excited to share that our code, associated with our study, is now accessible for everyone. 
 
