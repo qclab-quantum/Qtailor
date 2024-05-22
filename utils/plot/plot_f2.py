@@ -72,11 +72,11 @@ for i in range(len(y)):
 
 
 # Set axis labels
-ax.set_xlabel('Qubits')
-ax.set_ylabel('Gates (Qubits * N)')
-ax.set_zlabel('Depth')
+ax.set_xlabel('Qubits Number')
+ax.set_ylabel('Gates Factor')
+ax.set_zlabel('Circuits Depth')
 ax.legend()
 # 添加图例
-plt.savefig('trend.png',dpi=450)
+plt.savefig('trend.png',dpi=600)
 plt.show()
 

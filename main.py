@@ -1,7 +1,6 @@
-import math
-
 import numpy as np
-
+x = [10,15,20,25,30,35,40]
+y = [2,3,4,5,6]
 z1 = np.array([
 [11,	23,	    29,	  37, 40],
 [25.9,	46.2,	47.9,	63.8,	81.7],
@@ -22,6 +21,11 @@ z2=np.array([
 [86.8,	150.9	,194.3,	255.1,	280.8,],
 ])
 
-result = np.divide(z1,z2)
+av1=0
+av2=0
+for i in range(7):
+    av1=(z1[i][4])
+    av2=(z2[i][4])
+    print((1-av1/av2).__round__(4))
 
-print(result.min(), result.max())
+

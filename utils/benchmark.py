@@ -187,7 +187,7 @@ def remove_idle_qwires(circ):
     return dag_to_circuit(dag)
 
 if __name__ == '__main__':
-    array  =[1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
+    array  = [1, 1, 1, 1, 1, 1, 1, 0, 1, 1]
 
 
     #    [0, 1, 0, 1, 1, 0, 1, 0],
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'real_amp/realamprandom_indep_qiskit_9qasm'
+    qasm = 'portfolio_vqe/portfoliovqe_indep_qiskit_5.qasm'
     # start_time = time.time()
     # for i in range(3):
     #     Benchmark.test_result(matrix = None,array=array,qasm=qasm)
