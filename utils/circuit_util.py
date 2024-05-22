@@ -30,7 +30,7 @@ class CircutUtil:
             for i in range(3):
                 cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
                 #avr += cc.size() * 0.5 + cc.depth()*0.5
-                avr += cc.depth()
+                avr += cc.decompose().depth()
 
             #取平均值
             return avr/3

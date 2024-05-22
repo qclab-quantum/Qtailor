@@ -1,0 +1,1323 @@
+╭────────────────────────────────────────────────────────────╮
+│ Configuration for experiment     PPO_2024-01-16_22-24-44   │
+├────────────────────────────────────────────────────────────┤
+│ Search algorithm                 BasicVariantGenerator     │
+│ Scheduler                        FIFOScheduler             │
+│ Number of trials                 1                         │
+╰────────────────────────────────────────────────────────────╯
+
+View detailed results here: /home/lit/ray_results/PPO_2024-01-16_22-24-44
+To visualize your results with TensorBoard, run: `tensorboard --logdir /home/lit/ray_results/PPO_2024-01-16_22-24-44`
+
+Trial status: 1 PENDING
+Current time: 2024-01-16 22:24:44. Total running time: 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭──────────────────────────────────────────────╮
+│ Trial name                          status   │
+├──────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   PENDING  │
+╰──────────────────────────────────────────────╯
+
+Trial PPO_CircuitEnvTest_v5_fe473_00000 started with configuration:
+╭───────────────────────────────────────────────────────────────────────────╮
+│ Trial PPO_CircuitEnvTest_v5_fe473_00000 config                            │
+├───────────────────────────────────────────────────────────────────────────┤
+│ _AlgorithmConfig__prior_exploration_config/type        StochasticSampling │
+│ _disable_action_flattening                                          False │
+│ _disable_execution_plan_api                                          True │
+│ _disable_initialize_loss_from_dummy_batch                           False │
+│ _disable_preprocessor_api                                           False │
+│ _enable_learner_api                                                  True │
+│ _enable_rl_module_api                                                True │
+│ _fake_gpus                                                          False │
+│ _is_atari                                                                 │
+│ _learner_class                                                            │
+│ _tf_policy_handles_more_than_one_loss                               False │
+│ action_mask_key                                               action_mask │
+│ action_space                                                              │
+│ actions_in_input_normalized                                         False │
+│ always_attach_evaluation_results                                    False │
+│ auto_wrap_old_gym_envs                                               True │
+│ batch_mode                                              truncate_episodes │
+│ callbacks                                            ...efaultCallbacks'> │
+│ checkpoint_trainable_policies_only                                  False │
+│ clip_actions                                                        False │
+│ clip_param                                                            0.3 │
+│ clip_rewards                                                              │
+│ compress_observations                                               False │
+│ count_steps_by                                                  env_steps │
+│ create_env_on_driver                                                False │
+│ custom_eval_function                                                      │
+│ delay_between_worker_restarts_s                                       60. │
+│ disable_env_checking                                                False │
+│ eager_max_retraces                                                     20 │
+│ eager_tracing                                                        True │
+│ enable_async_evaluation                                             False │
+│ enable_connectors                                                    True │
+│ enable_tf1_exec_eagerly                                             False │
+│ entropy_coeff                                                          0. │
+│ entropy_coeff_schedule                                                    │
+│ env                                                  ...rcuitEnvTest_v5'> │
+│ env_runner_cls                                                            │
+│ env_task_fn                                                               │
+│ evaluation_config                                                         │
+│ evaluation_duration                                                    10 │
+│ evaluation_duration_unit                                         episodes │
+│ evaluation_interval                                                       │
+│ evaluation_num_workers                                                  0 │
+│ evaluation_parallel_to_training                                     False │
+│ evaluation_sample_timeout_s                                          180. │
+│ explore                                                              True │
+│ export_native_model_files                                           False │
+│ fake_sampler                                                        False │
+│ framework                                                           torch │
+│ gamma                                                                0.99 │
+│ grad_clip                                                                 │
+│ grad_clip_by                                                  global_norm │
+│ ignore_worker_failures                                              False │
+│ in_evaluation                                                       False │
+│ input                                                             sampler │
+│ keep_per_episode_custom_metrics                                     False │
+│ kl_coeff                                                              0.2 │
+│ kl_target                                                            0.01 │
+│ lambda                                                                 1. │
+│ local_gpu_idx                                                           0 │
+│ local_tf_session_args/inter_op_parallelism_threads                      8 │
+│ local_tf_session_args/intra_op_parallelism_threads                      8 │
+│ log_level                                                            WARN │
+│ log_sys_usage                                                        True │
+│ logger_config                                                             │
+│ logger_creator                                                            │
+│ lr                                                                0.00005 │
+│ lr_schedule                                                               │
+│ max_num_worker_restarts                                              1000 │
+│ max_requests_in_flight_per_sampler_worker                               2 │
+│ metrics_episode_collection_timeout_s                                  60. │
+│ metrics_num_episodes_for_smoothing                                    100 │
+│ min_sample_timesteps_per_iteration                                      0 │
+│ min_time_s_per_iteration                                                  │
+│ min_train_timesteps_per_iteration                                       0 │
+│ model/_disable_action_flattening                                    False │
+│ model/_disable_preprocessor_api                                     False │
+│ model/_time_major                                                   False │
+│ model/_use_default_native_models                                       -1 │
+│ model/always_check_shapes                                           False │
+│ model/attention_dim                                                    64 │
+│ model/attention_head_dim                                               32 │
+│ model/attention_init_gru_gate_bias                                    2.0 │
+│ model/attention_memory_inference                                       50 │
+│ model/attention_memory_training                                        50 │
+│ model/attention_num_heads                                               1 │
+│ model/attention_num_transformer_units                                   1 │
+│ model/attention_position_wise_mlp_dim                                  32 │
+│ model/attention_use_n_prev_actions                                      0 │
+│ model/attention_use_n_prev_rewards                                      0 │
+│ model/conv_activation                                                relu │
+│ model/conv_filters                                                        │
+│ model/custom_action_dist                                                  │
+│ model/custom_model                                                        │
+│ model/custom_preprocessor                                                 │
+│ model/dim                                                              84 │
+│ model/encoder_latent_dim                                                  │
+│ model/fcnet_activation                                               tanh │
+│ model/fcnet_hiddens                                            [256, 256] │
+│ model/framestack                                                     True │
+│ model/free_log_std                                                  False │
+│ model/grayscale                                                     False │
+│ model/lstm_cell_size                                                  256 │
+│ model/lstm_use_prev_action                                          False │
+│ model/lstm_use_prev_action_reward                                      -1 │
+│ model/lstm_use_prev_reward                                          False │
+│ model/max_seq_len                                                      20 │
+│ model/no_final_linear                                               False │
+│ model/post_fcnet_activation                                          relu │
+│ model/post_fcnet_hiddens                                               [] │
+│ model/use_attention                                                 False │
+│ model/use_lstm                                                      False │
+│ model/vf_share_layers                                               False │
+│ model/zero_mean                                                      True │
+│ normalize_actions                                                    True │
+│ num_consecutive_worker_failures_tolerance                             100 │
+│ num_cpus_for_driver                                                     1 │
+│ num_cpus_per_learner_worker                                             1 │
+│ num_cpus_per_worker                                                     1 │
+│ num_envs_per_worker                                                     1 │
+│ num_gpus                                                                1 │
+│ num_gpus_per_learner_worker                                             0 │
+│ num_gpus_per_worker                                                     0 │
+│ num_learner_workers                                                     0 │
+│ num_sgd_iter                                                           30 │
+│ num_workers                                                            70 │
+│ observation_filter                                               NoFilter │
+│ observation_fn                                                            │
+│ observation_space                                                         │
+│ offline_sampling                                                    False │
+│ ope_split_batch_by_episode                                           True │
+│ output                                                                    │
+│ output_compress_columns                                ['obs', 'new_obs'] │
+│ output_max_file_size                                             67108864 │
+│ placement_strategy                                                   PACK │
+│ policies/default_policy                              ...None, None, None) │
+│ policies_to_train                                                         │
+│ policy_map_cache                                                       -1 │
+│ policy_map_capacity                                                   100 │
+│ policy_mapping_fn                                    ...t 0x7fea79250550> │
+│ policy_states_are_swappable                                         False │
+│ postprocess_inputs                                                  False │
+│ preprocessor_pref                                                deepmind │
+│ recreate_failed_workers                                             False │
+│ remote_env_batch_wait_ms                                                0 │
+│ remote_worker_envs                                                  False │
+│ render_env                                                          False │
+│ replay_sequence_length                                                    │
+│ restart_failed_sub_environments                                     False │
+│ rl_module_spec                                                            │
+│ rollout_fragment_length                                              auto │
+│ sample_async                                                        False │
+│ sample_collector                                     ...leListCollector'> │
+│ sampler_perf_stats_ema_coef                                               │
+│ seed                                                                      │
+│ sgd_minibatch_size                                                    128 │
+│ shuffle_buffer_size                                                     0 │
+│ shuffle_sequences                                                    True │
+│ simple_optimizer                                                       -1 │
+│ sync_filters_on_rollout_workers_timeout_s                             60. │
+│ synchronize_filters                                                    -1 │
+│ tf_session_args/allow_soft_placement                                 True │
+│ tf_session_args/device_count/CPU                                        1 │
+│ tf_session_args/gpu_options/allow_growth                             True │
+│ tf_session_args/inter_op_parallelism_threads                            2 │
+│ tf_session_args/intra_op_parallelism_threads                            2 │
+│ tf_session_args/log_device_placement                                False │
+│ torch_compile_learner                                               False │
+│ torch_compile_learner_dynamo_backend                             inductor │
+│ torch_compile_learner_dynamo_mode                                         │
+│ torch_compile_learner_what_to_compile                ...ile.FORWARD_TRAIN │
+│ torch_compile_worker                                                False │
+│ torch_compile_worker_dynamo_backend                                onnxrt │
+│ torch_compile_worker_dynamo_mode                                          │
+│ train_batch_size                                                     4000 │
+│ update_worker_filter_stats                                           True │
+│ use_critic                                                           True │
+│ use_gae                                                              True │
+│ use_kl_loss                                                          True │
+│ use_worker_filter_stats                                              True │
+│ validate_workers_after_construction                                  True │
+│ vf_clip_param                                                         10. │
+│ vf_loss_coeff                                                          1. │
+│ vf_share_layers                                                        -1 │
+│ worker_cls                                                             -1 │
+│ worker_health_probe_timeout_s                                          60 │
+│ worker_restore_timeout_s                                             1800 │
+╰───────────────────────────────────────────────────────────────────────────╯
+
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:25:14. Total running time: 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)     ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING         1             10.839   4000   -0.70372               0.194099               -4.15523                4.211                    891 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:25:44. Total running time: 1min 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING         4            46.2345   16000   -0.113987               0.183066                   -2.4               1.8557                   2176 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:26:14. Total running time: 1min 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts       reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING         6            71.9689   24000   -0.0626103               0.187769                   -2.4              1.50731                   2667 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:26:44. Total running time: 2min 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts       reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING         8            97.9305   32000   -0.0217244               0.224151               -2.29255              1.30689                   3063 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:27:14. Total running time: 2min 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts         reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        11            137.902   44000   -0.000150405               0.194099                     -2              1.21002                   3295 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:27:44. Total running time: 3min 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts       reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        13            164.738   52000   0.00176975               0.195294                     -2              1.26817                   3151 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:28:14. Total running time: 3min 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        15            191.956   60000   0.0114462               0.224151                     -2              1.32097                   3019 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:28:44. Total running time: 4min 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        17            218.909   68000   0.0234059               0.224151               -2.00964              1.48315                   2701 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:29:14. Total running time: 4min 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        20            259.254   80000   0.0583947               0.246605              -0.339787              1.85741                   2153 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:29:44. Total running time: 5min 0s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        22            286.241   88000   0.080543               0.246605               -1.87649              2.05946                   1934 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:30:14. Total running time: 5min 30s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)      ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        24             313.21   96000   0.100668               0.246605               -1.94527              2.11699                   1889 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:30:45. Total running time: 6min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        26            340.258   104000   0.122201               0.246605              -0.370381              2.21551                   1805 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:31:15. Total running time: 6min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        28            367.479   112000   0.132941               0.246605               -1.85747              2.25056                   1784 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:31:45. Total running time: 7min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        31            407.896   124000   0.152646               0.246605              -0.263037              2.29696                   1741 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:32:15. Total running time: 7min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        33            434.785   132000    0.16529               0.246605               -1.91366              2.40589                   1663 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:32:45. Total running time: 8min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        35            461.764   140000   0.177789               0.246605              -0.227947              2.51982                   1589 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:33:15. Total running time: 8min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        37             488.93   148000   0.186662               0.246605                -1.9028              2.64811                   1509 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:33:45. Total running time: 9min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        39            515.833   156000   0.196286               0.246605              -0.230449              2.82569                   1417 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:34:15. Total running time: 9min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        42            556.315   168000   0.207582               0.246605              -0.164631              2.95044                   1352 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:34:45. Total running time: 10min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        44            583.512   176000   0.213944               0.246605              -0.222003              3.00676                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:35:15. Total running time: 10min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        46            610.536   184000   0.222607               0.246605               0.143685              3.00676                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:35:45. Total running time: 11min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        48            637.374   192000   0.224725               0.246605               -1.83894              3.00225                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:36:15. Total running time: 11min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        51             677.82   204000    0.22825               0.246605              -0.153395              3.01437                   1322 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:36:45. Total running time: 12min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        53            704.875   212000   0.227792               0.246605               -1.76463              3.01053                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:37:15. Total running time: 12min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        55            732.113   220000   0.229419               0.246605               0.200141              3.00301                   1328 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:37:45. Total running time: 13min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        57            759.336   228000    0.22619               0.246605               -1.82232              3.00751                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:38:15. Total running time: 13min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        59            786.186   236000   0.215375               0.246605              -0.575849              3.03799                   1316 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:38:45. Total running time: 14min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        62            826.608   248000   0.228171               0.246605                -1.7534              3.00152                   1317 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:39:15. Total running time: 14min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        64            852.966   256000   0.0554209               0.246605               -2.18705              3.43621                   1160 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:39:45. Total running time: 15min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        66            879.848   264000   0.224691               0.246605              -0.187047              3.01581                   1328 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:40:15. Total running time: 15min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        68             906.48   272000   0.203545               0.258497               -1.97585              3.07515                   1304 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:40:45. Total running time: 16min 1s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        71            946.814   284000   0.221974               0.246605               -1.77585              3.01884                   1327 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:41:16. Total running time: 16min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        73            973.718   292000   0.228892               0.246605              0.0241511              3.00978                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:41:46. Total running time: 17min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        75            1000.71   300000   0.227809               0.246605               -1.77585               3.0015                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:42:16. Total running time: 17min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        77            1027.74   308000   0.229279               0.246605              0.0466046              3.00376                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:42:46. Total running time: 18min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        79            1055.03   316000   0.229752               0.246605              0.0466046              3.00225                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:43:16. Total running time: 18min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        82            1095.51   328000   -0.088706               0.246605               -2.17585              3.07524                   1276 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:43:46. Total running time: 19min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        84            1122.64   336000   0.207529               0.246605               -1.78705               3.0075                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:44:16. Total running time: 19min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        86            1149.69   344000   0.224241               0.246605               -1.78705              3.00527                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:44:46. Total running time: 20min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        88            1176.78   352000   0.229152               0.246605              -0.175849              3.00376                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:45:16. Total running time: 20min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        91            1217.09   364000   0.188666               0.246605               -1.77585              3.38814                   1180 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:45:46. Total running time: 21min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        93            1244.08   372000   0.182616               0.258497                -1.9199              3.23987                   1234 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:46:16. Total running time: 21min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        95            1271.31   380000   0.206537               0.264505               -1.77585              3.09491                   1296 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:46:46. Total running time: 22min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        97            1298.56   388000   0.222612               0.258497               -1.78705              3.05356                   1307 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:47:16. Total running time: 22min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING        99            1326.08   396000    0.22584                0.25253               -1.83146              3.04037                   1313 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:47:46. Total running time: 23min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       102            1367.05   408000   0.229227               0.246605              0.0861475              3.03023                   1323 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:48:16. Total running time: 23min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       104               1394   416000   0.142477               0.246605               -2.63514              3.05721                   1311 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:48:46. Total running time: 24min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       106            1421.54   424000   0.229738               0.246605              0.0241511              3.00904                   1328 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:49:16. Total running time: 24min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       108             1448.9   432000   0.226103               0.246605               -1.83894                3.006                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:49:46. Total running time: 25min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       110            1476.57   440000   0.230191               0.246605               0.212953               3.0015                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:50:16. Total running time: 25min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       112            1503.96   448000   0.229697               0.246605               0.212953              3.00075                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:50:46. Total running time: 26min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       115            1545.32   460000   0.229314               0.246605               0.212953                    3                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:51:16. Total running time: 26min 32s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       117            1572.46   468000   0.221132               0.246605              -0.975849               3.1251                   1279 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:51:46. Total running time: 27min 2s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       119            1600.42   476000   0.227642               0.246605              0.0550007               2.9657                   1341 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:52:17. Total running time: 27min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       121             1627.8   484000   0.0353726               0.246605               -2.16463              3.13699                   1241 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:52:47. Total running time: 28min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       123            1655.13   492000   0.208098               0.246605               -1.78705              3.01355                   1328 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:53:17. Total running time: 28min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       126            1696.12   504000   0.228183               0.246605               -1.76463              3.00075                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:53:47. Total running time: 29min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       128            1723.32   512000   0.188772               0.246605               -2.17527              3.37744                   1179 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:54:17. Total running time: 29min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       130            1750.97   520000     0.1832               0.247215               -2.26397              3.16706                   1263 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:54:47. Total running time: 30min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       132             1778.6   528000    0.21894               0.246605               -1.77585              3.05103                   1313 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:55:17. Total running time: 30min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       134             1806.2   536000   0.227575               0.246605              0.0129529              3.01508                   1326 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:55:47. Total running time: 31min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       136            1833.88   544000   0.228989               0.246605              0.0353689              3.01201                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:56:17. Total running time: 31min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       139            1875.25   556000   0.220724               0.246605              -0.210941              3.03028                   1321 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:56:47. Total running time: 32min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       141            1902.66   564000   0.226942               0.246605               -1.77585              3.01737                   1324 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:57:17. Total running time: 32min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       143            1930.28   572000   0.229072               0.246605               0.161061              3.00828                   1328 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:57:47. Total running time: 33min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       145            1957.58   580000   0.207178               0.246605                     -2              3.05412                   1312 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:58:17. Total running time: 33min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       147            1985.34   588000    0.22943               0.246605               0.131282              3.01508                   1326 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:58:47. Total running time: 34min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       150            2026.68   600000   0.229545               0.246605              0.0353689              3.00451                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:59:17. Total running time: 34min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       152            2054.29   608000   0.229764               0.246605               0.212953              3.00374                   1336 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 22:59:47. Total running time: 35min 3s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       154            2081.87   616000   0.229661               0.246605              0.0241511               3.0015                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:00:17. Total running time: 35min 33s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       156             2109.6   624000   0.230002               0.246605               0.212953               3.0015                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:00:48. Total running time: 36min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       158            2136.65   632000   0.154117               0.246605              -0.587047              3.40734                   1171 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:01:18. Total running time: 36min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       160            2164.38   640000   0.228722               0.246605              0.0129529              3.00827                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:01:48. Total running time: 37min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       163             2205.9   652000   0.229282               0.246605              0.0353689                    3                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:02:18. Total running time: 37min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       165            2233.81   660000   0.229807               0.246605               0.212953                    3                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:02:48. Total running time: 38min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       167            2261.36   668000   0.223914               0.246605              -0.587047              3.12383                   1284 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:03:18. Total running time: 38min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts       reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       169            2288.03   676000   -0.0248232               0.246605               -2.77585              3.32804                   1070 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:03:48. Total running time: 39min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       171            2315.51   684000   0.182697               0.246605               -2.17585              3.07834                   1302 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:04:18. Total running time: 39min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       173            2343.09   692000   0.222583               0.246605               -1.78705              3.01203                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:04:48. Total running time: 40min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       176            2384.71   704000   0.229275               0.246605              0.0353689              3.01129                   1329 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:05:18. Total running time: 40min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       178            2412.16   712000   0.229128               0.246605              -0.175849               3.0045                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:05:48. Total running time: 41min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       180            2439.74   720000   0.229448               0.246605               0.212953              3.00526                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:06:18. Total running time: 41min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       182            2467.33   728000   0.228097               0.246605               -1.76463              3.00225                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:06:48. Total running time: 42min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       185            2506.12   740000   0.0983287               0.246605               -1.16463              3.66209                   1092 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:07:18. Total running time: 42min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       187            2533.73   748000   0.228096               0.246605              -0.175849              3.00977                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:07:48. Total running time: 43min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       189             2561.2   756000   0.0911326               0.246605               -1.96463              3.04179                   1316 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:08:18. Total running time: 43min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       191            2588.89   764000   0.217262               0.246605               -1.77585              3.00451                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:08:48. Total running time: 44min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       193            2616.46   772000   0.224926               0.246605               -1.78705              3.00225                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:09:19. Total running time: 44min 34s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       195            2644.44   780000   0.230089               0.246605               0.212953                    3                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:09:49. Total running time: 45min 4s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       198            2685.92   792000   0.187485               0.246605               -1.37488              3.35294                   1190 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:10:19. Total running time: 45min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       200            2713.28   800000   0.186642               0.246605               -1.77585              3.41202                   1165 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:10:49. Total running time: 46min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       202            2740.16   808000   0.159149               0.246605              -0.987047              3.46114                   1145 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:11:19. Total running time: 46min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       204            2767.45   816000   0.226771               0.246605              -0.164631              3.03558                   1321 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:11:49. Total running time: 47min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       206               2795   824000   0.229431               0.246605              -0.164631              3.02269                   1322 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:12:19. Total running time: 47min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       208            2822.86   832000    0.16471               0.246605               -2.83514              3.14826                   1268 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:12:49. Total running time: 48min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       211            2864.37   844000   0.229099               0.246605              -0.334687               3.0075                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:13:19. Total running time: 48min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       213            2892.14   852000     0.2301               0.246605              0.0814178               3.0015                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:13:49. Total running time: 49min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       215             2919.7   860000   0.229574               0.246605               0.183066              3.00301                   1330 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:14:19. Total running time: 49min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       217            2947.63   868000   0.229804               0.246605               0.103524               3.0015                   1335 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:14:49. Total running time: 50min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       219            2975.12   876000   0.229975               0.246605               0.212953                    3                   1332 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:15:19. Total running time: 50min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       221            3002.72   884000    0.22805               0.246605               -1.77585                    3                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:15:49. Total running time: 51min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       224            3044.45   896000   0.229647               0.246605               0.212953                    3                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:16:19. Total running time: 51min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       226            3071.98   904000   0.229546               0.246605               0.212953                    3                   1334 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:16:49. Total running time: 52min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       228             3099.6   912000   0.228071               0.246605               -1.76463               3.0015                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:17:19. Total running time: 52min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       230            3126.29   920000   0.135408               0.246605               -1.57585              3.47295                   1146 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:17:49. Total running time: 53min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       232            3152.88   928000   0.203503               0.246605              -0.564631              3.12229                   1292 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:18:19. Total running time: 53min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       235            3194.06   940000   0.229369               0.246605              -0.175849              3.01811                   1325 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:18:49. Total running time: 54min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       237            3221.69   948000   0.229803               0.246605               0.212953               3.0015                   1331 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:19:19. Total running time: 54min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       239            3249.54   956000   0.230278               0.246605               0.212953               3.0015                   1335 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:19:49. Total running time: 55min 5s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       241            3276.43   964000   0.210262               0.246605               -1.87983              3.10388                   1290 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:20:20. Total running time: 55min 35s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       243            3304.13   972000   0.227647               0.246605              -0.130629              3.02268                   1323 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:20:50. Total running time: 56min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       245            3331.89   980000   0.230065               0.246605              0.0241511              3.00375                   1333 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:21:20. Total running time: 56min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)       ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       248            3373.09   992000   0.181582               0.246605                -2.1653              3.41774                   1161 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:21:50. Total running time: 57min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts      reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       250            3400.82   1000000   0.0597166               0.246605                 -2.546              2.84196                   1411 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:22:20. Total running time: 57min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       252            3428.41   1008000   0.213713               0.246605              0.0466046              2.72702                   1458 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:22:50. Total running time: 58min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       254            3456.11   1016000   0.225044               0.246605              0.0353689               2.9404                   1359 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:23:20. Total running time: 58min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       256            3483.88   1024000    0.22836               0.246605              0.0129529              2.99177                   1337 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:23:50. Total running time: 59min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       258             3511.6   1032000   0.229332               0.246605              -0.153395              3.02039                   1324 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:24:20. Total running time: 59min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       261            3552.88   1044000   0.139282               0.246605               -2.62939              3.12363                   1278 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:24:50. Total running time: 1hr 0min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       263            3580.36   1052000   0.175057               0.246605                -1.7534              3.41645                   1167 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:25:20. Total running time: 1hr 0min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       265            3607.61   1060000   0.224595               0.246605              -0.564631              3.14096                   1277 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:25:50. Total running time: 1hr 1min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       267             3635.1   1068000   0.229367               0.246605              -0.175849               3.0635                   1307 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:26:20. Total running time: 1hr 1min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       269            3662.68   1076000   0.229296               0.246605              -0.175849              3.02721                   1323 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:26:50. Total running time: 1hr 2min 6s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       272            3704.13   1088000   0.223256               0.246605               -7.90859               3.0317                   1325 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:27:20. Total running time: 1hr 2min 36s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       274             3731.8   1096000   0.229807               0.246605               0.212953              3.00225                   1332 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:27:51. Total running time: 1hr 3min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       276            3759.38   1104000    0.23029               0.246605               0.212953              3.00225                   1333 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:28:21. Total running time: 1hr 3min 37s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       278             3787.3   1112000   0.230144               0.246605               0.212953               3.0015                   1334 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:28:51. Total running time: 1hr 4min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       280            3813.93   1120000   0.202706               0.264505              -0.726325              3.15669                   1270 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:29:21. Total running time: 1hr 4min 37s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       282            3841.49   1128000   0.229312               0.246605              0.0129529              3.00978                   1329 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:29:51. Total running time: 1hr 5min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       285            3883.06   1140000   0.221979               0.246605               -3.01369              3.01433                   1326 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:30:21. Total running time: 1hr 5min 37s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       287            3910.82   1148000   0.229791               0.246605               0.196724               3.0015                   1334 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:30:51. Total running time: 1hr 6min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       289            3938.24   1156000   0.229227               0.246605               0.212953                    3                   1334 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:31:21. Total running time: 1hr 6min 37s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       291            3965.81   1164000   0.229051               0.246605              0.0353689              3.00226                   1330 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:31:51. Total running time: 1hr 7min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       293            3993.26   1172000    0.18284               0.246605               -1.76463              3.41509                   1166 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:32:21. Total running time: 1hr 7min 37s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts       reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       296            4033.47   1184000   -0.0424403               0.246605               -5.63246              3.30291                   1030 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2024-01-16 23:32:51. Total running time: 1hr 8min 7s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   RUNNING       298            4060.73   1192000   0.201304               0.246605               -14.5833              3.06093                   1313 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Trial PPO_CircuitEnvTest_v5_fe473_00000 completed after 300 iterations at 2024-01-16 23:33:15. Total running time: 1hr 8min 31s
+╭─────────────────────────────────────────────────────────────╮
+│ Trial PPO_CircuitEnvTest_v5_fe473_00000 result              │
+├─────────────────────────────────────────────────────────────┤
+│ episodes_total                                       426318 │
+│ num_env_steps_sampled                               1.2e+06 │
+│ num_env_steps_trained                                     0 │
+│ sampler_results/episode_len_mean                    3.02035 │
+│ sampler_results/episode_reward_mean                0.221314 │
+╰─────────────────────────────────────────────────────────────╯
+
+Trial status: 1 TERMINATED
+Current time: 2024-01-16 23:33:15. Total running time: 1hr 8min 31s
+Logical resource usage: 71.0/112 CPUs, 0/1 GPUs (0.0/1.0 accelerator_type:A100)
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status         iter     total time (s)        ts     reward     episode_reward_max     episode_reward_min     episode_len_mean     episodes_this_iter │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ PPO_CircuitEnvTest_v5_fe473_00000   TERMINATED      300            4088.37   1200000   0.221314               0.246605               -1.77585              3.02035                   1327 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Training completed

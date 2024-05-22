@@ -82,7 +82,7 @@ def new_csv(time_str):
 
 def get_qasm():
     qasm = [
-       'qft\\qft_indep_qiskit_10.qasm',
+       'qft\\qft_indep_qiskit_5.qasm',
     ]
     return qasm
 
