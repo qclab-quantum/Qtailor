@@ -16,7 +16,7 @@ class SingletonMap(metaclass=SingletonMapMeta):
         self._lock = threading.Lock()
         self._map = {}
         self.uuid = str(uuid.uuid4())
-        print('init singleton_map with id', self.uuid)
+        #print('init singleton_map with id', self.uuid)
 
     def insert(self, key, value):
         with self._lock:

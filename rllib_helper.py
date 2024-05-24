@@ -6,6 +6,7 @@ from datetime import datetime
 from ray.tune import ResultGrid
 from ray.tune.logger import UnifiedLogger
 
+from config import ConfigSingleton
 from utils.file.csv_util import CSVUtil
 from utils.file.file_util import FileUtil
 
@@ -80,10 +81,9 @@ def new_csv(time_str):
     CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit','mix', 'result', 'iter','checkpoint','remark', ]])
     return  csv_path
 
-def get_qasm():
-    qasm = [
-       'qft\\qft_indep_qiskit_5.qasm',
-    ]
+#get circuits for training
+def get_circuits():
+    qasm = ConfigSingleton().get_config().circuits
     return qasm
 
 def parse_tensorboard(content):
