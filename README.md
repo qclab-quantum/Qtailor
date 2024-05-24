@@ -117,3 +117,8 @@ if __name__ == '__main__':
 ![](./data/fig/ae1.png) 
 
 > Topology recommend for 40-bit Amplitude_Estimation circuits by RR-PPO model and a gird like layout for this topology.
+
+## Acknowledgment
+Our implementation is based on 
+
+[Ray RLlib](https://github.com/ray-project/ray/tree/master/rllib) and [Pytorch]()
