@@ -26,11 +26,11 @@ from utils.graph_util import GraphUtil
 from io import StringIO
 
 from utils.notice.email_notifier import Notifier
-from rllib_helper import set_logger, new_csv, get_qasm, parse_tensorboard
+from rllib_helper import set_logger, new_csv, parse_tensorboard, get_circuits
 
 import logging
-logger = logging.getLogger('rllibRun')
 
+logger = logging.getLogger('rllibRun')
 tf1, tf, tfv = try_import_tf()
 torch, nn = try_import_torch()
 csv_path = ''
@@ -40,7 +40,6 @@ tensorboard=''
 args = None
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
-
     # Can also register the env creator function explicitly with:
     # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
@@ -187,14 +186,12 @@ def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
     data = [datetime_str,smd['qasm'],rl, qiskit, mix,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
 
-
 def train():
     global datetime_str
     global text_path
     global tensorboard
-    qasms = get_qasm()
+    qasms = get_circuits()
     sep = '/'
-
     for q in qasms:
         args.log_file_id = random.randint(1000, 9999)
         smd = SharedMemoryDict(name='tokens', size=1024)
@@ -223,7 +220,6 @@ def train():
 def test():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
     new_csv(datetime_str)
-
     smd = SharedMemoryDict(name='tokens', size=1024)
     smd['qasm'] = 'cumtom/10_20.qasm'
     try:
@@ -255,7 +251,7 @@ if __name__ == "__main__":
             args.stop_iters = iter
             train()
             time.sleep(5)
-        Notifier().on_experiment_finsh(subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
+        Notifier().on_experiment_finsh(email='904715458@qq.com',subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
     except Exception as e:
         logger.error(str(e))
         smd.shm.close()

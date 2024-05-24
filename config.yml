@@ -1,5 +1,4 @@
 
-
 env_version: 7
 
 #rllib ppo start
@@ -8,7 +7,9 @@ stop_iters: 0
 
 iters_arr:
   - 2
-
+# relative path of  store in benchmark folder
+circuits:
+  - qft\\qft_indep_qiskit_5.qasm
 ##One call to env.step() is one timestep.
 stop_timesteps: 10000000
 
@@ -18,7 +19,7 @@ no_tune: False
 local_mode: False
 framework: torch
 run: PPO
-num_rollout_workers: 2
+num_rollout_workers: 4
 checkpoint_frequency: 10
 checkpoint_at_end: True
 rllib_lr: 1e-3
@@ -26,13 +27,11 @@ qasm: None
 log_file_id: 0
 as_test: False
 
-#
 #resume: False
 checkpoint: None
 
 #the save path of check_point zip file
 check_point_zip_path: None
-
 
 debug: False
 #rllib ppo end

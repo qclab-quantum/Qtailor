@@ -192,9 +192,7 @@ class CircuitEnvTest_v7(gym.Env):
         CSVUtil.write_data(csv_path, self.hit_rate)
     def _close_env(self):
         logger.info('_close_env')
-        self.log_hit_rate()
-
-    #取矩阵的左下三角
+        #self.log_hit_rate()
 
 
 if __name__ == '__main__':
