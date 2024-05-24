@@ -13,7 +13,7 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 <hr/>
 
-![](./assets/intro2.png)
+![](./temp/intro2.png)
 
 > Our study employs Reinforcement Learning model to suggest an topology that aligns with the circuit’s characteristics under the limitations imposed by restricted connectivity. Subsequently, qubits are mapped in a sequential manner instead of a complex mapping algorithms. Our approach yields a suggested topology and mapped circuit onto this proposed topology.
 
