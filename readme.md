@@ -2,6 +2,8 @@
 # AI-Powered Algorithm-Centric Quantum Processor Topology Design
 
 This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***
+>If you have any questions or need further information, please feel free to contact me or add a Issue to this repository.
+
 
 ![Overview](./temp/overview.png)
 
@@ -9,15 +11,23 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 We recommend **Anaconda** as Python environment manager
 
- Install Pytorch on Linux:
+For Linux , you can  install Pytorch  by run:
 
 ```setup
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
 
-Guide of install Pytorch on windows or with GPU  is available at [Pytorch Get Started](https://pytorch.org/get-started/locally/)
+Guide of install Pytorch on **Windows** or with GPU  is available at [Pytorch Get Started](https://pytorch.org/get-started/locally/)
 
-To install requirements:
+## Get started
+
+1. download code
+
+```
+git clone https://github.com/qclab-quantum/Qtailor.git
+```
+
+2. install requirements:
 
 ```setup
 pip install -r requirements.txt
@@ -44,21 +54,20 @@ num_rollout_workers: 4
 
 ## Training
 
-To train the model(s) in the paper, run this command:
+To train the model, run this command:
 
 ```train
 python rllib_run.py
 ```
 
->📋  When training complete the training result will be automatically saved in benchmark/a-result/xxx.csv
->
->The column 'rl' means the depth of mapped circuits results from our method, the column 'results'  results represents the lower left corner of the matrix , as we mention in **Section 2.1 (line 92)**
+>📋  When training complete the training result will be automatically saved in **benchmark/a-result/xxx.csv**.
+> The column **'rl'** means the depth of mapped circuits results from our method, the column 'results'  results represents the lower left corner of the matrix , as we mention in **Section 2.1 (line 92)**
 
 ## Evaluation
 
 To evaluate the result,
 
-1. open utils/benchmark.py  and modify the main function
+1. Open utils/benchmark.py  and modify the main function
 
 ```python
 if __name__ == '__main__':
@@ -70,7 +79,7 @@ if __name__ == '__main__':
     Benchmark.compare_gates(qasm=qasm,array=array,bits = 10)
 ```
 
-2. replace the existing values with those retrieved from the CSV file.
+2. Replace the existing values with those retrieved from the **benchmark/a-result/xxx.csv**. the csv file looks like:
 
 ![](./temp/readme2.png)
 
@@ -78,7 +87,7 @@ if __name__ == '__main__':
 
 
 
-3. run the main Function in your editor , or  run:
+3. Run the main Function in your editor , or  run:
 
    ```shell
    python utils/benchmark.py
