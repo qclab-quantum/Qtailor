@@ -1,11 +1,21 @@
-
 # AI-Powered Algorithm-Centric Quantum Processor Topology Design
 
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***
->If you have any questions or need further information, please feel free to contact me or add a Issue to this repository.
+
+
+## Introction
+
+This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact me(qclab_quantum@163.com) .
 
 
 ![Overview](./temp/overview.png)
+
+> *Overview architecture and workflow of OurProposed RR-PPO:  (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $M_{ij} = 1$ indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action ($a$), that determines  build an connection between which two qubits. (3) The action is then applied to the current topology. (4)}The action a is used as a key to query the reward ($r$) from memory, which stores pairs of $<a,r>$. If the action is found in memory, the corresponding reward  will be directly provided to the agent, else, an evaluation involving circuit transpilation and depth calculation is performed. The reward function then computes the reward based on the circuit depth, and this reward is subsequently stored in memory as pairs of $<a,r>$​​. (5) The agent receives the reward and continuation to the subsequent iteration.*
+
+<hr/>
+
+![](./assets/intro2.png)
+
+> Our study employs Reinforcement Learning model to suggest an topology that aligns with the circuit’s characteristics under the limitations imposed by restricted connectivity. Subsequently, qubits are mapped in a sequential manner instead of a complex mapping algorithms. Our approach yields a suggested topology and mapped circuit onto this proposed topology.
 
 ## Requirements
 
@@ -97,6 +107,13 @@ if __name__ == '__main__':
 
 ## Results
 
-Our model achieves the following performance on circuits depth :
-
 ![](./data/fig/benchmarkBar.png)
+
+>A comparative evaluation involving QTailor and Qiskit. The x-axis represents the circuit size quantified by the number of qubits, while the y-axis denotes the circuit depth after the mapping
+>process:
+
+<hr>
+
+![](./data/fig/ae1.png) 
+
+> Topology recommend for 40-bit Amplitude_Estimation circuits by RR-PPO model and a gird like layout for this topology.
