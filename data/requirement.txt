@@ -7,14 +7,14 @@ pylatexenc
 wandb
 pyyaml
 munch
-wandb
 pyvis
 dm_tree
 scikit-image
 lz4
 tensorboard
 gputil
-shutil
-zipfile
 seaborn
 shared-memory-dict
+gymnasium
+ray[rllib]
+

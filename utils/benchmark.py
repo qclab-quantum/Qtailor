@@ -133,7 +133,7 @@ class Benchmark():
         qt = remove_idle_qwires(qt)
         #qt.decompose().draw('mpl').show()
         qiskit_opts = qt.decompose().count_ops()
-        depth = qt.decompose().depth()
+        depth = qt.depth()
         #print(sorted(qiskit_opts.items()))
 
         qgates_cnt= sum(qiskit_opts.values())
@@ -161,7 +161,7 @@ class Benchmark():
         rt = transpile(circuits=circuit, coupling_map=GraphUtil.get_adj_list(G), initial_layout=layout, optimization_level=3, backend=simulator)
         #rt.decompose().draw('mpl').show()
         rl_opts = rt.decompose().count_ops()
-        depth = rt.decompose().depth()
+        depth = rt.depth()
         gates_cnt = sum(rl_opts.values())
         r_idle_rate = (1 - (gates_cnt / (bits * depth))).__round__(4)
 
@@ -187,7 +187,9 @@ def remove_idle_qwires(circ):
     return dag_to_circuit(dag)
 
 if __name__ == '__main__':
-    array  =[1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
+    array  = [1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1]
+
+        #[1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1]
 
 
     #    [0, 1, 0, 1, 1, 0, 1, 0],
@@ -196,7 +198,7 @@ if __name__ == '__main__':
     #    [0, 1, 0, 1, 1, 0, 1, 0],
     #    [1, 0, 1, 0, 0, 1, 0, 1],
     #    [1, 1, 0, 1, 0, 0, 1, 0]]
-    qasm = 'real_amp/realamprandom_indep_qiskit_9qasm'
+    qasm = 'portfolio_vqe/portfoliovqe_indep_qiskit_10.qasm'
     # start_time = time.time()
     # for i in range(3):
     #     Benchmark.test_result(matrix = None,array=array,qasm=qasm)
