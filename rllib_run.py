@@ -251,7 +251,7 @@ if __name__ == "__main__":
             args.stop_iters = iter
             train()
             time.sleep(5)
-        Notifier().on_experiment_finsh(email='904715458@qq.com',subject="实验完成" + smd['qasm'], body="实验完成:\n" + smd['qasm'])
+        Notifier().on_experiment_finsh(email='904715458@qq.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
     except Exception as e:
         logger.error(str(e))
         smd.shm.close()
