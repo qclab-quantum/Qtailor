@@ -4,7 +4,7 @@
 
 ## Introction
 
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact me(qclab_quantum@163.com) .
+This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(qclab_quantum@163.com) .
 
 
 ![Overview](./temp/overview.png)
