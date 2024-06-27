@@ -4,7 +4,7 @@
 
 ## Introction
 
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact me(qclab_quantum@163.com) .
+This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(qclab_quantum@163.com) .
 
 
 ![Overview](./temp/overview.png)
@@ -19,7 +19,7 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 ## Requirements
 
-We recommend **Anaconda** as Python environment manager
+We recommend **Anaconda** as Python environment manager, and **Pytorch** as base environment
 
 For Linux , you can  install Pytorch  by run:
 
@@ -40,6 +40,13 @@ git clone https://github.com/qclab-quantum/Qtailor.git
 2. install requirements:
 
 ```setup
+To create python environment with conda, use:
+conda create --name qtailor python=3.10
+
+To activate this environment, use:
+conda activate qtailor
+
+To install requirements, use:
 pip install -r requirements.txt
 ```
 
