@@ -3,10 +3,11 @@ import datetime
 import random
 import time
 import gymnasium as gym
+import ray
 from gymnasium import register
 import os
-import ray
-from ray import air, tune
+
+from ray import tune, air
 from ray.rllib.algorithms import Algorithm
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.tune.logger import pretty_print
@@ -251,11 +252,13 @@ if __name__ == "__main__":
             args.stop_iters = iter
             train()
             time.sleep(5)
-        Notifier().on_experiment_finsh(email='904715458@qq.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
+        Notifier().on_experiment_finsh(email='xx@xx.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
     except Exception as e:
         logger.error(str(e))
         smd.shm.close()
         smd.shm.unlink()
+
+
 
 
 

@@ -2,7 +2,7 @@ import math
 import time
 
 import numpy as np
-from qiskit import QuantumCircuit, transpile, execute
+from qiskit import QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram
 from qiskit_aer import AerSimulator
 from qiskit.quantum_info import state_fidelity

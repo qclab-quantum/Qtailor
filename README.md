@@ -17,17 +17,6 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 > Our study employs Reinforcement Learning model to suggest an topology that aligns with the circuit’s characteristics under the limitations imposed by restricted connectivity. Subsequently, qubits are mapped in a sequential manner instead of a complex mapping algorithms. Our approach yields a suggested topology and mapped circuit onto this proposed topology.
 
-## Requirements
-
-We recommend **Anaconda** as Python environment manager, and **Pytorch** as base environment
-
-For Linux , you can  install Pytorch  by run:
-
-```setup
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-```
-
-Guide of install Pytorch on **Windows** or with GPU  is available at [Pytorch Get Started](https://pytorch.org/get-started/locally/)
 
 ## Get started
 
@@ -37,8 +26,10 @@ Guide of install Pytorch on **Windows** or with GPU  is available at [Pytorch Ge
 git clone https://github.com/qclab-quantum/Qtailor.git
 ```
 
-2. install requirements:
 
+
+2. install requirements:
+We recommend **Anaconda** as Python package manager.
 ```setup
 To create python environment with conda, use:
 conda create --name qtailor python=3.10
@@ -50,9 +41,14 @@ To install requirements, use:
 pip install -r requirements.txt
 ```
 
+The  **Pytorch**  package is also required, For **Windows**, the Pytorch  is already installed  by run "pip install -r requirements.txt":
+
+For **Linux** or to install Pytorch with GPU,  please see [Pytorch Get Started](https://pytorch.org/get-started/locally/)
+
+
 ## Configuration
 
-you have the option to utilize the default settings or customize the important items in the config.xml :
+you have the option to utilize the default settings or customize the important items in the **config.xml** :
 
 ```
 # traing iterations
