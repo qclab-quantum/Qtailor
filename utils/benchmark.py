@@ -34,7 +34,7 @@ class Benchmark():
     '''
     @staticmethod
     def depth_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        b_1 = gu.test_adj_matrix(matrix, qasm)
+        b_1 = CircutUtil.get_rl_depth(matrix, qasm)
         rl = b_1[-1][0]
         mix = b_1[-1][1]
         #get Qiskit result
@@ -52,6 +52,114 @@ class Benchmark():
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
             #pu.plot_points(points)
         return rl,qiskit,mix
+
+    @staticmethod
+    def gates_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
+        rl =  CircutUtil.get_rl_gates(matrix, qasm)
+
+        #get Qiskit result
+        qiskit = Benchmark.get_qiskit_depth(qasm)
+        print('rl = %r,qiskit= %r,'%(rl,qiskit,))
+
+        #write to csv file
+        data = []
+        for i in range(len(rl)):
+            data.append(['','',rl[i],qiskit[i]])
+        if file_path:
+            CSVUtil.append_data(file_path, data)
+        if draw:
+            gu.draw_adj_matrix(matrix,is_draw_nt=True)
+            #pu.plot_points(points)
+        return rl,qiskit
+
+    @staticmethod
+    def get_rl_gates(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
+        simulator = AerSimulator()
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj = GraphUtil.get_adj_list(G)
+        gates_cnt = 0
+        result = []
+        repeat = 2
+        for i in range(repeat):
+            try:
+                cnt = CircutUtil.get_gates_cnt(circuit = circuit,adj=adj)
+                gates_cnt += cnt
+                result.append(cnt)
+            except Exception as e:
+                print(e)
+                result.append(-1)
+        gates_cnt /= repeat
+        result.append(gates_cnt)
+        return result
+
+    @staticmethod
+    def get_qiskit_gates(qasm:str):
+        result = []
+        repeat = 2
+        adj= pu.coordinate2adjacent(points)
+        circuit = cu.get_from_qasm(qasm)
+        # c.draw('mpl').show()
+        gates_cnt = 0
+        for i in range(repeat):
+            try:
+                cnt = CircutUtil.get_gates_cnt(circuit = circuit,adj=adj)
+                gates_cnt += cnt
+                result.append(cnt)
+            except Exception as e:
+                traceback.print_exc()
+        result.append(gates_cnt/repeat)
+        return  result
+
+    @staticmethod
+    def get_rl_depth(adj_matrix, qasm):
+        simulator = AerSimulator()
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(adj_matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if adj_matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj_list = GraphUtil.get_adj_list(G)
+        layout = list(range(len(circuit.qubits)))
+        avr_rl = 0
+        avr_rl_mix = 0
+        result = []
+        repeat = 10
+        for i in range(repeat):
+            try:
+                ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=1, backend=simulator)
+                ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
+                d1 = ct1.depth()
+                d2 = ct2.depth()
+                result.append([d1,d2])
+                avr_rl += d1
+                avr_rl_mix += d2
+            except Exception as e:
+                print(e)
+                result.append([-1,-1])
+
+            # print(ct.layout.initial_layout)
+        avr_rl /= repeat
+        avr_rl_mix /= repeat
+        result.append([avr_rl,avr_rl_mix])
+        return result
 
     @staticmethod
     def get_qiskit_depth(qasm:str):
@@ -78,9 +186,9 @@ class Benchmark():
         adj_list = pu.coordinate2adjacent(points)
         circuit = cu.get_from_qasm(qasm)
         fidelity = 0
-        for i in range(10):
+        for i in range(3):
             fidelity += circuit_fidelity_benchmark(circuit=circuit,coupling_map=adj_list,type='qiskit')
-        return fidelity/10
+        return fidelity/3
 
     @staticmethod
     def get_fidelity(qasm:str,matrix):
@@ -99,16 +207,18 @@ class Benchmark():
         adj_list = GraphUtil.get_adj_list(G)
         init_layout = list(range(len(circuit.qubits)))
         fidelity = 0
-        for i in range(10):
+        for i in range(3):
             fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',initial_layout = init_layout)
-        return fidelity/10
+        return fidelity/3
+
+
     #用于测试模型运行后的结果
     @staticmethod
     def test_result(qasm,matrix = None, array = None):
         #test rl and mix
         if matrix is None:
             matrix =gu.restore_from_1d_array(array)
-        res = gu.test_adj_matrix(matrix,qasm)
+        res = CircutUtil.get_rl_depth(matrix,qasm)
         print(res)
         mean = np.mean(res, axis=0)
         rl = mean[0]
@@ -118,14 +228,12 @@ class Benchmark():
 
     #比较保真度
     @staticmethod
-    def test_fidelity(qasm,matrix = None, array = None):
-        if matrix is None:
-            matrix =gu.restore_from_1d_array(array)
+    def test_fidelity(qasm,matrix = None):
         #qiskit
         f1= Benchmark.get_qiskit_fidelity(qasm)
         #rl
         f2= Benchmark.get_fidelity(qasm,matrix)
-        print(f"q_fidelity={f1}\nr_fidelity={f2}")
+        print(f"q_fidelity={f1}\n r_fidelity={f2}")
 
 
     @staticmethod
@@ -179,6 +287,7 @@ class Benchmark():
         improvement = ((q_idle_rate-r_idle_rate)/q_idle_rate).__round__(4)*100
         improvement = improvement.__round__(2)
         print(f'& {data[1]} & {data[2]} & {data[3]}  & {data[4]}  & {data[5]}  & {data[6]}  & {improvement} $\downarrow$ ')
+
 def remove_idle_qwires(circ):
     dag = circuit_to_dag(circ)
 
@@ -192,9 +301,10 @@ def remove_idle_qwires(circ):
 
 if __name__ == '__main__':
 
-    array  = [1, 0, 1, 1, 1, 1, 1, 0, 1, 0]
+    array  = [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
+
     matrix = gu.restore_from_1d_array(array)
-    qasm = 'qnn/qnn_indep_qiskit_5.qasm'
+    qasm = 'real_amp/realamprandom_indep_qiskit_6.qasm'
 
     '''
     file_path: 'the path of csv file ', is file_path is not None, the result will be saved in csv file
@@ -203,4 +313,5 @@ if __name__ == '__main__':
     draw:  true =  draw the topology(graph)
     show_in_html: show topology in html  
     '''
-    Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
+    #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
+    Benchmark.test_fidelity(qasm,matrix=matrix)

@@ -164,11 +164,11 @@ def test_result(checkpoint):
 
             print(f"Episode done: Total reward = {episode_reward}")
             #log to file
-            rl,qiskit,mix = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
+            rl,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
 
             if not isinstance(checkpoint,str):
                 checkpoint = checkpoint.path
-            log2file(rl, qiskit, mix,  obs,args.stop_iters, checkpoint,)
+            log2file(rl, qiskit,  obs,args.stop_iters, checkpoint,)
 
             obs, info = env.reset()
             num_episodes += 1
@@ -178,13 +178,13 @@ def test_result(checkpoint):
     smd.shm.unlink()
     algo.stop()
 
-def log2file(rl, qiskit, mix,  result,iter_cnt, checkpoint):
+def log2file(rl, qiskit,  result,iter_cnt, checkpoint):
     # rootdir = FileUtil.get_root_dir()
     # sep =os.path.sep
     # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
     # FileUtil.write(path, content)
     smd = SharedMemoryDict(name='tokens', size=1024)
-    data = [datetime_str,smd['qasm'],rl, qiskit, mix,  result,iter_cnt, checkpoint,tensorboard]
+    data = [datetime_str,smd['qasm'],rl, qiskit,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
 
 def train():
@@ -243,7 +243,9 @@ if __name__ == "__main__":
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     smd = SharedMemoryDict(name='tokens', size=1024)
-    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
+
+    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'),header=[['datetime', 'qasm', 'rl', 'qiskit', 'result', 'iter','checkpoint','remark', ]])
+
     iters_arr = args.iters_arr
     try:
         ray.init(num_gpus=1, local_mode=args.local_mode)
