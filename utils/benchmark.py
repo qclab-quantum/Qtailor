@@ -298,10 +298,10 @@ def remove_idle_qwires(circ):
 
 if __name__ == '__main__':
 
-    array  = [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
+    array  = [1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1]
 
     matrix = gu.restore_from_1d_array(array)
-    qasm = 'real_amp/realamprandom_indep_qiskit_6.qasm'
+    qasm = 'real_amp/realamprandom_indep_qiskit_7.qasm'
 
     '''
     file_path: 'the path of csv file ', is file_path is not None, the result will be saved in csv file

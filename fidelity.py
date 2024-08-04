@@ -57,8 +57,8 @@ def flip_noise_model():
 def T_noise_model():
     n=10
     # T1 and T2 values for qubits 0-3
-    T1s = np.random.normal(5000, 10, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
-    T2s = np.random.normal(7000, 10, n)
+    T1s = np.random.normal(50000, 10, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
+    T2s = np.random.normal(70000, 10, n)
 
     # Truncate random T2s <= T1s
     T2s = np.array([min(T2s[j], 2 * T1s[j]) for j in range(n)])
@@ -80,22 +80,10 @@ def T_noise_model():
         thermal_relaxation_error(t1b, t2b, time_cx))
         for t1a, t2a in zip(T1s, T2s)]
         for t1b, t2b in zip(T1s, T2s)]
-    errors_swap = []
     # Add errors to noise model
     noise_thermal = NoiseModel()
-    noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], gates_2 )
-    for j in range(n):
-        # noise_thermal.add_quantum_error(errors_reset[j], "reset", [j])
-        # noise_thermal.add_quantum_error(errors_measure[j], "measure", [j])
-        # noise_thermal.add_quantum_error(errors_u1[j], "u1", [j])
-        # noise_thermal.add_quantum_error(errors_u2[j], "u2", [j])
-        # noise_thermal.add_quantum_error(errors_u3[j], "u3", [j])
-        #noise_thermal.add_quantum_error(errors_u3[j], "id", [j])
-        for k in range(n):
-            pass
-
-
-
+    #noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], gates_2 )
+    noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], ['swap'] )
     return noise_thermal
 
 def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None):
