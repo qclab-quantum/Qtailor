@@ -34,7 +34,7 @@ class Benchmark():
     '''
     @staticmethod
     def depth_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        b_1 = CircutUtil.get_rl_depth(matrix, qasm)
+        b_1 = Benchmark.get_rl_depth(matrix, qasm)
         rl = b_1[-1][0]
         mix = b_1[-1][1]
         #get Qiskit result
@@ -55,10 +55,9 @@ class Benchmark():
 
     @staticmethod
     def gates_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        rl =  CircutUtil.get_rl_gates(matrix, qasm)
-
+        rl =  Benchmark.get_rl_gates(file_path,matrix, qasm)
         #get Qiskit result
-        qiskit = Benchmark.get_qiskit_depth(qasm)
+        qiskit = Benchmark.get_qiskit_gates(qasm)
         print('rl = %r,qiskit= %r,'%(rl,qiskit,))
 
         #write to csv file
@@ -70,11 +69,10 @@ class Benchmark():
         if draw:
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
             #pu.plot_points(points)
-        return rl,qiskit
+        return rl[-1],qiskit[-1]
 
     @staticmethod
     def get_rl_gates(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        simulator = AerSimulator()
         circuit = CircutUtil.get_from_qasm(qasm)
         G = nx.DiGraph()
         # 添加节点
@@ -99,8 +97,7 @@ class Benchmark():
             except Exception as e:
                 print(e)
                 result.append(-1)
-        gates_cnt /= repeat
-        result.append(gates_cnt)
+        result.append(gates_cnt/repeat)
         return result
 
     @staticmethod

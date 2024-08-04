@@ -16,7 +16,7 @@ from ray.tune.registry import get_trainable_cls
 from shared_memory_dict import SharedMemoryDict
 
 from config import  ConfigSingleton
-from core.env.env_test_v7 import CircuitEnvTest_v7
+from core.env.env_test_v8 import CircuitEnvTest_v8
 
 from utils.benchmark import Benchmark
 
@@ -46,7 +46,7 @@ def train_policy():
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env = CircuitEnvTest_v7)
+        .environment(env = CircuitEnvTest_v8)
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   ,num_envs_per_worker=1
@@ -121,11 +121,11 @@ def train_policy():
 def test_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
-    env_id = "CircuitEnvTest-v"+str(args.env_version)
+
     smd = SharedMemoryDict(name='tokens', size=1024)
     #smd['evaluate'] = True
    # smd['debug'] = True
-
+    env_id = "CircuitEnvTest-v" + str(args.env_version)
     register(
         id=env_id,
         # entry_point='core.envs.circuit_env:CircuitEnv',
@@ -133,7 +133,6 @@ def test_result(checkpoint):
         max_episode_steps=4000000,
     )
 
-    # Create the env to do inference in.
     env = gym.make(env_id)
     obs, info = env.reset()
     num_episodes = 0
@@ -154,20 +153,17 @@ def test_result(checkpoint):
 
         # Is the episode `done`? -> Reset.
         if done:
-            # shape = int(math.sqrt(len(obs)))
-           #reshape_obs = np.array(obs).reshape(shape, shape)
             reshape_obs = GraphUtil.restore_from_1d_array(obs)
-           #  print('info = ', info)
-           #  obs = info['matrix']
-           #  reshape_obs = info['matrix']
-            print('done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
-
+            print('env done = %r, reward = %r \n obs = \n {%r} ' % (done, reward,reshape_obs ))
             print(f"Episode done: Total reward = {episode_reward}")
-            #log to file
-            rl,qiskit = Benchmark.depth_benchmark( csv_path,reshape_obs, smd['qasm'], False)
+
+            rl,qiskit = Benchmark.gates_benchmark( csv_path,reshape_obs, smd['qasm'], False)
 
             if not isinstance(checkpoint,str):
                 checkpoint = checkpoint.path
+
+            # log to file
+            print('logging to csv file ...')
             log2file(rl, qiskit,  obs,args.stop_iters, checkpoint,)
 
             obs, info = env.reset()
@@ -253,7 +249,7 @@ if __name__ == "__main__":
             #print(f'training on iter {iter}')
             args.stop_iters = iter
             train()
-            time.sleep(5)
+            time.sleep(10)
         Notifier().on_experiment_finsh(email='904715458@qq.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
     except Exception as e:
         logger.error(str(e))

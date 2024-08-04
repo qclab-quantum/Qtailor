@@ -42,7 +42,6 @@ args = None
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
     # Can also register the env creator function explicitly with:
-    # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
         get_trainable_cls(args.run)
         .get_default_config()

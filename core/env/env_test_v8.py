@@ -18,7 +18,7 @@ from utils.file.file_util import FileUtil
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from config import get_args, ConfigSingleton
 import os
-
+import traceback
 
 os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
 
@@ -38,13 +38,11 @@ class CircuitEnvTest_v8(gym.Env):
         self.mem_cnt = 0
         self.all_cnt=0
         self.hit_rate=[]
-        # obs[i] == qubit_nums 说明该位置为空，
         # circuit 相关变量
         qasm = SharedMemoryDict(name='tokens',size=1024).get('qasm')
         self.circuit = self.get_criruit(qasm)
 
         self.qubit_nums = len(self.circuit.qubits)
-        # self.qr =self.circuit.qubits
 
         obs_size = int((self.qubit_nums * self.qubit_nums - self.qubit_nums ) / 2)
         self.observation_space = flatten_space(spaces.Box(0,1,(1,obs_size),dtype=np.uint8,))
@@ -62,7 +60,10 @@ class CircuitEnvTest_v8(gym.Env):
         super().reset(seed=seed)
         self.graph = gu.get_new_graph(self.qubit_nums)
         self.adj = gu.get_adj_list(self.graph)
-        self.obs = gu.get_adj_matrix(self.graph)
+        try:
+            self.obs = gu.get_adj_matrix(self.graph)
+        except Exception as e:
+            traceback.print_exc()
 
         self.step_cnt = 0
         self.total_reward = 0
@@ -102,14 +103,12 @@ class CircuitEnvTest_v8(gym.Env):
     def close(self):
         self._close_env()
 
-
     def _get_obs(self):
         #flattened_matrix = np.array(copy.deepcopy(self.obs)).flatten()
         return GraphUtil.lower_triangle_to_1d_array(self.obs)
 
     def _get_info(self):
         return {"info":"this is info"}
-
 
     def get_criruit(self,name:str):
         circuit = cu.get_from_qasm(name)

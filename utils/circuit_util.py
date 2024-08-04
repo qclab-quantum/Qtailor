@@ -1,4 +1,5 @@
 import os
+import traceback
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -32,12 +33,11 @@ class CircutUtil:
             #取平均值
             return avr/3
         except Exception as e:
-            #print(adj)
             #traceback.print_exc()
             return None
 
     @staticmethod
-    def get_gates_cnt(circuit:QuantumCircuit, adj,initial_layout: list,gates:list) -> int:
+    def get_gates_cnt(circuit:QuantumCircuit, adj,initial_layout=None, gates=[]) -> int:
         try:
             if initial_layout is None:
                 initial_layout = list(range(len(circuit.qubits)))
@@ -49,10 +49,10 @@ class CircutUtil:
             if len(gates) == 0:
                 return  sum(ops.values())
             else:
-                return sum(ops[g] for g in gates)
+                return  sum(ops[g] for g in gates if g in ops)
         except Exception as e:
-            print(e)
-            return None
+            traceback.print_exc()
+            return 999999
 
 
     # get adj  from coordinate

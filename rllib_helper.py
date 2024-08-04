@@ -78,7 +78,7 @@ def load_checkpoint_from_path(checkpoint_to_load: Union[str, Path]) -> Dict:
 def new_csv(time_str,header=None):
     sep = '/'
     csv_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + time_str + '.csv'
-    if header is not None:
+    if header is  None:
         header = [['datetime', 'qasm', 'rl', 'qiskit','mix', 'result', 'iter','checkpoint','remark', ]]
     CSVUtil.write_data(csv_path,data = header)
     return  csv_path
