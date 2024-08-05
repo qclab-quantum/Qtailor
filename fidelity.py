@@ -5,7 +5,7 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram
 from qiskit_aer import AerSimulator
-from qiskit.quantum_info import state_fidelity
+from qiskit.quantum_info import Statevector, state_fidelity
 
 from utils.circuit_util import CircutUtil
 #others: 'measure','barrier',
@@ -122,29 +122,29 @@ def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None
 
 
 def circuit_fidelity_benchmark_ori(circuit):
-    sim_ideal = AerSimulator()
-    circuit_ideal =transpile(circuit, sim_ideal)
-    result_ideal = sim_ideal.run(circuit_ideal).result()
-    counts = result_ideal.get_counts(0)
-    print(counts)
-    plot_histogram(counts).show()
+    # Set the simulation options to include the statevector
+    sim_opts = {
+        "method": "statevector"
+    }
+
+    aer1 = AerSimulator()
+    circuit_ideal =transpile(circuit, aer1)
+    result_ideal = aer1.run(circuit_ideal,**sim_opts).result()
+    counts_ideal = result_ideal.get_counts(0)
+    # print(counts)
+    # plot_histogram(counts).show()
 
 
     # Create noisy simulator backend
     sim_noise = AerSimulator(noise_model=flip_noise_model())
-
-    # Transpile circuit for noisy basis gates
-    circ_tnoise = transpile(circuit, sim_noise)
-
-    # Run and get counts
-    result_bit_flip = sim_noise.run(circ_tnoise).result()
-    counts_bit_flip = result_bit_flip.get_counts(0)
-    print(counts_bit_flip)
-
+    circuit_noise = transpile(circuit, sim_noise)
+    result_noise = sim_noise.run(circuit_noise,**sim_opts).result()
+    counts_noise = result_noise.get_counts(0)
+    # print(counts_noise)
     # Plot noisy output
-    plot_histogram(counts_bit_flip).show()
+    # plot_histogram(counts_bit_flip).show()
 
-    fidelity = calc_fidelity(counts,counts_bit_flip)
+    fidelity = calc_fidelity(counts_ideal,counts_noise)
     return fidelity
 
 #使用 Bhattacharyya 距离近似
