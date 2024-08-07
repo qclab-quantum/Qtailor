@@ -128,8 +128,7 @@ def generate_circuit(n,p):
 
 
 if __name__ == '__main__':
-    #CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
-    # for i in [50,60,70,80,90,100]:
-    #     for j in [10]:
-    #         generate_circuit(i,j)
-    pass
+    for i in [80,160]:
+        for j in [2]:
+            generate_circuit(i,j)
+

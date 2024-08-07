@@ -27,7 +27,7 @@ from utils.graph_util import GraphUtil
 from io import StringIO
 
 from utils.notice.email_notifier import Notifier
-from run_helper import set_logger, new_csv, parse_tensorboard, get_circuits
+from helper import set_logger, new_csv, parse_tensorboard, get_circuits
 
 import logging
 
