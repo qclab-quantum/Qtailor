@@ -70,7 +70,8 @@ class CircuitEnvTest_v8(gym.Env):
 
         # 上个动作获取到的score
         #self.default_score = cu.get_circuit_score(self.circuit, self.adj)
-        self.default_score = cu.get_gates_cnt(self.circuit, self.adj,gates=['cp','cx','swap'])
+
+        self.default_score = cu.count_gates('rl',self.circuit, self.adj,gates=['cp','cx','swap'])
         self.last_score = self.default_score
         self.best_score = self.default_score
         self.last_action = np.array(0)
@@ -150,7 +151,7 @@ class CircuitEnvTest_v8(gym.Env):
                 #print(f'key{key} is None,map = {sorted(list(self._map.keys()))}')
                 #print(key in self._map.keys())
                 #score = cu.get_circuit_score(self.circuit, self.adj)
-                score = cu.get_gates_cnt(self.circuit, self.adj,gates=['cp','cx','swap'])
+                score = cu.count_gates('rl',self.circuit, self.adj,gates=['cp','cx','swap'])
 
 
 

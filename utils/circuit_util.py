@@ -37,14 +37,18 @@ class CircutUtil:
             return None
 
     @staticmethod
-    def get_gates_cnt(circuit:QuantumCircuit, adj,initial_layout=None, gates=[]) -> int:
+    def count_gates(type,circuit:QuantumCircuit, adj, gates=[],) -> int:
         try:
-            if initial_layout is None:
-                initial_layout = list(range(len(circuit.qubits)))
-            compiled_circuit = transpile(circuits=circuit,
-                                         coupling_map=adj,
-                                         initial_layout=initial_layout,
-                                         backend=simulator)
+            if type == 'rl':
+                compiled_circuit = transpile(circuits=circuit,
+                                             coupling_map=adj,
+                                             initial_layout=list(range(len(circuit.qubits))),
+                                             backend=simulator)
+            elif type == 'qiskit':
+                compiled_circuit = transpile(circuits=circuit,
+                                             coupling_map=adj,
+                                             backend=simulator)
+
             ops = compiled_circuit.count_ops()
             if len(gates) == 0:
                 return  sum(ops.values())
@@ -53,7 +57,6 @@ class CircutUtil:
         except Exception as e:
             traceback.print_exc()
             return 999999
-
 
     # get adj  from coordinate
     @staticmethod

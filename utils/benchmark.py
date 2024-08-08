@@ -55,7 +55,7 @@ class Benchmark():
 
     @staticmethod
     def gates_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        rl =  Benchmark.get_rl_gates(file_path,matrix, qasm)
+        rl =  Benchmark.get_rl_gates(matrix, qasm)
         #get Qiskit result
         qiskit = Benchmark.get_qiskit_gates(qasm)
         print('rl = %r,qiskit= %r,'%(rl,qiskit,))
@@ -72,7 +72,7 @@ class Benchmark():
         return rl[-1],qiskit[-1]
 
     @staticmethod
-    def get_rl_gates(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
+    def get_rl_gates(matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
         circuit = CircutUtil.get_from_qasm(qasm)
         G = nx.DiGraph()
         # 添加节点
@@ -91,7 +91,7 @@ class Benchmark():
         repeat = 20
         for i in range(repeat):
             try:
-                cnt = CircutUtil.get_gates_cnt(circuit = circuit,adj=adj)
+                cnt = CircutUtil.count_gates(type='rl',circuit = circuit,adj=adj,gates=['cp','cx','swap'])
                 gates_cnt += cnt
                 result.append(cnt)
             except Exception as e:
@@ -102,19 +102,17 @@ class Benchmark():
 
     @staticmethod
     def get_qiskit_gates(qasm:str):
-        result = []
-        repeat = 20
+
         adj= pu.coordinate2adjacent(points)
         circuit = cu.get_from_qasm(qasm)
-        # c.draw('mpl').show()
+
         gates_cnt = 0
+        result = []
+        repeat = 20
         for i in range(repeat):
-            try:
-                cnt = CircutUtil.get_gates_cnt(circuit = circuit,adj=adj)
-                gates_cnt += cnt
-                result.append(cnt)
-            except Exception as e:
-                traceback.print_exc()
+            cnt = CircutUtil.count_gates(type='qiskit', circuit = circuit,adj=adj,gates=['cp','cx','swap'])
+            gates_cnt += cnt
+            result.append(cnt)
         result.append(gates_cnt/repeat)
         return  result
 
@@ -183,31 +181,10 @@ class Benchmark():
         adj_list = pu.coordinate2adjacent(points)
         circuit = cu.get_from_qasm(qasm)
         fidelity = 0
-        for i in range(3):
+        repeat = 1
+        for i in range(repeat):
             fidelity += circuit_fidelity_benchmark(circuit=circuit,coupling_map=adj_list,type='qiskit')
-        return fidelity/3
-
-    @staticmethod
-    def get_fidelity(qasm:str,matrix):
-        circuit = CircutUtil.get_from_qasm(qasm)
-        G = nx.DiGraph()
-        # 添加节点
-        num_nodes = len(matrix)
-        G.add_nodes_from(range(num_nodes))
-
-        # 添加边
-        for i in range(num_nodes):
-            for j in range(num_nodes):
-                if matrix[i][j] == 1:
-                    G.add_edge(i, j)
-
-        adj_list = GraphUtil.get_adj_list(G)
-        init_layout = list(range(len(circuit.qubits)))
-        fidelity = 0
-        for i in range(3):
-            fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',initial_layout = init_layout)
-        return fidelity/3
-
+        return fidelity/repeat
 
     #用于测试模型运行后的结果
     @staticmethod
@@ -232,6 +209,27 @@ class Benchmark():
         f2= Benchmark.get_fidelity(qasm,matrix)
         print(f"q_fidelity={f1}\n r_fidelity={f2}")
 
+    @staticmethod
+    def get_fidelity(qasm:str,matrix):
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj_list = GraphUtil.get_adj_list(G)
+        init_layout = list(range(len(circuit.qubits)))
+        fidelity = 0
+        repeat = 1
+        for i in range(repeat):
+            fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',initial_layout = init_layout)
+        return fidelity/repeat
 
     @staticmethod
     def compare_gates(qasm,matrix = None, array = None,bits=0):
@@ -296,29 +294,20 @@ def remove_idle_qwires(circ):
     dag.qregs = OrderedDict()
     return dag_to_circuit(dag)
 
-def demo():
-
-
-    matrix = gu.restore_from_1d_array(array)
-    qasm = 'real_amp/realamprandom_indep_qiskit_7.qasm'
-
-    '''
-    file_path: 'the path of csv file ', is file_path is not None, the result will be saved in csv file
-    matrix:  the adjacency matrix representing the graph 
-    qasm:  the qasm file path of circuits, qasm file is in benchmark folder
-    draw:  true =  draw the topology(graph)
-    show_in_html: show topology in html  
-    '''
-    #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
-    Benchmark.test_fidelity(qasm,matrix=matrix)
-
-if __name__ == '__main__':
+def benchmark0808():
     array = [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
-
-
-
-
     reshape_obs = GraphUtil.restore_from_1d_array(array)
     qasm = 'qft/qft_indep_qiskit_20.qasm'
     csv_path = 'd:/temp/qft.csv'
     rl, qiskit = Benchmark.gates_benchmark(csv_path, reshape_obs, qasm, False)
+
+if __name__ == '__main__':
+    topology = [1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1]
+    matrix = gu.restore_from_1d_array(topology)
+    qasm = 'amplitude_estimation/ae_indep_qiskit_10.qasm'
+
+    #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
+    Benchmark.test_fidelity(qasm,matrix=matrix)
+
+    print(Benchmark.get_qiskit_gates(qasm))
+    print(Benchmark.get_rl_gates(matrix,qasm))

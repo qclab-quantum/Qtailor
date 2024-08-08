@@ -54,19 +54,16 @@ def flip_noise_model():
     noise_bit_flip.add_all_qubit_quantum_error(error_gate2, ['swap'])
     return noise_bit_flip
 
-def T_noise_model():
+def T_noise_model(t1=50000,t2=70000):
     n=10
     # T1 and T2 values for qubits 0-3
-    T1s = np.random.normal(50000, 10, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
-    T2s = np.random.normal(70000, 10, n)
+    T1s = np.random.normal(t1, t1*0.1, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
+    T2s = np.random.normal(t2, t2*0.1, n)
 
     # Truncate random T2s <= T1s
     T2s = np.array([min(T2s[j], 2 * T1s[j]) for j in range(n)])
 
     # Instruction times (in nanoseconds)
-    time_u1 = 0  # virtual gate
-    time_u2 = 50  # (single X90 pulse)
-    time_u3 = 100  # (two X90 pulses)
     time_cx = 300
     time_reset = 1000  # 1 microsecond
     time_measure = 1000  # 1 microsecond
@@ -87,8 +84,8 @@ def T_noise_model():
     return noise_thermal
 
 def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None):
-    time.sleep(1)
     noise_model=T_noise_model()
+
     sim_ideal = AerSimulator()
     sim_noise = AerSimulator(noise_model=noise_model)
     circuit_ideal = None
@@ -121,7 +118,7 @@ def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None
 
 
 
-def circuit_fidelity_benchmark_ori(circuit):
+def circuit_fidelity_benchmark_T(circuit,t1,t2):
     # Set the simulation options to include the statevector
     sim_opts = {
         "method": "statevector"
@@ -134,9 +131,9 @@ def circuit_fidelity_benchmark_ori(circuit):
     # print(counts)
     # plot_histogram(counts).show()
 
-
+    noise_model = T_noise_model(t1,t2)
     # Create noisy simulator backend
-    sim_noise = AerSimulator(noise_model=flip_noise_model())
+    sim_noise = AerSimulator(noise_model=noise_model)
     circuit_noise = transpile(circuit, sim_noise)
     result_noise = sim_noise.run(circuit_noise,**sim_opts).result()
     counts_noise = result_noise.get_counts(0)
@@ -175,5 +172,9 @@ if __name__ == '__main__':
     for qubit in range(n_qubits - 1):
         circ.cx(qubit, qubit + 1)
     circ.measure_all()
-    f.append(circuit_fidelity_benchmark_ori(circ))
+
+    #for i in range(20):
+    t1=5
+    t2=7
+    f.append(circuit_fidelity_benchmark_T(circ,t1,t2))
     print(f)
