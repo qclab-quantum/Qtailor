@@ -1,9 +1,11 @@
 import time
 import traceback
 from collections import OrderedDict
-
+import matplotlib
+matplotlib.use('TkAgg')
 import networkx as nx
 import numpy as np
+from matplotlib import pyplot as plt
 from qiskit import transpile
 from qiskit_aer import AerSimulator
 
@@ -20,6 +22,9 @@ points  = [(x, y) for x in range(15) for y in range(15)]
 #           (1, 0), (1, 1), (1, 2), (1, 3),
 #           (2, 0), (2, 1), (2, 2), (2, 3),
 #           (3, 0), (3, 1), (3, 2), (3, 3)]
+
+t1 = 50000
+t2 = 70000
 class Benchmark():
 
     def __init__(self,qasm ):
@@ -52,6 +57,68 @@ class Benchmark():
             gu.draw_adj_matrix(matrix,is_draw_nt=True)
             #pu.plot_points(points)
         return rl,qiskit,mix
+
+    @staticmethod
+    def get_rl_depth(adj_matrix, qasm):
+        simulator = AerSimulator()
+        circuit = CircutUtil.get_from_qasm(qasm)
+        G = nx.DiGraph()
+        # 添加节点
+        num_nodes = len(adj_matrix)
+        G.add_nodes_from(range(num_nodes))
+
+        # 添加边
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if adj_matrix[i][j] == 1:
+                    G.add_edge(i, j)
+
+        adj_list = GraphUtil.get_adj_list(G)
+        layout = list(range(len(circuit.qubits)))
+        avr_rl = 0
+        avr_rl_mix = 0
+        result = []
+        repeat = 10
+        for i in range(repeat):
+            try:
+                ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=1, backend=simulator)
+                ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
+                d1 = ct1.depth()
+                d2 = ct2.depth()
+                result.append([d1,d2])
+                avr_rl += d1
+                avr_rl_mix += d2
+            except Exception as e:
+                print(e)
+                result.append([-1,-1])
+
+            # print(ct.layout.initial_layout)
+        avr_rl /= repeat
+        avr_rl_mix /= repeat
+        result.append([avr_rl,avr_rl_mix])
+        return result
+
+    @staticmethod
+    def get_qiskit_depth(qasm:str):
+        result = []
+        repeat = 10
+        adj_list = pu.coordinate2adjacent(points)
+        c = cu.get_from_qasm(qasm)
+        # c.draw('mpl').show()
+        simulator = AerSimulator()
+        avr = 0
+        for i in range(repeat):
+            try:
+                ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=1,backend=simulator)
+                d = ct.depth()
+                avr += d
+                result.append(d)
+            except Exception as e:
+                traceback.print_exc()
+        result.append(avr/repeat)
+        return  result
+
+
 
     @staticmethod
     def gates_benchmark(file_path,matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
@@ -117,73 +184,13 @@ class Benchmark():
         return  result
 
     @staticmethod
-    def get_rl_depth(adj_matrix, qasm):
-        simulator = AerSimulator()
-        circuit = CircutUtil.get_from_qasm(qasm)
-        G = nx.DiGraph()
-        # 添加节点
-        num_nodes = len(adj_matrix)
-        G.add_nodes_from(range(num_nodes))
-
-        # 添加边
-        for i in range(num_nodes):
-            for j in range(num_nodes):
-                if adj_matrix[i][j] == 1:
-                    G.add_edge(i, j)
-
-        adj_list = GraphUtil.get_adj_list(G)
-        layout = list(range(len(circuit.qubits)))
-        avr_rl = 0
-        avr_rl_mix = 0
-        result = []
-        repeat = 10
-        for i in range(repeat):
-            try:
-                ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=1, backend=simulator)
-                ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
-                d1 = ct1.depth()
-                d2 = ct2.depth()
-                result.append([d1,d2])
-                avr_rl += d1
-                avr_rl_mix += d2
-            except Exception as e:
-                print(e)
-                result.append([-1,-1])
-
-            # print(ct.layout.initial_layout)
-        avr_rl /= repeat
-        avr_rl_mix /= repeat
-        result.append([avr_rl,avr_rl_mix])
-        return result
-
-    @staticmethod
-    def get_qiskit_depth(qasm:str):
-        result = []
-        repeat = 10
-        adj_list = pu.coordinate2adjacent(points)
-        c = cu.get_from_qasm(qasm)
-        # c.draw('mpl').show()
-        simulator = AerSimulator()
-        avr = 0
-        for i in range(repeat):
-            try:
-                ct = transpile(circuits=c, coupling_map=adj_list, optimization_level=1,backend=simulator)
-                d = ct.depth()
-                avr += d
-                result.append(d)
-            except Exception as e:
-                traceback.print_exc()
-        result.append(avr/repeat)
-        return  result
-
-    @staticmethod
     def get_qiskit_fidelity(qasm:str):
         adj_list = pu.coordinate2adjacent(points)
         circuit = cu.get_from_qasm(qasm)
         fidelity = 0
         repeat = 1
         for i in range(repeat):
-            fidelity += circuit_fidelity_benchmark(circuit=circuit,coupling_map=adj_list,type='qiskit')
+            fidelity += circuit_fidelity_benchmark(circuit=circuit,coupling_map=adj_list,type='qiskit',t1=t1,t2=t2)
         return fidelity/repeat
 
     #用于测试模型运行后的结果
@@ -207,7 +214,8 @@ class Benchmark():
         f1= Benchmark.get_qiskit_fidelity(qasm)
         #rl
         f2= Benchmark.get_fidelity(qasm,matrix)
-        print(f"q_fidelity={f1}\n r_fidelity={f2}")
+        #print(f"q_fidelity={f1}\n r_fidelity={f2}")
+        return f1,f2
 
     @staticmethod
     def get_fidelity(qasm:str,matrix):
@@ -224,11 +232,10 @@ class Benchmark():
                     G.add_edge(i, j)
 
         adj_list = GraphUtil.get_adj_list(G)
-        init_layout = list(range(len(circuit.qubits)))
         fidelity = 0
         repeat = 1
         for i in range(repeat):
-            fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',initial_layout = init_layout)
+            fidelity += circuit_fidelity_benchmark(circuit,coupling_map=adj_list,type='rl',t1=t1,t2=t2)
         return fidelity/repeat
 
     @staticmethod
@@ -301,13 +308,45 @@ def benchmark0808():
     csv_path = 'd:/temp/qft.csv'
     rl, qiskit = Benchmark.gates_benchmark(csv_path, reshape_obs, qasm, False)
 
+def rount_arr(arr):
+    return [[round(element, 2) for element in row] for row in arr]
 if __name__ == '__main__':
-    topology = [1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1]
+    topology = [1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
     matrix = gu.restore_from_1d_array(topology)
-    qasm = 'amplitude_estimation/ae_indep_qiskit_10.qasm'
+    qasm = 'real_amp/realamprandom_indep_qiskit_6.qasm'
 
     #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
-    Benchmark.test_fidelity(qasm,matrix=matrix)
+    result = np.full((20, 19), 1.0)
+    f1_all=np.full((20, 19), 1.0)
+    f2_all=np.full((20, 19), 1.0)
+    t2_time=np.full((20, 19), 1.0)
 
-    print(Benchmark.get_qiskit_gates(qasm))
-    print(Benchmark.get_rl_gates(matrix,qasm))
+    t1max=50e3
+    for i in range(20):
+        t1=t1max * (0.2+i*0.04)
+        t1_arr = [].append(t1)
+        t2max=1.2 * t1
+
+        for j in range(19):
+            t2=t2max * ((j+1) * 0.05)
+            #print(t1, t2)
+            f1,f2=Benchmark.test_fidelity(qasm,matrix=matrix)
+            improve = (f2-f1)/f2
+            f1_all[i][j]=f1.__round__(2)
+            f2_all[i][j]=f2.__round__(2)
+            result[i][j] = improve.__round__(2)*100
+            t2_time[i][j]=t2.__round__(2)
+    print(np.array2string(f1_all, separator=', '))
+    print('f1')
+    print(np.array2string(f2_all, separator=', '))
+    print('f2')
+    print(np.array2string(result, separator=', '))
+    print('result')
+    print(np.array2string(t2_time, separator=', '))
+    print('t2')
+
+
+
+    #
+    # print(Benchmark.get_qiskit_gates(qasm))
+    # print(Benchmark.get_rl_gates(matrix,qasm))

@@ -54,11 +54,13 @@ def flip_noise_model():
     noise_bit_flip.add_all_qubit_quantum_error(error_gate2, ['swap'])
     return noise_bit_flip
 
+t1=-1
+t2=-1
 def T_noise_model(t1=50000,t2=70000):
     n=10
     # T1 and T2 values for qubits 0-3
-    T1s = np.random.normal(t1, t1*0.1, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
-    T2s = np.random.normal(t2, t2*0.1, n)
+    T1s = np.random.normal(t1, t1*0.01, n)  # 50 e3=Sampled from normal distribution mean 50 microsec
+    T2s = np.random.normal(t2, t2*0.01, n)
 
     # Truncate random T2s <= T1s
     T2s = np.array([min(T2s[j], 2 * T1s[j]) for j in range(n)])
@@ -83,9 +85,9 @@ def T_noise_model(t1=50000,t2=70000):
     noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], ['swap'] )
     return noise_thermal
 
-def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None):
-    noise_model=T_noise_model()
 
+def circuit_fidelity_benchmark(circuit,coupling_map,type:str,t1,t2):
+    noise_model=T_noise_model(t1,t2)
     sim_ideal = AerSimulator()
     sim_noise = AerSimulator(noise_model=noise_model)
     circuit_ideal = None
@@ -94,12 +96,13 @@ def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None
         circuit_ideal = transpile(circuit, backend=sim_ideal,coupling_map=coupling_map,basis_gates=basis_gates)
         circ_tnoise = transpile(circuit, backend=sim_noise,coupling_map=coupling_map,basis_gates=basis_gates)
     elif type == "rl":
+        initial_layout = list(range(len(circuit.qubits)))
         circuit_ideal = transpile(circuit, backend=sim_ideal,initial_layout=initial_layout,coupling_map=coupling_map,basis_gates=basis_gates)
         circ_tnoise = transpile(circuit, backend=sim_noise,initial_layout=initial_layout,coupling_map=coupling_map,basis_gates=basis_gates)
 
 
-    print(f"{type} circuit_ideal depth={circuit_ideal.depth()} opts = {dict(circuit_ideal.count_ops())}")
-    print(f"{type} circ_tnoise depth={circ_tnoise.depth()} opts = {dict(circ_tnoise.count_ops())}")
+    # print(f"{type} circuit_ideal depth={circuit_ideal.depth()} opts = {dict(circuit_ideal.count_ops())}")
+    # print(f"{type} circ_tnoise depth={circ_tnoise.depth()} opts = {dict(circ_tnoise.count_ops())}")
 
     result_ideal = sim_ideal.run(circuit_ideal).result()
     counts = result_ideal.get_counts(0)
@@ -115,34 +118,6 @@ def circuit_fidelity_benchmark(circuit,coupling_map,type:str,initial_layout=None
     fidelity = calc_fidelity(counts, counts_noise)
     return fidelity
 
-
-
-
-def circuit_fidelity_benchmark_T(circuit,t1,t2):
-    # Set the simulation options to include the statevector
-    sim_opts = {
-        "method": "statevector"
-    }
-
-    aer1 = AerSimulator()
-    circuit_ideal =transpile(circuit, aer1)
-    result_ideal = aer1.run(circuit_ideal,**sim_opts).result()
-    counts_ideal = result_ideal.get_counts(0)
-    # print(counts)
-    # plot_histogram(counts).show()
-
-    noise_model = T_noise_model(t1,t2)
-    # Create noisy simulator backend
-    sim_noise = AerSimulator(noise_model=noise_model)
-    circuit_noise = transpile(circuit, sim_noise)
-    result_noise = sim_noise.run(circuit_noise,**sim_opts).result()
-    counts_noise = result_noise.get_counts(0)
-    # print(counts_noise)
-    # Plot noisy output
-    # plot_histogram(counts_bit_flip).show()
-
-    fidelity = calc_fidelity(counts_ideal,counts_noise)
-    return fidelity
 
 #使用 Bhattacharyya 距离近似
 def calc_fidelity(result1,result2):
@@ -176,5 +151,3 @@ if __name__ == '__main__':
     #for i in range(20):
     t1=5
     t2=7
-    f.append(circuit_fidelity_benchmark_T(circ,t1,t2))
-    print(f)
