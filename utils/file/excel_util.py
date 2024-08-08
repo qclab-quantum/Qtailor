@@ -36,5 +36,22 @@ def demo():
         qiskit = df['qiskit']
         mix= df['mix']
 
+def row2array(sheet):
+    data = []
+    df = dfs[sheet]
+    for index, row in df.iterrows():
+        # print(f"Index: {index}")
+        # print(f"Row:\n{row}\n")
+        temp = []
+        for header in ['ae', 'qnn', 'su2', 'portfvqe', 'qtf']:
+            temp.append(row[header])
+        data.append(temp)
+    print(data)
+
+
 if __name__ == '__main__':
-    pass
+    sheets, dfs = ExcelUtil.read_by_sheet('d:/parallel.xlsx')
+    qtailor = sheets[0]
+    qiskit = sheets[1]
+    row2array(qtailor)
+    #row2array(qiskit)

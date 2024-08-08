@@ -88,7 +88,7 @@ class Benchmark():
         adj = GraphUtil.get_adj_list(G)
         gates_cnt = 0
         result = []
-        repeat = 2
+        repeat = 20
         for i in range(repeat):
             try:
                 cnt = CircutUtil.get_gates_cnt(circuit = circuit,adj=adj)
@@ -103,7 +103,7 @@ class Benchmark():
     @staticmethod
     def get_qiskit_gates(qasm:str):
         result = []
-        repeat = 2
+        repeat = 20
         adj= pu.coordinate2adjacent(points)
         circuit = cu.get_from_qasm(qasm)
         # c.draw('mpl').show()
@@ -296,9 +296,8 @@ def remove_idle_qwires(circ):
     dag.qregs = OrderedDict()
     return dag_to_circuit(dag)
 
-if __name__ == '__main__':
+def demo():
 
-    array  = [1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1]
 
     matrix = gu.restore_from_1d_array(array)
     qasm = 'real_amp/realamprandom_indep_qiskit_7.qasm'
@@ -312,3 +311,14 @@ if __name__ == '__main__':
     '''
     #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
     Benchmark.test_fidelity(qasm,matrix=matrix)
+
+if __name__ == '__main__':
+    array = [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
+
+
+
+
+    reshape_obs = GraphUtil.restore_from_1d_array(array)
+    qasm = 'qft/qft_indep_qiskit_20.qasm'
+    csv_path = 'd:/temp/qft.csv'
+    rl, qiskit = Benchmark.gates_benchmark(csv_path, reshape_obs, qasm, False)

@@ -38,7 +38,6 @@ class CSVUtil:
     @staticmethod
     def to_dataframe(abs_path=None, relative_path=None):
         import pandas as pd
-        path=''
         if  abs_path:
             path=abs_path
         else :
