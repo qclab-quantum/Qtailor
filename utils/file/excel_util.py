@@ -43,7 +43,7 @@ def row2array(sheet):
         # print(f"Index: {index}")
         # print(f"Row:\n{row}\n")
         temp = []
-        for header in ['ae', 'qnn', 'su2', 'portfvqe', 'qtf']:
+        for header in ['ae_30',	'qnn_20',	'su2',	'portfvqe_15',	'qtf_20',	'pricingput_17',	'pricingcall_21']:
             temp.append(row[header])
         data.append(temp)
     print(data)
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     sheets, dfs = ExcelUtil.read_by_sheet('d:/parallel.xlsx')
     qtailor = sheets[0]
     qiskit = sheets[1]
-    row2array(qtailor)
+    row2array(qiskit)
     #row2array(qiskit)

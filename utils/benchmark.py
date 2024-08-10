@@ -311,9 +311,9 @@ def benchmark0808():
 def rount_arr(arr):
     return [[round(element, 2) for element in row] for row in arr]
 if __name__ == '__main__':
-    topology = [1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
+    topology =[1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
     matrix = gu.restore_from_1d_array(topology)
-    qasm = 'real_amp/realamprandom_indep_qiskit_6.qasm'
+    qasm = 'real_amp\\realamprandom_indep_qiskit_8.qasm'
 
     #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
     result = np.full((20, 19), 1.0)
@@ -327,8 +327,8 @@ if __name__ == '__main__':
         t1_arr = [].append(t1)
         t2max=1.2 * t1
 
-        for j in range(19):
-            t2=t2max * ((j+1) * 0.05)
+        for j in range(17):
+            t2=t2max * ((j+3) * 0.05)
             #print(t1, t2)
             f1,f2=Benchmark.test_fidelity(qasm,matrix=matrix)
             improve = (f2-f1)/f2
@@ -336,14 +336,14 @@ if __name__ == '__main__':
             f2_all[i][j]=f2.__round__(2)
             result[i][j] = improve.__round__(2)*100
             t2_time[i][j]=t2.__round__(2)
-    print(np.array2string(f1_all, separator=', '))
-    print('f1')
-    print(np.array2string(f2_all, separator=', '))
-    print('f2')
+    # print('f1=')
+    # print(np.array2string(f1_all, separator=', '))
+    # print('f2=')
+    # print(np.array2string(f2_all, separator=', '))
+    print('result=')
     print(np.array2string(result, separator=', '))
-    print('result')
-    print(np.array2string(t2_time, separator=', '))
-    print('t2')
+    # print('t2=')
+    # print(np.array2string(t2_time, separator=', '))
 
 
 
