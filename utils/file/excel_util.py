@@ -46,12 +46,12 @@ def row2array(sheet):
         for header in ['ae_30',	'qnn_20',	'su2',	'portfvqe_15',	'qtf_20',	'pricingput_17',	'pricingcall_21']:
             temp.append(row[header])
         data.append(temp)
-    print(data)
+    return data
 
 
 if __name__ == '__main__':
     sheets, dfs = ExcelUtil.read_by_sheet('d:/parallel.xlsx')
     qtailor = sheets[0]
     qiskit = sheets[1]
-    row2array(qiskit)
-    #row2array(qiskit)
+    q1=row2array(qtailor)
+    q2=row2array(qiskit)

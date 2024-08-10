@@ -147,7 +147,3 @@ if __name__ == '__main__':
     for qubit in range(n_qubits - 1):
         circ.cx(qubit, qubit + 1)
     circ.measure_all()
-
-    #for i in range(20):
-    t1=5
-    t2=7

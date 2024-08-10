@@ -131,27 +131,50 @@ surf3 = ax.plot_surface(x, y, np.full_like(n_data3, heights[2]), rstride=1, cstr
 
 # 创建第三个热力图
 #surf3 = ax.plot_surface(x, y, np.full_like(data3, heights[2]), rstride=1, cstride=1, facecolors=plt.cm.viridis(data3), shade=False)
+# from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+# cbaxes = inset_axes(ax, width="3%", height="50%", loc='center left')
 
+cbaxes = fig.add_axes([0.17, 0.25, 0.02, 0.45])  # [left, bottom, width, height]
 # 添加颜色条
 mappable = ScalarMappable(cmap='viridis')
 mappable.set_array(np.concatenate([data1.flatten(),data2.flatten(),data3.flatten()]))
-cbar = fig.colorbar(mappable, ax=ax, shrink=0.6, aspect=15)  # 调整 shrink 和 aspect 参数
+cbar = fig.colorbar(mappable, ax=ax, shrink=0.6, aspect=15,cax=cbaxes)  # 调整 shrink 和 aspect 参数
 cbar.outline.set_visible(False)
+cbar.set_label('Fidelity Improvement(\%)',)
 # 设置轴标签
-ax.set_xlabel('T1 Relaxation Time')
-ax.set_ylabel('T2 Relaxation Time \n($24\% \leq T2/T1 \leq 120\% $')
-ax.set_zlabel('fidelity')
+ax.set_ylabel('T1 Relaxation Time (µs)',labelpad=10)
+ax.set_xlabel('T2 Relaxation Time \n($18\% \leq T2/T1 \leq 120\% $',labelpad=10)
+# ax.set_zlabel('Bits')
+
+# 设置Z轴的刻度位置和标签
+z_ticks = [0, 20, 40]
+z_labels = ['6 Bits', '8 Bits', '10 Bits']
+ax.set_zticks(z_ticks)
+ax.set_zticklabels(z_labels)
+ax.zaxis.set_tick_params(pad=8)
+
+# 设置x轴刻度和标签
+x_ticks = [0,5,10,16]
+x_labels = ['18', '48','78','120']
+ax.set_xticks(x_ticks)
+ax.set_xticklabels(x_labels)
+
+# 设置Y轴刻度和标签
+y_ticks = [0,5,10,15,20]
+y_labels = ['10e3', '20e3','30e3','40e3','50e3']
+ax.set_yticks(y_ticks)
+ax.set_yticklabels(y_labels)
+
 
 # 设置标题
 # ax.set_title('3D Stacked Heatmaps')
-
 # 设置视角
 ax.view_init(elev=17, azim=-60)
-
 # 调整轴的范围以更好地展示热力图
 # ax.set_xlim(0, data1.shape[1]-1)
 # ax.set_ylim(0, data1.shape[0]-1)
 # ax.set_zlim(min(heights)-5, max(heights)+5)
 plt.savefig('d:/fidelity.png',dpi=400)
+
 # 显示图形
 plt.show()

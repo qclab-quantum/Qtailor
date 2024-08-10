@@ -132,6 +132,6 @@ def generate_circuit(n,p):
 
 if __name__ == '__main__':
     for i in [80]:
-        for j in [1]:
+        for j in [3,4]:
             generate_circuit(i,j)
 
