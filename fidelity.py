@@ -66,7 +66,7 @@ def T_noise_model(t1=50000,t2=70000):
     T2s = np.array([min(T2s[j], 2 * T1s[j]) for j in range(n)])
 
     # Instruction times (in nanoseconds)
-    time_cx = 300
+    time_cx = 90
     time_reset = 1000  # 1 microsecond
     time_measure = 1000  # 1 microsecond
 
@@ -82,7 +82,7 @@ def T_noise_model(t1=50000,t2=70000):
     # Add errors to noise model
     noise_thermal = NoiseModel()
     #noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], gates_2 )
-    noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], ['swap'] )
+    noise_thermal.add_all_qubit_quantum_error(errors_cx[0][0], ['cx','swap'] )
     return noise_thermal
 
 

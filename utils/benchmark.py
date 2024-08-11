@@ -2,6 +2,9 @@ import time
 import traceback
 from collections import OrderedDict
 import matplotlib
+
+from utils.file.excel_util import ExcelUtil
+
 matplotlib.use('TkAgg')
 import networkx as nx
 import numpy as np
@@ -310,43 +313,57 @@ def benchmark0808():
 
 def rount_arr(arr):
     return [[round(element, 2) for element in row] for row in arr]
+
+def fidelity_benchmark(topologys,qasms):
+    sheet =[
+        # 'qft5',
+        # 'qft10',
+        # 'qnn5',
+        # 'qnn10',
+        'realamp6'
+    ]
+    for g, t in enumerate(topologys):
+        matrix = gu.restore_from_1d_array(t)
+        qasm = qasms[g]
+        result = np.full((20, 19), 1.0)
+        f1_all = np.full((20, 19), 1.0)
+        f2_all = np.full((20, 19), 1.0)
+        t2_time = np.full((20, 19), 1.0)
+
+        #50 micro seconds
+        t1max = 50e3
+        for i in range(20):
+            t1 = t1max * (0.2 + i * 0.04)
+            t1_arr = [].append(t1)
+            t2max = 1.2 * t1
+
+            for j in range(17):
+                t2 = t2max * ((j + 3) * 0.05)
+                # print(t1, t2)
+                f1, f2 = Benchmark.test_fidelity(qasm, matrix=matrix)
+                improve = (f2 - f1) / f2
+                f1_all[i][j] = f1.__round__(2)
+                f2_all[i][j] = f2.__round__(2)
+                result[i][j] = improve.__round__(2) * 100
+                t2_time[i][j] = t2.__round__(2)
+
+        print('result=')
+        print(np.array2string(result, separator=', '))
+        ExcelUtil.array2sheet('d:/fidelity_cx.xlsx',sheet[g],result)
+
 if __name__ == '__main__':
-    topology =[1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]
-    matrix = gu.restore_from_1d_array(topology)
-    qasm = 'real_amp\\realamprandom_indep_qiskit_8.qasm'
-
-    #Benchmark.depth_benchmark(file_path=None,matrix=matrix,qasm=qasm,draw=True,show_in_html=True)
-    result = np.full((20, 19), 1.0)
-    f1_all=np.full((20, 19), 1.0)
-    f2_all=np.full((20, 19), 1.0)
-    t2_time=np.full((20, 19), 1.0)
-
-    t1max=50e3
-    for i in range(20):
-        t1=t1max * (0.2+i*0.04)
-        t1_arr = [].append(t1)
-        t2max=1.2 * t1
-
-        for j in range(17):
-            t2=t2max * ((j+3) * 0.05)
-            #print(t1, t2)
-            f1,f2=Benchmark.test_fidelity(qasm,matrix=matrix)
-            improve = (f2-f1)/f2
-            f1_all[i][j]=f1.__round__(2)
-            f2_all[i][j]=f2.__round__(2)
-            result[i][j] = improve.__round__(2)*100
-            t2_time[i][j]=t2.__round__(2)
-    # print('f1=')
-    # print(np.array2string(f1_all, separator=', '))
-    # print('f2=')
-    # print(np.array2string(f2_all, separator=', '))
-    print('result=')
-    print(np.array2string(result, separator=', '))
-    # print('t2=')
-    # print(np.array2string(t2_time, separator=', '))
-
-
-
-    #
-    # print(Benchmark.get_qiskit_gates(qasm))
-    # print(Benchmark.get_rl_gates(matrix,qasm))
+    topologys = [
+        # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        # [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1],
+        # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        # [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0,1, 1, 0, 0, 0, 1, 0, 1]
+        [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]#realamp 6
+    ]
+    qasms =[
+        # 'qft/qft_indep_qiskit_5.qasm',
+        # 'qft/qft_indep_qiskit_10.qasm',
+        # 'qnn/qnn_indep_qiskit_5.qasm',
+        # 'qnn/qnn_indep_qiskit_10.qasm',
+    'real_amp/realamprandom_indep_qiskit_6.qasm'
+    ]
+    fidelity_benchmark(topologys,qasms)

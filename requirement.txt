@@ -19,6 +19,6 @@ shared-memory-dict
 tensorboard
 setuptools<=69.5.1
 numpy==1.26.2
-
+openpyxl
 
 

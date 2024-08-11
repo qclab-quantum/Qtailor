@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-
+import matplotlib as mpl
 #立体曲面
-
+mpl.rcParams['font.family'] = ['Arial']
+mpl.rcParams['font.size'] =15
 def normalize_array_to_range(arr, new_min=0.4, new_max=1.0):
     min_value = np.min(arr)
     max_value = np.max(arr)
@@ -72,11 +73,11 @@ for i in range(len(y)):
 
 
 # Set axis labels
-ax.set_xlabel('Qubits Number')
-ax.set_ylabel('Gates Factor')
+ax.set_xlabel('Gates Factor')
+ax.set_ylabel('Qubits')
 ax.set_zlabel('Circuits Depth')
 ax.legend()
 # 添加图例
-plt.savefig('trend.png',dpi=600)
+plt.savefig('trend.pdf',dpi=600)
 plt.show()
 

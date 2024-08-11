@@ -46,6 +46,11 @@ class CSVUtil:
         df = pd.read_csv(path)
         # Display the dataframe
         return  df
+    @staticmethod
+    def wirte2darray(filepath,data):
+        for row in data:
+            CSVUtil.append_data(filepath,row)
+
 
 
 def test():

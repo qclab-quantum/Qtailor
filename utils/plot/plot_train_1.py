@@ -9,7 +9,7 @@ import matplotlib.ticker as ticker
 
 
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 16
+mpl.rcParams['font.size'] = 20
 label_size = 16
 line_width = 2.0
 v6=[]
@@ -24,8 +24,8 @@ def time_formatter(x,pos):
         # Format as minutes otherwise
         return f'{(x/3600).__round__(1)}hr'
 def get_data(folder,x_index):
-    dfv6=CSVUtil.to_dataframe(relative_path=f'data/train_1/ae40/{folder}/env6.csv')
-    dfv7=CSVUtil.to_dataframe(relative_path=f'data/train_1/ae40/{folder}/env7.csv')
+    dfv6=CSVUtil.to_dataframe(relative_path=f'data\\train_demo\\ae40/{folder}/env6.csv')
+    dfv7=CSVUtil.to_dataframe(relative_path=f'data\\train_demo\\ae40/{folder}/env7.csv')
 
     xv6=dfv6[x_index].values
     yv6=dfv6['Value'].values
@@ -145,6 +145,6 @@ if __name__ == '__main__':
     plot4()
 
     plt.tight_layout()
-    plt.savefig(FileUtil.get_root_dir()+'/data/fig/tensorboard.png',dpi = dpi)
+    plt.savefig(FileUtil.get_root_dir()+'/data/fig/tensorboard.pdf',dpi = dpi)
     # 显示图形
     plt.show()
