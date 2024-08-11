@@ -43,7 +43,7 @@ def row2array(sheet):
         # print(f"Index: {index}")
         # print(f"Row:\n{row}\n")
         temp = []
-        for header in ['ae_30',	'qnn_20',	'su2',	'portfvqe_15',	'qtf_20',	'pricingput_17',	'pricingcall_21']:
+        for header in ['ae_30',	'qnn_20',	'su2',	'portfvqe_15',	'pricingcall_21','qtf_20',	'pricingput_17',	]:
             temp.append(row[header])
         data.append(temp)
     return data
@@ -55,3 +55,4 @@ if __name__ == '__main__':
     qiskit = sheets[1]
     q1=row2array(qtailor)
     q2=row2array(qiskit)
+
