@@ -161,7 +161,7 @@ ax.set_xticklabels(x_labels)
 
 # 设置Y轴刻度和标签
 y_ticks = [0,5,10,15,20]
-y_labels = ['10e3', '20e3','30e3','40e3','50e3']
+y_labels = ['10', '20','30','40','50']
 ax.set_yticks(y_ticks)
 ax.set_yticklabels(y_labels)
 
@@ -174,7 +174,7 @@ ax.view_init(elev=17, azim=-60)
 # ax.set_xlim(0, data1.shape[1]-1)
 # ax.set_ylim(0, data1.shape[0]-1)
 # ax.set_zlim(min(heights)-5, max(heights)+5)
-plt.savefig('d:/fidelity.png',dpi=400)
+plt.savefig('d:/fidelity.pdf',dpi=400)
 
 # 显示图形
 plt.show()

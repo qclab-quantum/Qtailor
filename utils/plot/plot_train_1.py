@@ -10,7 +10,7 @@ import matplotlib.ticker as ticker
 
 mpl.rcParams['font.family'] = ['Arial']
 mpl.rcParams['font.size'] = 20
-label_size = 16
+label_size = 18
 line_width = 2.0
 v6=[]
 v7=[]
@@ -36,11 +36,11 @@ def get_data(folder,x_index):
     return xv6,yv6,xv7,yv7
 
 # 创建一个2x1的子图
-fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+fig, axs = plt.subplots(1, 2, figsize=(12, 4))
 
 #mean kl loss
 def plot1():
-    ax = axs[0][0]
+    ax = axs[0]
     xv6,yv6,xv7,yv7 = get_data('mean_kl_loss',x_index = 'relative')
     # 创建折线图
     ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
@@ -60,13 +60,13 @@ def plot1():
 
     # ustom formatter
     ax.xaxis.set_major_formatter(FuncFormatter(time_formatter))
-    ax.legend(loc='upper right',fontsize='medium')
+    #ax.legend(loc='upper right',fontsize='medium')
 
 
 
 #total loss
 def plot2():
-    ax = axs[0][1]
+    ax = axs[1]
     xv6,yv6,xv7,yv7 = get_data('total_loss',x_index = 'relative')
     # 创建折线图
     ax.plot(xv6, yv6,color='#1565c0',linewidth=line_width, label='PPO')
@@ -141,10 +141,10 @@ def plot4():
 if __name__ == '__main__':
     plot1()
     plot2()
-    plot3()
-    plot4()
+    # plot3()
+    # plot4()
 
     plt.tight_layout()
-    plt.savefig(FileUtil.get_root_dir()+'/data/fig/tensorboard.pdf',dpi = dpi)
+    plt.savefig(FileUtil.get_root_dir()+'/data/fig/t1.pdf',dpi = dpi)
     # 显示图形
     plt.show()
