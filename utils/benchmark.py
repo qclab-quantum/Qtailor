@@ -34,7 +34,7 @@ class Benchmark():
         self.qasm = qasm
 
     '''
-    file_path: 'the path of csv file ', is file_path is not None, the result will be saved in csv file
+    file_path: the csv file path, to save the result, set to empty = not save
     matrix:  the adjacency matrix representing the graph 
     qasm:  the qasm file path of circuits, qasm file is in benchmark folder
     draw:  true =  draw the topology(graph)
@@ -48,7 +48,7 @@ class Benchmark():
         #get Qiskit result
         b_2 = Benchmark.get_qiskit_depth(qasm)
         qiskit = b_2[-1]
-        print('rl = %r,qiskit= %r, mix = %r '%(rl,qiskit,mix))
+        print('qtailor = %r,qiskit= %r, mix = %r '%(rl,qiskit,mix))
 
         #write to csv file
         data = []
@@ -57,7 +57,7 @@ class Benchmark():
         if file_path:
             CSVUtil.append_data(file_path, data)
         if draw:
-            gu.draw_adj_matrix(matrix,is_draw_nt=True)
+            gu.draw_adj_matrix(matrix,is_draw_nt=show_in_html)
             #pu.plot_points(points)
         return rl,qiskit,mix
 
@@ -352,18 +352,17 @@ def fidelity_benchmark(topologys,qasms):
         ExcelUtil.array2sheet('d:/fidelity_cx.xlsx',sheet[g],result)
 
 if __name__ == '__main__':
-    topologys = [
-        # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        # [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1],
-        # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        # [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0,1, 1, 0, 0, 0, 1, 0, 1]
-        [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]#realamp 6
-    ]
-    qasms =[
-        # 'qft/qft_indep_qiskit_5.qasm',
-        # 'qft/qft_indep_qiskit_10.qasm',
-        # 'qnn/qnn_indep_qiskit_5.qasm',
-        # 'qnn/qnn_indep_qiskit_10.qasm',
-    'real_amp/realamprandom_indep_qiskit_6.qasm'
-    ]
-    fidelity_benchmark(topologys,qasms)
+
+    array = [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1]
+    matrix = gu.restore_from_1d_array(array)
+    qasm = 'qnn/qnn_indep_qiskit_10.qasm'
+
+    Benchmark.depth_benchmark(file_path='',matrix=matrix,qasm = qasm,draw = True,show_in_html=True)
+
+    '''
+    file_path: the csv file path, to save the result, set to empty = not save
+    matrix:  the adjacency matrix representing the graph 
+    qasm:  the qasm file path of circuits, qasm file is in benchmark folder
+    draw:  true =  draw the topology(graph)
+    show_in_html: show topology in html  
+    '''
