@@ -78,7 +78,7 @@ class GraphUtil():
             for i in range(len(nt.nodes)):
                 nt.nodes[i]['label'] = 'Q' + str(nt.nodes[i]['id'])
                 #print(nt.nodes[i])
-            nt.show('nx.html', notebook=False)
+            nt.show('topology.html', notebook=False)
 
 
     def demo(self):
@@ -99,7 +99,7 @@ class GraphUtil():
         nt.from_nx(nx_graph)
       #  nt.show_buttons()
 
-        nt.show('nx.html',notebook=False)
+        nt.show('topology.html',notebook=False)
 
 
     def generate_html(self):
@@ -113,7 +113,7 @@ class GraphUtil():
         nt = Network('1000px', '1000px')
         setOption(nt)
         nt.from_nx(G1)
-        nt.show('nx.html', notebook=False)
+        nt.show('topology.html', notebook=False)
 
     @staticmethod
     def get_new_graph(n:int):
