@@ -9,14 +9,7 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 ![Overview](./temp/overview.png)
 
-Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened
-matrix that denotes the current topology, where Mij = 1 indicates that Qi and Qj are connected. (2) Subsequently, the agent
-outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology.
-(4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the
-corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation
-of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in
-memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent
-receives the reward and continues to the subsequent iteration.
+Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $$M_{ij}$$ = 1 indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology. (4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent receives the reward and continues to the subsequent iteration.
 <hr/>
 
 ![](./temp/intro2.png)
@@ -65,7 +58,7 @@ iters_arr
 circuits:
   -qft\\qft_indep_qiskit_5.qasm
   
-# about 0.5x the number of CPU cores, for laptop you can set to 4
+# about 0.5 times the number of CPU cores, for laptop you can set to 4
 num_rollout_workers: 4
 ```
 
@@ -76,7 +69,7 @@ num_rollout_workers: 4
 To train the model, run this command:
 
 ```train
-python rllib_run.py
+python run_v7.py
 ```
 
 >📋  When training complete the training result will be automatically saved in **benchmark/a-result/xxx.csv**.
@@ -89,13 +82,11 @@ To evaluate the result,
 1. Open utils/benchmark.py  and modify the main function
 
 ```python
-if __name__ == '__main__':
-
-    array  = []
-
-    qasm = 'portfolio_vqe/portfoliovqe_indep_qiskit_10.qasm'
-
-    Benchmark.compare_gates(qasm=qasm,array=array,bits = 10)
+    array = [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1]
+    matrix = gu.restore_from_1d_array(array)
+    qasm = 'qnn/qnn_indep_qiskit_10.qasm'
+    
+    Benchmark.depth_benchmark(file_path='',matrix=matrix,qasm = qasm,draw = True,show_in_html=True)
 ```
 
 2. Replace the existing values with those retrieved from the **benchmark/a-result/xxx.csv**. the csv file looks like:
@@ -106,7 +97,7 @@ if __name__ == '__main__':
 
 
 
-3. Run the main Function in your editor , or  run:
+3. Run the main function in IDE(i.e. Pycharm), or just excute in terminal :
 
    ```shell
    python utils/benchmark.py
