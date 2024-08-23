@@ -9,8 +9,14 @@ This repository is the official implementation of ***AI-Powered Algorithm-Centri
 
 ![Overview](./temp/overview.png)
 
-> *Overview architecture and workflow of OurProposed RR-PPO:  (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $M_{ij} = 1$ indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action ($a$), that determines  build an connection between which two qubits. (3) The action is then applied to the current topology. (4)}The action a is used as a key to query the reward ($r$) from memory, which stores pairs of $<a,r>$. If the action is found in memory, the corresponding reward  will be directly provided to the agent, else, an evaluation involving circuit transpilation and depth calculation is performed. The reward function then computes the reward based on the circuit depth, and this reward is subsequently stored in memory as pairs of $<a,r>$​​. (5) The agent receives the reward and continuation to the subsequent iteration.*
-
+Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened
+matrix that denotes the current topology, where Mij = 1 indicates that Qi and Qj are connected. (2) Subsequently, the agent
+outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology.
+(4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the
+corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation
+of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in
+memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent
+receives the reward and continues to the subsequent iteration.
 <hr/>
 
 ![](./temp/intro2.png)
