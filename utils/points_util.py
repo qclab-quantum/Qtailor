@@ -82,5 +82,4 @@ class PointsUtil:
 
 
 if __name__ == '__main__':
-    points=[(1,1),(1,4),(3,1),(3,4)]
-    PointsUtil.plot_points(points)
+    pass

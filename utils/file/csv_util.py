@@ -38,7 +38,6 @@ class CSVUtil:
     @staticmethod
     def to_dataframe(abs_path=None, relative_path=None):
         import pandas as pd
-        path=''
         if  abs_path:
             path=abs_path
         else :
@@ -47,6 +46,11 @@ class CSVUtil:
         df = pd.read_csv(path)
         # Display the dataframe
         return  df
+    @staticmethod
+    def wirte2darray(filepath,data):
+        for row in data:
+            CSVUtil.append_data(filepath,row)
+
 
 
 def test():

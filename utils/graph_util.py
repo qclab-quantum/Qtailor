@@ -162,44 +162,7 @@ class GraphUtil():
         matrix[i][j] = 0
         matrix[j][i] = 0
 
-    @staticmethod
-    def test_adj_matrix(adj_matrix, qasm):
-        circuit = CircutUtil.get_from_qasm(qasm)
-        G = nx.DiGraph()
-        # 添加节点
-        num_nodes = len(adj_matrix)
-        G.add_nodes_from(range(num_nodes))
 
-        # 添加边
-        for i in range(num_nodes):
-            for j in range(num_nodes):
-                if adj_matrix[i][j] == 1:
-                    G.add_edge(i, j)
-
-        adj_list = GraphUtil.get_adj_list(G)
-        layout = list(range(len(circuit.qubits)))
-        avr_rl = 0
-        avr_rl_mix = 0
-        result = []
-        repeat = 10
-        for i in range(repeat):
-            try:
-                ct1 = transpile(circuits=circuit, coupling_map=adj_list, initial_layout=layout,  optimization_level=1, backend=simulator)
-                ct2 = transpile(circuits=circuit, coupling_map=adj_list, optimization_level=3, backend=simulator)
-                d1 = ct1.depth()
-                d2 = ct2.depth()
-                result.append([d1,d2])
-                avr_rl += d1
-                avr_rl_mix += d2
-            except Exception as e:
-                print(e)
-                result.append([-1,-1])
-
-            # print(ct.layout.initial_layout)
-        avr_rl /= repeat
-        avr_rl_mix /= repeat
-        result.append([avr_rl,avr_rl_mix])
-        return result
 
     @staticmethod
     #将矩阵左下三角拉伸为一维矩阵

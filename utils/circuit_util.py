@@ -1,4 +1,5 @@
 import os
+import traceback
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -9,8 +10,6 @@ from utils.file.file_util import FileUtil
 simulator = AerSimulator()
 
 class CircutUtil:
-    def __init__(self, name):
-        self.name = name
     # 获取线路深度（门分解后）
     @staticmethod
     def get_circuit_depth(circuit:QuantumCircuit, adj:list,initial_layout: list) -> int:
@@ -20,40 +19,44 @@ class CircutUtil:
             return -1
         return compiled_circuit.decompose().depth()
 
-
     @staticmethod
     def get_circuit_score(circuit:QuantumCircuit, adj:list) -> int:
         #[0,1,2,....,qubits的个数-1]
-        layout = list(range(len(circuit.qubits)))
+        initial_layout = list(range(len(circuit.qubits)))
         try:
             avr = 0
             for i in range(3):
-                cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
+                cc = transpile(circuits=circuit, coupling_map=adj,initial_layout=initial_layout,layout_method='sabre',routing_method='sabre', optimization_level=1,backend=simulator)
                 #avr += cc.size() * 0.5 + cc.depth()*0.5
                 avr += cc.decompose().depth()
 
             #取平均值
             return avr/3
         except Exception as e:
-            #print(adj)
             #traceback.print_exc()
             return None
 
     @staticmethod
-
-    def get_gates(circuit:QuantumCircuit,adj:list,initial_layout: list):
+    def count_gates(type,circuit:QuantumCircuit, adj, gates=[],) -> int:
         try:
-            compiled_circuit = transpile(circuits=circuit,
-                                         coupling_map=adj,
-                                         initial_layout=initial_layout,
-                                         backend=simulator)
+            if type == 'rl':
+                compiled_circuit = transpile(circuits=circuit,
+                                             coupling_map=adj,
+                                             initial_layout=list(range(len(circuit.qubits))),
+                                             backend=simulator)
+            elif type == 'qiskit':
+                compiled_circuit = transpile(circuits=circuit,
+                                             coupling_map=adj,
+                                             backend=simulator)
+
             ops = compiled_circuit.count_ops()
-            return  sum(ops.values())
-        except:
-            return None
-        return compiled_circuit.decompose().depth()
-
-
+            if len(gates) == 0:
+                return  sum(ops.values())
+            else:
+                return  sum(ops[g] for g in gates if g in ops)
+        except Exception as e:
+            traceback.print_exc()
+            return 999999
 
     # get adj  from coordinate
     @staticmethod
@@ -91,7 +94,7 @@ class CircutUtil:
         return matrix
 
     @staticmethod
-    #从 qasm 文件中读取 代码并转为 qiskit circuit 对象
+    # qasm to qiskit circuit object
     def get_from_qasm(name:str):
         qasm_str = FileUtil.read_all('benchmark'+ os.path.sep+name)
         circuit = QuantumCircuit.from_qasm_str(qasm_str=qasm_str)
@@ -102,17 +105,17 @@ class CircutUtil:
         circuit = CircutUtil.get_from_qasm(qasm)
         circuit.draw('mpl').show()
 
-def generate_random_integer(n, mean, std=1):
+#获取正态分布数组
+def get_random_std_arr(n, mean, std=1):
     random_array = np.random.normal(mean, std, n)
     rounded_array = np.rint(random_array).astype(int)
     final_array = np.clip(rounded_array, 0, n)
-    #print(final_array)
     return final_array
 
 #生成随机线路
 def generate_circuit(n,p):
     circuit = QuantumCircuit(n)
-    random_array = generate_random_integer(n=(p*n),mean=(n/2))
+    random_array = get_random_std_arr(n=(p*n),mean=(n/2))
     i = 0
     while (i+1) < len(random_array):
         ctrl = random_array[i]
@@ -128,7 +131,7 @@ def generate_circuit(n,p):
 
 
 if __name__ == '__main__':
-    #CircutUtil.draw_circult('qnn/qnn_indep_qiskit_3.qasm')
-    for i in [50,60,70,80,90,100]:
-        for j in [10]:
+    for i in [80]:
+        for j in [3,4]:
             generate_circuit(i,j)
+
