@@ -73,7 +73,7 @@ python run_v7.py
 ```
 
 >📋  When training complete the training result will be automatically saved in **benchmark/a-result/xxx.csv**.
-> The column **'rl'** means the depth of mapped circuits results from our method, the column 'results'  results represents the lower left corner of the matrix , as we mention in **Section 2.1 (line 92)**
+> The column **'rl'** means the depth of mapped circuits results from our method, the column 'results'  results represents the lower left corner of the matrix **
 
 ## Evaluation
 
