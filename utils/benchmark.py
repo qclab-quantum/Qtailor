@@ -19,7 +19,7 @@ from utils.graph_util import GraphUtil as gu, GraphUtil
 from utils.points_util import PointsUtil as pu
 from qiskit.converters import circuit_to_dag, dag_to_circuit
 #15*15 的点阵
-points  = [(x, y) for x in range(15) for y in range(15)]
+points  = [(x, y) for x in range(10) for y in range(10)]
 
 # points = [(0, 0), (0, 1), (0, 2), (0, 3),
 #           (1, 0), (1, 1), (1, 2), (1, 3),
@@ -217,7 +217,7 @@ class Benchmark():
         f1= Benchmark.get_qiskit_fidelity(qasm)
         #rl
         f2= Benchmark.get_fidelity(qasm,matrix)
-        #print(f"q_fidelity={f1}\n r_fidelity={f2}")
+        print(f"q_fidelity={f1}\n r_fidelity={f2}")
         return f1,f2
 
     @staticmethod
@@ -314,7 +314,7 @@ def benchmark0808():
 def rount_arr(arr):
     return [[round(element, 2) for element in row] for row in arr]
 
-def fidelity_benchmark(topologys,qasms):
+def fidelity_benchmark(topologys :list, qasms :list):
     sheet =[
         # 'qft5',
         # 'qft10',
@@ -332,12 +332,12 @@ def fidelity_benchmark(topologys,qasms):
 
         #50 micro seconds
         t1max = 50e3
-        for i in range(20):
+        for i in range(1):
             t1 = t1max * (0.2 + i * 0.04)
             t1_arr = [].append(t1)
             t2max = 1.2 * t1
 
-            for j in range(17):
+            for j in range(1):
                 t2 = t2max * ((j + 3) * 0.05)
                 # print(t1, t2)
                 f1, f2 = Benchmark.test_fidelity(qasm, matrix=matrix)
@@ -353,9 +353,11 @@ def fidelity_benchmark(topologys,qasms):
 
 if __name__ == '__main__':
 
-    array = [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1]
+    array = [1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1,
+             1, 0, 0, 1, 0, 0, 0, 0, 1]
+
     matrix = gu.restore_from_1d_array(array)
-    qasm = 'qnn/qnn_indep_qiskit_10.qasm'
+    qasm = 'amplitude_estimation/ae_indep_qiskit_10.qasm'
 
     Benchmark.depth_benchmark(file_path='',matrix=matrix,qasm = qasm,draw = True,show_in_html=True)
 
@@ -366,3 +368,5 @@ if __name__ == '__main__':
     draw:  true =  draw the topology(graph)
     show_in_html: show topology in html  
     '''
+    # array =[1, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    # fidelity_benchmark([array],['qft/qft_indep_qiskit_5.qasm'])
