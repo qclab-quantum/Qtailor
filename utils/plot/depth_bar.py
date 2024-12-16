@@ -3,7 +3,7 @@ import matplotlib as mpl
 import numpy as np
 import re
 from utils.file.excel_util import ExcelUtil
-mpl.rcParams['font.family'] = ['Arial']
+mpl.rcParams['font.family'] = ['Times New Roman']
 mpl.rcParams['font.size'] = 20
 #9个柱状图
 

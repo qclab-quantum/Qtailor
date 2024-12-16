@@ -4,6 +4,12 @@ from matplotlib.colors import Normalize
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.cm import ScalarMappable
 
+from utils.file.file_util import FileUtil
+
+plt.rcParams["font.family"] = "Arial"
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+plt.rcParams['font.size'] = 13
 # 生成一些示例数据
 data1 = np.array([[ 6.,  8.,  8.,  6.,  7.,  8.,  9.,  7.,  6.,  6.,  7.,  5.,  5.,  7.,
    5.,  5.,  4.],
@@ -143,7 +149,7 @@ cbar.outline.set_visible(False)
 cbar.set_label('Fidelity Improvement(\%)',)
 # 设置轴标签
 ax.set_ylabel('T1 Relaxation Time (µs)',labelpad=10)
-ax.set_xlabel('T2 Relaxation Time \n($18\% \leq T2/T1 \leq 120\% $',labelpad=10)
+ax.set_xlabel('T2 Relaxation Time \n($18\% \leq T2/T1 \leq 120\%) $',labelpad=10)
 # ax.set_zlabel('Bits')
 
 # 设置Z轴的刻度位置和标签
@@ -174,7 +180,7 @@ ax.view_init(elev=17, azim=-60)
 # ax.set_xlim(0, data1.shape[1]-1)
 # ax.set_ylim(0, data1.shape[0]-1)
 # ax.set_zlim(min(heights)-5, max(heights)+5)
-plt.savefig('d:/fidelity.pdf',dpi=400)
+plt.savefig(FileUtil.get_root_dir()+'/data/fig/fidelity.png',dpi = 500)
 
 # 显示图形
 plt.show()

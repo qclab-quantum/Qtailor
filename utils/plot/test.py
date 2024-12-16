@@ -1,7 +1,21 @@
+import matplotlib.pyplot as plt
+import numpy as np
 
+# 创建数据
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
 
-rl = [13506,	19726,	17127,	2615,	6145,	6963,	24891]
-qiskit = [15323,	20716,	19247,	4111,	6825,	7383,	25667]
+# 绘制折线图
+line1, = plt.plot(x, y1, label='Sine', color='blue')
+line2, = plt.plot(x, y2, label='Cosine', color='orange')
 
-for i in range(len(rl)):
-    print(round(1 - rl[i]/qiskit[i],4))
+# 创建自定义的标记
+circle_marker_line1 = plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10)
+circle_marker_line2 = plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='orange', markersize=10)
+
+# 添加图例，并使用自定义的标记
+plt.legend([circle_marker_line1, circle_marker_line2], ['Sine', 'Cosine'])
+
+# 显示图形
+plt.show()
