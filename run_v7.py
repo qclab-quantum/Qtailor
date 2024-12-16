@@ -132,7 +132,6 @@ def test_result(checkpoint):
         max_episode_steps=4000000,
     )
 
-    # Create the env to do inference in.
     env = gym.make(env_id)
     obs, info = env.reset()
     num_episodes = 0
