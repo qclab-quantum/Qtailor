@@ -9,6 +9,7 @@ import os
 
 from ray import tune, air
 from ray.rllib.algorithms import Algorithm
+from ray.rllib.core.models.configs import ModelConfig
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.tune.logger import pretty_print
 from ray.tune.registry import get_trainable_cls
@@ -50,10 +51,10 @@ def train_policy():
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   ,num_envs_per_worker=1
-                  #,remote_worker_envs=True
                   )
         .resources(num_gpus=1)
     )
+    # config['model']['use_attention'] = True
     stop = {
         "training_iteration": args.stop_iters,
         "timesteps_total": args.stop_timesteps,
