@@ -23,19 +23,30 @@ def draw_graph(coupling_map: List[Union[Tuple[int, int], Tuple[Node, Node]]]):
     nx.draw(coupling_graph, labels={node: node for node in coupling_graph.nodes()})
 
 '''
-real_amp:[1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1]
+qft/qft_indep_qiskit_5.qasm:[1, 0, 1, 1, 1, 1, 1, 1, 1, 1] time out
+
+91/93
+su2/su2random_indep_qiskit_6.qasm:[1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1]
+
+48/78
+qnn/qnn_indep_qiskit_5.qasm: [1, 0, 1, 1, 1, 1, 1, 0, 1, 0]
+
+29/49
+portfolio_vqe/portfoliovqe_indep_qiskit_5.qasm:[1, 1, 1, 1, 1, 1, 1, 0, 1, 1]
+
+69/82
+real_amp/realamprandom_indep_qiskit_8.qasm:[1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1]
+
+110/120
+two_local_ansatz/twolocalrandom_indep_qiskit_10.qasm: [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]
 
 '''
 
-array =[1, 1, 1, 1, 1, 1, 1, 0, 1, 1]
-
-
-
-
+array =[1, 0, 1, 1, 1, 1, 1, 1, 1, 1]
 
 matrix = gu.restore_from_1d_array(array)
-qubits_number = 5
-name = r'portfolio_vqe/portfoliovqe_indep_qiskit_5.qasm'
+qubits_number =5
+name = r'qft/qft_indep_qiskit_5.qasm'
 root_dir = FileUtil.get_root_dir()
 
 def compile_on_tket():
