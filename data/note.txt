@@ -11,8 +11,5 @@ update_per_step：step_per_collect*update_per_step= 收集够step_per_collect个
 
 batch： 每次训练时使用的数据批次
 
-
-class collect
-
 n_step 收集的step的数量
 n_episode episode的数量

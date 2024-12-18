@@ -6,6 +6,7 @@
 
 This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(qclab_quantum@163.com) .
 
+The full paper includes **Appendix**  is available at **assets**
 
 ![Overview](./temp/overview.png)
 
