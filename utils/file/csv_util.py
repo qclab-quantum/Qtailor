@@ -77,4 +77,4 @@ def demo():
     CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'remark', 'checkpoint'] ])
 if __name__ == '__main__':
 
-    CSVUtil.to_dataframe(relative_path=r'data/train_demo/ae40/env6.csv')
+    CSVUtil.to_dataframe(relative_path=r'data/train_metric/ae40/env6.csv')
