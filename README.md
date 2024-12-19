@@ -1,14 +1,18 @@
 # AI-Powered Algorithm-Centric Quantum Processor Topology Design
+Tian Li, Xiao-Yue Xu, Chen Ding, Tian-Ci Tian, Wei-You Liao, Shuo Zhang, He-Liang Huang*
 
+This repository is the official implementation our paper. For any questions, please feel free to contact us: 
 
-## Message
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.*** For any questions, please feel free to contact us: 
+- He-Liang Huang (Corresponding author, quanhhl@ustc.edu.cn)
 
-He-Liang Huang (Corresponding author, quanhhl@ustc.edu.cn)
+- Tian Li( felix.litian@foxmail.com )
 
-Tian Li(felix.litian@foxmail.com)
+The code is available in both :
 
-The full paper includes **Appendix**  is available at **assets**
+Github https://github.com/qclab-quantum/Qtailor 
+
+and Gitee https://gitee.com/Eliment-li/qccrl
+
 
 ## Introction
 
@@ -129,12 +133,5 @@ Our implementation is based on
 [Ray RLlib](https://github.com/ray-project/ray/tree/master/rllib) and [Pytorch]()
 
 
-## Others
-
-The code is available in both :
-
-Github https://github.com/qclab-quantum/Qtailor 
-
-and Gitee https://gitee.com/Eliment-li/qccrl
 
 
