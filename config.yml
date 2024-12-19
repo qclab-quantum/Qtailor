@@ -1,15 +1,17 @@
 
 env_version: 8
 
-#rllib ppo start
-###Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
+#Iters is the number of batches the model will train on and the number of times your model weights will be updated (not counting minibatches).
+#deprecated,use  iters_arr instead
 stop_iters: 0
 
+# set circuits and set the stop_iters for each circuits
 iters_arr:
   - 2
 # relative path of  store in benchmark folder
 circuits:
   - real_amp/realamprandom_indep_qiskit_6.qasm
+
 ##One call to env.step() is one timestep.
 stop_timesteps: 10000000
 
@@ -33,4 +35,3 @@ checkpoint: None
 check_point_zip_path: None
 
 debug: False
-#rllib ppo end

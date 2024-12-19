@@ -23,7 +23,6 @@ class FileUtil:
     @staticmethod
     def get_root_dir():
         #方法一 从其他目录调用该方法不一定返回正确的目录
-
         # current_dir = os.getcwd() # Get the current directory
         # root_dir = os.path.dirname(current_dir)
         #方法二
