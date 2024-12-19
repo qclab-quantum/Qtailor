@@ -30,6 +30,7 @@ text_path=''
 datetime_str =''
 tensorboard=''
 args = None
+
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
     # Can also register the env creator function explicitly with:
@@ -40,7 +41,6 @@ def train_policy():
         .framework(args.framework)
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   ,num_envs_per_worker=1
-                  #,remote_worker_envs=True
                   )
         .resources(num_gpus=1)
     )
@@ -112,8 +112,6 @@ def evaluate_result(checkpoint):
     algo = Algorithm.from_checkpoint(checkpoint)
     env_id = "CircuitEnvTest-v"+str(args.env_version)
     smd = SharedMemoryDict(name='tokens', size=1024)
-    #smd['evaluate'] = True
-   # smd['debug'] = True
 
     register(
         id=env_id,
@@ -188,12 +186,9 @@ def run():
         output = StringIO()
         #with contextlib.redirect_stdout(output):
         results = train_policy()
-
         strings = output.getvalue()
-
         FileUtil.write(text_path, strings)
         tensorboard = parse_tensorboard(strings)
-
         checkpoint = results.get_best_result().checkpoint
         evaluate_result(checkpoint)
 
@@ -216,6 +211,9 @@ def evaluate_checkpoint():
         smd.shm.close()
         smd.shm.unlink()
 
+'''
+use  CircuitEnvTest_v7
+'''
 if __name__ == "__main__":
     time.sleep(1)
     args = ConfigSingleton().get_config()

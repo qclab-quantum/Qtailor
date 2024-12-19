@@ -35,7 +35,6 @@ args = None
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
     # Can also register the env creator function explicitly with:
-    # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
@@ -46,7 +45,6 @@ def train_policy():
                   )
         .resources(num_gpus=1)
     )
-    # config['model']['use_attention'] = True
     stop = {
         "training_iteration": args.stop_iters,
         "timesteps_total": args.stop_timesteps,
@@ -179,7 +177,6 @@ def run():
         args.log_file_id = random.randint(1000, 9999)
         smd = SharedMemoryDict(name='tokens', size=1024)
         smd['qasm'] = q
-
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
         text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q +'_'+str(args.stop_iters)+ '_' + datetime_str + '.txt'
 
@@ -213,7 +210,9 @@ def evaluate_checkpoint():
     finally:
         smd.shm.close()
         smd.shm.unlink()
-
+'''
+use  CircuitEnvTest_v8
+'''
 if __name__ == "__main__":
     time.sleep(1)
     args = ConfigSingleton().get_config()
