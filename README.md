@@ -1,16 +1,20 @@
 # AI-Powered Algorithm-Centric Quantum Processor Topology Design
 
 
+## Message
+This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.*** For any questions, please feel free to contact us: 
 
-## Introction
+He-Liang Huang (Corresponding author, quanhhl@ustc.edu.cn)
 
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(felix.litian@foxmail.com) .
+Tian Li(felix.litian@foxmail.com)
 
 The full paper includes **Appendix**  is available at **assets**
 
+## Introction
+
 ![Overview](assets/overview.png)
 
-Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $$M_{ij}$$ = 1 indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology. (4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent receives the reward and continues to the subsequent iteration.
+Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $M_{ij}$ = 1 indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology. (4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent receives the reward and continues to the subsequent iteration.
 <hr/>
 
 ![](assets/intro2.png)
@@ -123,3 +127,14 @@ To evaluate the result,
 Our implementation is based on 
 
 [Ray RLlib](https://github.com/ray-project/ray/tree/master/rllib) and [Pytorch]()
+
+
+## Others
+
+The code is available in both :
+
+Github https://github.com/qclab-quantum/Qtailor 
+
+and Gitee https://gitee.com/Eliment-li/qccrl
+
+
