@@ -27,10 +27,13 @@ def draw_graph(coupling_map: List[Union[Tuple[int, int], Tuple[Node, Node]]]):
     coupling_graph = nx.Graph(coupling_map)
     nx.draw(coupling_graph, labels={node: node for node in coupling_graph.nodes()})
 
+
 '''
+compare between qtailor and tket (qtailor/tket)
+
 qft/qft_indep_qiskit_5.qasm:[1, 0, 1, 1, 1, 1, 1, 1, 1, 1] time out
 
-91/93
+91/93 (qtailor/tket the same below) 
 su2/su2random_indep_qiskit_6.qasm:[1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1]
 
 48/78
@@ -254,21 +257,23 @@ def plot_result():
 
 
 if __name__ == '__main__':
-    #test single circuit
+
+    #benchmark single circuit
     # array =[1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1]
     # matrix = gu.restore_from_1d_array(array)
     # q_num =8
     # name = r'real_amp/realamprandom_indep_qiskit_8.qasm'
     # root_dir = FileUtil.get_root_dir()
-    #
+
     # circ = circuit_from_qasm(root_dir + '\\benchmark' + os.path.sep + name)
     # rl_depth = compile_on_given_topo(circ, matrix, q_num)
     # tket_depth = compile_on_tket(circ)
     # print(f'{circ}: {rl_depth},{tket_depth},{(rl_depth / tket_depth)}')
 
-    # ae qft: all timeout
-    #benchmark()
+    # benchmark all circuits,
+    # note that tket do not guarantee that all circuits will compile successfully
+    benchmark()
 
-    plot_result()
+    #plot_result()
 
 

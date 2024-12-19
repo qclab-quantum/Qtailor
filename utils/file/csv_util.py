@@ -4,7 +4,7 @@ import os
 
 from utils.file.file_util import FileUtil
 
-sep = '/'
+sep = os.path.sep
 rootdir = FileUtil.get_root_dir()
 class CSVUtil:
     @staticmethod
@@ -51,7 +51,13 @@ class CSVUtil:
         for row in data:
             CSVUtil.append_data(filepath,row)
 
-
+    def new_csv(time_str, header=None):
+        sep = '/'
+        csv_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + time_str + '.csv'
+        if header is None:
+            header = [['datetime', 'qasm', 'rl', 'qiskit', 'mix', 'result', 'iter', 'checkpoint', 'remark', ]]
+        CSVUtil.write_data(csv_path, data=header)
+        return csv_path
 
 def test():
     # 写入数据
@@ -75,6 +81,7 @@ def demo():
     csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + formatted_datetime + '.csv'
     print(csv_path)
     CSVUtil.write_data(csv_path,[['datetime', 'qasm', 'rl', 'qiskit', 'rl_qiskit', 'result', 'iter', 'remark', 'checkpoint'] ])
+
 if __name__ == '__main__':
 
     CSVUtil.to_dataframe(relative_path=r'data/train_metric/ae40/env6.csv')

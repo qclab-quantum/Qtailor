@@ -1,4 +1,3 @@
-import contextlib
 import datetime
 import random
 import time
@@ -6,30 +5,21 @@ import gymnasium as gym
 import ray
 from gymnasium import register
 import os
-
 from ray import tune, air
 from ray.rllib.algorithms import Algorithm
-from ray.rllib.core.models.configs import ModelConfig
 from ray.rllib.utils.framework import try_import_tf, try_import_torch
 from ray.tune.logger import pretty_print
 from ray.tune.registry import get_trainable_cls
-
 from shared_memory_dict import SharedMemoryDict
-
 from config import  ConfigSingleton
 from core.env.env_test_v8 import CircuitEnvTest_v8
-
 from utils.benchmark import Benchmark
-
 from utils.file.csv_util import CSVUtil
 from utils.file.file_util import FileUtil
-
 from utils.graph_util import GraphUtil
 from io import StringIO
-
 from utils.notice.email_notifier import Notifier
-from helper import set_logger, new_csv, parse_tensorboard, get_circuits
-
+from helper import set_logger, parse_tensorboard, get_circuits
 import logging
 
 logger = logging.getLogger('rllibRun')
@@ -40,10 +30,11 @@ text_path=''
 datetime_str =''
 tensorboard=''
 args = None
+
+
 def train_policy():
     #os.environ.get("RLLIB_NUM_GPUS", "1")
     # Can also register the env creator function explicitly with:
-    # register_env("corridor", lambda config: SimpleCorridor(config))
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
@@ -54,7 +45,6 @@ def train_policy():
                   )
         .resources(num_gpus=1)
     )
-    # config['model']['use_attention'] = True
     stop = {
         "training_iteration": args.stop_iters,
         "timesteps_total": args.stop_timesteps,
@@ -101,7 +91,7 @@ def train_policy():
                 TrainingResult = algo.save()
                 print(f"New best reward: {best_reward}. Checkpoint saved to: {TrainingResult}")
 
-        test_result(TrainingResult.checkpoint.path)
+        evaluate_result(TrainingResult.checkpoint.path)
         algo.stop()
     else:
         # automated run with Tune and grid search and TensorBoard
@@ -119,13 +109,10 @@ def train_policy():
         print("Training completed")
         return results
 
-def test_result(checkpoint):
+def evaluate_result(checkpoint):
 
     algo = Algorithm.from_checkpoint(checkpoint)
-
     smd = SharedMemoryDict(name='tokens', size=1024)
-    #smd['evaluate'] = True
-   # smd['debug'] = True
     env_id = "CircuitEnvTest-v" + str(args.env_version)
     register(
         id=env_id,
@@ -176,15 +163,11 @@ def test_result(checkpoint):
     algo.stop()
 
 def log2file(rl, qiskit,  result,iter_cnt, checkpoint):
-    # rootdir = FileUtil.get_root_dir()
-    # sep =os.path.sep
-    # path = rootdir+sep+'benchmark'+sep+'a-result'+sep+str(smd['qasm'])+'_'+str(args.log_file_id)+'.txt'
-    # FileUtil.write(path, content)
     smd = SharedMemoryDict(name='tokens', size=1024)
     data = [datetime_str,smd['qasm'],rl, qiskit,  result,iter_cnt, checkpoint,tensorboard]
     CSVUtil.append_data(csv_path,[data])
 
-def train():
+def run():
     global datetime_str
     global text_path
     global tensorboard
@@ -194,7 +177,6 @@ def train():
         args.log_file_id = random.randint(1000, 9999)
         smd = SharedMemoryDict(name='tokens', size=1024)
         smd['qasm'] = q
-
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
         text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q +'_'+str(args.stop_iters)+ '_' + datetime_str + '.txt'
 
@@ -202,26 +184,25 @@ def train():
         output = StringIO()
         #with contextlib.redirect_stdout(output):
         results = train_policy()
-
         strings = output.getvalue()
-
         FileUtil.write(text_path, strings)
         tensorboard = parse_tensorboard(strings)
 
         checkpoint = results.get_best_result().checkpoint
-        test_result(checkpoint)
+        evaluate_result(checkpoint)
 
         output.truncate(0)
         output.close()
-
         time.sleep(1)
-def test():
+
+def evaluate_checkpoint():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
-    new_csv(datetime_str)
+    CSVUtil.new_csv(datetime_str)
     smd = SharedMemoryDict(name='tokens', size=1024)
+    #put qasm path into smd
     smd['qasm'] = 'cumtom/10_20.qasm'
     try:
-        test_result(checkpoint)
+        evaluate_result(checkpoint)
         smd.shm.close()
         smd.shm.unlink()
     except Exception as e:
@@ -229,29 +210,32 @@ def test():
     finally:
         smd.shm.close()
         smd.shm.unlink()
-
+'''
+use  CircuitEnvTest_v8
+'''
 if __name__ == "__main__":
-   # RedisThreadPool.initialize()
     time.sleep(1)
     args = ConfigSingleton().get_config()
     set_logger()
-    # 设置环境变量
-    #os.environ['TUNE_RESULT_DIR'] = 'd:/tensorboard'
+    iters = args.iters_arr
+
     #给 SharedMemoryDict 加锁
     os.environ["SHARED_MEMORY_USE_LOCK"] = '1'
     smd = SharedMemoryDict(name='tokens', size=1024)
 
-    csv_path = new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'),header=[['datetime', 'qasm', 'rl', 'qiskit', 'result', 'iter','checkpoint','remark', ]])
+    #create a csv file for saving results
+    csv_path = CSVUtil.new_csv(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'),header=[['datetime', 'qasm', 'rl', 'qiskit', 'result', 'iter','checkpoint','remark', ]])
 
-    iters_arr = args.iters_arr
     try:
         ray.init(num_gpus=1, local_mode=args.local_mode)
-        for iter in iters_arr:
+        for iter in iters:
             #print(f'training on iter {iter}')
             args.stop_iters = iter
-            train()
+            run()
             time.sleep(10)
-        Notifier().on_experiment_finsh(email='904715458@qq.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
+
+        #set email password in Class notice.EmailNotifier before use this
+        #Notifier().on_experiment_finsh(email='xxx.com',subject="Experiment Finsh:  " + smd['qasm'], body="Experiment Finsh: \n" + smd['qasm']+"\n results are stored in"+csv_path)
     except Exception as e:
         logger.error(str(e))
         smd.shm.close()

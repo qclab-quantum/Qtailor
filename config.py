@@ -15,6 +15,9 @@ def get_args():
         config = Munch(config)
     return config
 
+'''
+单例模式
+'''
 class Singleton(type):
     _instances = {}
 

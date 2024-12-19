@@ -1,16 +1,14 @@
-# 二维坐标->邻接表（qiskit 可识别的形式）
-# 坐标形式：  points=[(1,0),(1,1),(1,2),(1,3),(1,4)]
 import matplotlib.pyplot as plt
 from math import sqrt
-import matplotlib.ticker as ticker
-from qiskit import transpile
-from qiskit.visualization import plot_circuit_layout
-from utils.circuit_util import CircutUtil
-from qiskit_aer import AerSimulator
 
 class PointsUtil:
+
     @staticmethod
     def coordinate2adjacent(points):
+        '''
+          将若干点的二维坐标转换为邻接表（qiskit 可识别的邻接表形式）
+          二维坐标形式:  points=[(1,0),(1,1),(1,2),(1,3),(1,4)]
+        '''
         import math
         point_dict = {i: points[i] for i in range(len(points))}
         adjacency_dict = {}
@@ -29,10 +27,11 @@ class PointsUtil:
             v = adjacency_dict.get(k)
             for node in v:
                 res.append([k, node])
-        # return adjacency_dict
         return res
 
-    # 邻接表-> 邻接矩阵
+    '''
+    transform adjacency list to adjacency matrix
+    '''
     @staticmethod
     def adjacency2matrix(adj_list):
         max_index = max(max(pair) for pair in adj_list)
@@ -44,9 +43,9 @@ class PointsUtil:
 
         return matrix
 
-
-
-    # draw couping map from coordinate
+    '''
+    draw couping map using  2-d points coordinate
+    '''
     @staticmethod
     def plot_points(points):
         point_dict = {i: points[i] for i in range(len(points))}

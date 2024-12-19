@@ -43,10 +43,10 @@ def demo():
     SMTP_SERVER = "smtp.163.com"
     PORT = 465  # 对于SSL连接
     SENDER_EMAIL = "notify_helper@163.com"
-    PASSWORD = "TRBWNPDOPJDYUFSZ"
-    # 创建EmailNotifier实例
+    #your email password, 注意不是普通的登录密码，是用于 Api 的授权码，可在邮箱中设置
+    PASSWORD = "TRBWNPDOPJDYUFSZ_xxx"
+
     notifier = EmailNotifier(SMTP_SERVER, PORT, SENDER_EMAIL, PASSWORD)
-    # 发送邮件
     notifier.send_email("youremail@qq.com", "实验完成通知", "这是邮件正文。")
 class Notifier:
     def __init__(self):
