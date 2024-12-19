@@ -4,16 +4,16 @@
 
 ## Introction
 
-This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(qclab_quantum@163.com) .
+This repository is the official implementation of ***AI-Powered Algorithm-Centric Quantum Processor Topology Design.***     For any questions, please feel free to contact us(felix.litian@foxmail.com) .
 
 The full paper includes **Appendix**  is available at **assets**
 
-![Overview](./temp/overview.png)
+![Overview](assets/overview.png)
 
 Overview of proposed Qtailor: (1) The agent acquires state from the environment; state are represented by a flattened matrix that denotes the current topology, where $$M_{ij}$$ = 1 indicates that $Q_i$ and $Q_j$ are connected. (2) Subsequently, the agent outputs an action (a), that establish an connection between which two qubits. (3) The action is then applied to the topology. (4) Using the action as a key, we query the reward (r) from memory, which stores pairs of < a, r >. If a match is found, the corresponding reward will be directly provided to the agent, otherwise, an evaluation involving circuit compilation, computation of depth, and gates is conducted. The reward function is then applied based on the depth or gates, and this reward is stored in memory as a pair of < a, r >. This process is referred to as reward replay, detailed in Section 2.2. (5) Finally, The agent receives the reward and continues to the subsequent iteration.
 <hr/>
 
-![](./temp/intro2.png)
+![](assets/intro2.png)
 
 > Our study employs Reinforcement Learning model to suggest an topology that aligns with the circuit’s characteristics under the limitations imposed by restricted connectivity. Subsequently, qubits are mapped in a sequential manner instead of a complex mapping algorithms. Our approach yields a suggested topology and mapped circuit onto this proposed topology.
 
@@ -92,9 +92,9 @@ To evaluate the result,
 
 2. Replace the existing values with those retrieved from the **benchmark/a-result/xxx.csv**. the csv file looks like:
 
-![](./temp/readme2.png)
+![](assets/readme2.png)
 
-![](./temp/readme1.png)
+![](assets/readme1.png)
 
 
 
