@@ -15,8 +15,8 @@ plt.rcParams['ps.fonttype'] = 42
 # # 列出可用字体
 # available_fonts = sorted([f.name for f in font_manager.fontManager.ttflist])
 # print(available_fonts)
-mpl.rcParams['font.size'] = 20
-label_size = 18
+mpl.rcParams['font.size'] = 24
+label_size = 24
 line_width = 2.0
 v6=[]
 v7=[]
@@ -35,8 +35,8 @@ def seconds_to_hours(x, pos):
     hours = x / 3600
     return f'{hours:.1f}'
 def get_data(folder,x_index):
-    dfv6=CSVUtil.to_dataframe(relative_path=f'data\\train_demo\\ae40/{folder}/env6.csv')
-    dfv7=CSVUtil.to_dataframe(relative_path=f'data\\train_demo\\ae40/{folder}/env7.csv')
+    dfv6=CSVUtil.to_dataframe(relative_path=f'data\\train_metric\\ae40/{folder}/env6.csv')
+    dfv7=CSVUtil.to_dataframe(relative_path=f'data\\train_metric\\ae40/{folder}/env7.csv')
 
     xv6=dfv6[x_index].values
     yv6=dfv6['Value'].values
@@ -156,7 +156,7 @@ def plot4():
     y_min, y_max = ax.get_ylim()
     # 循环遍历 y 轴坐标值，为每个 y 坐标值添加参考线
     for y_coord in np.arange(y_min, y_max, 10):
-        ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', zorder=0)
+        ax.axhline(y=y_coord, color='#cfcfcf', linestyle='--', linewidth=line_width, zorder=0)
 
     # plt.title('amplitude_estimation')
     ax.set_xlabel('Steps',fontsize = label_size)

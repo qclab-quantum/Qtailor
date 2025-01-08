@@ -8,7 +8,7 @@ from utils.file.excel_util import ExcelUtil
 from utils.file.file_util import FileUtil
 
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 16
+mpl.rcParams['font.size'] = 34
 rootdir = FileUtil.get_root_dir()
 sep = os.path.sep
 #9个柱状图
@@ -24,12 +24,12 @@ title = [
     'Portfolio Optimization with VQE',
     'Quantum Fourier Transformation',
     'Real Amplitudes ansatz',
-    'Pricing Call Option',
-    'Pricing Put Option',
-    'Random',
+    # 'Pricing Call Option',
+    # 'Pricing Put Option',
+    # 'Random',
 ]
 # get data
-path = rootdir + sep + 'data' + sep + 'depth_benchmark_summary.xlsx'
+path = rootdir + sep + 'data' + sep + 'depth_benchmark_plot.xlsx'
 sheets, dfs = ExcelUtil.read_by_sheet(path)
 # pharse data
 for sheet in sheets:
@@ -52,17 +52,17 @@ bar_width = 0.04
 # 设置柱子的位置
 index = np.arange(len(labels))*0.12
 
-# 创建3x3的子图布局
-fig, axes = plt.subplots(3, 3, figsize=(12, 8))  # figsize可以根据需要调整
+# 创建3x2的子图布局
+fig, axes = plt.subplots(3, 2, figsize=(14, 14))  # figsize可以根据需要调整
 
-plt.subplots_adjust(hspace=0.25,wspace = 0.2)
+plt.subplots_adjust(hspace=0.4,wspace = 0.4)
 # 遍历数据和子图网格，绘制柱状图
 cnt = 0
 all = 0
 for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 计算子图的行和列索引
-    row = i // 3
-    col = i % 3
+    row = i // 2
+    col = i % 2
 
     g1=group1.values
     g2 = group2.values
@@ -87,7 +87,7 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 绘制第二组数据的柱状图
     ax.bar(index + bar_width, group2, bar_width,color = '#f16569', label=f'{group_name} 2',hatch='/', edgecolor='black',zorder = 1)
     #ax.bar(index + bar_width*2, group3, bar_width,color = '#95c978', label=f'{group_name} 3',hatch='//', edgecolor='black')
-
+    fontsize = 26
     # 添加图例
     if i==0:
         ax.legend(['Qtailor','Qiskit'], loc='upper left')
@@ -95,12 +95,12 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 设置横轴的标签
     ax.set_xticks(index + bar_width / 1)
     ax.set_xticklabels(labels_2d[i])
-    if i % 3 ==0:
-        ax.set_ylabel('Depth', fontsize = 16)
+    # if i % 2 ==0:
+    #     ax.set_ylabel('Depth', fontsize = fontsize)
     if i in range(6,9):
-        ax.set_xlabel('Qubits' ,fontsize = 16)
+        ax.set_xlabel('Qubits' ,fontsize = fontsize)
     # 设置图表的标题
-    ax.set_title(title[i], fontsize = 16)
+    ax.set_title(title[i], fontsize = fontsize+6)
     # 显示背景网格
     ax.grid(True, which='both', axis='y', linestyle='-', linewidth=1,zorder = 0)
 # print(cnt/all)

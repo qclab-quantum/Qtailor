@@ -14,7 +14,7 @@ Github https://github.com/qclab-quantum/Qtailor
 and Gitee https://gitee.com/Eliment-li/qccrl
 
 
-## Introction
+## Introduction
 
 ![Overview](assets/overview.png)
 
