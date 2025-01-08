@@ -8,7 +8,7 @@ from utils.file.excel_util import ExcelUtil
 from utils.file.file_util import FileUtil
 
 mpl.rcParams['font.family'] = ['Arial']
-mpl.rcParams['font.size'] = 26
+mpl.rcParams['font.size'] = 34
 rootdir = FileUtil.get_root_dir()
 sep = os.path.sep
 #9个柱状图
@@ -53,9 +53,9 @@ bar_width = 0.04
 index = np.arange(len(labels))*0.12
 
 # 创建3x2的子图布局
-fig, axes = plt.subplots(3, 2, figsize=(12, 12))  # figsize可以根据需要调整
+fig, axes = plt.subplots(3, 2, figsize=(14, 14))  # figsize可以根据需要调整
 
-plt.subplots_adjust(hspace=0.25,wspace = 0.2)
+plt.subplots_adjust(hspace=0.4,wspace = 0.4)
 # 遍历数据和子图网格，绘制柱状图
 cnt = 0
 all = 0
@@ -95,12 +95,12 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 设置横轴的标签
     ax.set_xticks(index + bar_width / 1)
     ax.set_xticklabels(labels_2d[i])
-    # if i % 3 ==0:
-    #     ax.set_ylabel('Depth', fontsize = 16)
+    # if i % 2 ==0:
+    #     ax.set_ylabel('Depth', fontsize = fontsize)
     if i in range(6,9):
         ax.set_xlabel('Qubits' ,fontsize = fontsize)
     # 设置图表的标题
-    ax.set_title(title[i], fontsize = fontsize)
+    ax.set_title(title[i], fontsize = fontsize+6)
     # 显示背景网格
     ax.grid(True, which='both', axis='y', linestyle='-', linewidth=1,zorder = 0)
 # print(cnt/all)
