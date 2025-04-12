@@ -148,6 +148,6 @@ Our implementation is based on [Ray RLlib](https://github.com/ray-project/ray/tr
   pages     = {442--450},
   year      = {2025},
   month     = {Apr.},
-  url       = {https://ojs.aaai.org/index.php/AAAI/article/view/32023},
+  url       = { https://ojs.aaai.org/index.php/AAAI/article/view/32023 },
   doi       = {10.1609/aaai.v39i1.32023}
 }
