@@ -23,7 +23,7 @@ simulator = AerSimulator()
 '''
 v6 更新： 两个Qi 加上一个标志位
 '''
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v6(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
