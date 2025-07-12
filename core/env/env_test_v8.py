@@ -27,7 +27,7 @@ simulator = AerSimulator()
 '''
 8 更新：其他设置和v7一致 自定义 reward 指标
 '''
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v8(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):
@@ -188,8 +188,7 @@ class CircuitEnvTest_v8(gym.Env):
         current_datetime = datetime.datetime.now()
         formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H-%M')
         rootdir = FileUtil.get_root_dir()
-        sep = '/'
-        csv_path = rootdir + sep + 'benchmark' + sep + 'a-result' + sep + formatted_datetime +'hit_rate' + '.csv'
+        csv_path = rootdir / 'benchmark' / 'a-result' / f'{formatted_datetime}hit_rate.csv'
         print(self.hit_rate)
         CSVUtil.write_data(csv_path, self.hit_rate)
     def _close_env(self):

@@ -29,7 +29,7 @@ title = [
     # 'Random',
 ]
 # get data
-path = rootdir + sep + 'data' + sep + 'depth_benchmark_plot.xlsx'
+path = rootdir / 'data' / 'depth_benchmark_plot.xlsx'
 sheets, dfs = ExcelUtil.read_by_sheet(path)
 # pharse data
 for sheet in sheets:
@@ -107,7 +107,7 @@ for i, (group_name, (group1, group2,group3)) in enumerate(data.items()):
     # 调整子图之间的间距
     plt.tight_layout()
 
-    path = rootdir + sep + 'data' + sep + 'fig' + sep + 'benchmarkBar.png'
+    path = rootdir / 'data' / 'fig' / 'benchmarkBar.png'
 plt.savefig(path,dpi=300)
 # 显示图表
 plt.show()

@@ -7,7 +7,7 @@ from qiskit.visualization import plot_histogram
 from qiskit_aer import AerSimulator
 from qiskit.quantum_info import Statevector, state_fidelity
 
-from utils.circuit_util import CircutUtil
+from utils.circuit_util import CircuitUtil
 #others: 'measure','barrier',
 gates_1=['u1', 'u2', 'u3', 'id','p','ry','h']
 gates_2=['cp','cx','swap',]

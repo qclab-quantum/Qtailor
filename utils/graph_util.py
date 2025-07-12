@@ -9,7 +9,7 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from pyvis.network import Network
 
-from utils.circuit_util import CircutUtil
+from utils.circuit_util import CircuitUtil
 from utils.points_util import PointsUtil
 
 from qiskit_aer import AerSimulator
@@ -207,7 +207,7 @@ def test_adj_list(adj):
     circuit.cx(0, 2)
     circuit.cx(0, 3)
     circuit.cx(0, 4)
-    print(CircutUtil.get_circuit_score1(circuit,adj=adj))
+    print(CircuitUtil.get_circuit_score1(circuit,adj=adj))
 
 @staticmethod
     #调用 draw_adj_matrix 实现绘制拓扑图
