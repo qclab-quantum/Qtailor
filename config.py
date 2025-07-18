@@ -9,7 +9,7 @@ from utils.file.file_util import FileUtil
 def get_args():
     config = None
     rootdir = FileUtil.get_root_dir()
-    with open(rootdir+os.path.sep+'config.yml', 'r') as file:
+    with open(rootdir / 'config.yml', 'r') as file:
         config = yaml.safe_load(file)
         config['device'] = "cuda" if torch.cuda.is_available() else "cpu"
         config = Munch(config)
@@ -34,8 +34,9 @@ class ConfigSingleton(metaclass=Singleton):
 
     def load_config(self):
         rootdir = FileUtil.get_root_dir()
-        with open(rootdir+os.path.sep+'config.yml', 'r') as file:
+        with open(rootdir / 'config.yml', 'r') as file:
             config = yaml.safe_load(file)
+            print(f'DEVICE:{"cuda" if torch.cuda.is_available() else "cpu"}')
             config['device'] = "cuda" if torch.cuda.is_available() else "cpu"
             self.config = Munch(config)
 

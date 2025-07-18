@@ -27,7 +27,7 @@ simulator = AerSimulator()
 不给定硬件拓扑，让智能体自己寻找最佳连接
 v4 更新： 减小 obs 的体积，删去对称的冗余信息，提升模型效率
 '''
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v4(gym.Env):
     def __init__(self, render_mode=None,kwargs = {'debug':False},env_config=None):

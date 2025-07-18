@@ -26,7 +26,7 @@ simulator = AerSimulator()
 '''
 不给定硬件拓扑，让智能体自己寻找最佳连接
 '''
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v3(gym.Env):
     def __init__(self, render_mode=None):

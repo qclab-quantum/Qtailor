@@ -26,7 +26,7 @@ simulator = AerSimulator()
 '''
 v5 更新： 减小动作空间 提升模型效率
 '''
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v5(gym.Env):
     def __init__(self, render_mode=None):

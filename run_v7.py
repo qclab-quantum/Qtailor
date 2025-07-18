@@ -42,7 +42,9 @@ def train_policy():
         .rollouts(num_rollout_workers=args.num_rollout_workers
                   ,num_envs_per_worker=1
                   )
-        .resources(num_gpus=1)
+        .resources(num_gpus=1,
+                  num_cpus_per_worker=1,
+                  num_gpus_per_worker=0)
     )
     stop = {
         "training_iteration": args.stop_iters,
@@ -180,7 +182,7 @@ def run():
         smd['qasm'] = q
 
         datetime_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
-        text_path = FileUtil.get_root_dir() + sep + 'benchmark' + sep + 'a-result' + sep + q +'_'+str(args.stop_iters)+ '_' + datetime_str + '.txt'
+        text_path = FileUtil.get_root_dir() / 'benchmark' / 'a-result' / (q +'_'+str(args.stop_iters)+ '_' + datetime_str + '.txt')
 
         # Create a StringIO object to redirect the console output
         output = StringIO()
@@ -197,7 +199,7 @@ def run():
 
 def evaluate_checkpoint():
     checkpoint = r'D:\workspace\data\AblationStudy\PPO_2024-01-02_20-25-47\PPO_CircuitEnvTest_v5_05cbb_00000_0_2024-01-02_20-25-47\checkpoint_000000'
-    CSVUtil. new_csv(datetime_str)
+    CSVUtil.new_csv(datetime_str)
     smd = SharedMemoryDict(name='tokens', size=1024)
     # put qasm path into smd
     smd['qasm'] = 'cumtom/10_20.qasm'

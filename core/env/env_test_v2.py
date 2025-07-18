@@ -9,7 +9,7 @@ from loguru import logger
 import warnings
 simulator = AerSimulator()
 
-from utils.circuit_util import CircutUtil as cu
+from utils.circuit_util import CircuitUtil as cu
 warnings.filterwarnings("ignore")
 class CircuitEnvTest_v2(gym.Env):
     def __init__(self, render_mode=None,**kwargs):

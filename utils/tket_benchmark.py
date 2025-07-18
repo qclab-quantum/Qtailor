@@ -250,7 +250,7 @@ def plot_result():
 
     rootdir = FileUtil.get_root_dir()
     sep = os.path.sep
-    path = rootdir + sep + 'data' + sep + 'fig' + sep + 'tket_benchmarkBar.png'
+    path = rootdir / 'data' / 'fig' / 'tket_benchmarkBar.png'
 
     plt.savefig(path, dpi=300)
     plt.show()

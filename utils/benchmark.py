@@ -1,3 +1,6 @@
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import time
 import traceback
 from collections import OrderedDict
@@ -13,7 +16,7 @@ from qiskit import transpile
 from qiskit_aer import AerSimulator
 
 from fidelity import circuit_fidelity_benchmark
-from utils.circuit_util import CircutUtil as cu, CircutUtil
+from utils.circuit_util import CircuitUtil as cu, CircuitUtil
 from utils.file.csv_util import CSVUtil
 from utils.graph_util import GraphUtil as gu, GraphUtil
 from utils.points_util import PointsUtil as pu
@@ -64,7 +67,7 @@ class Benchmark():
     @staticmethod
     def get_rl_depth(adj_matrix, qasm):
         simulator = AerSimulator()
-        circuit = CircutUtil.get_from_qasm(qasm)
+        circuit = CircuitUtil.get_from_qasm(qasm)
         G = nx.DiGraph()
         # 添加节点
         num_nodes = len(adj_matrix)
@@ -143,7 +146,7 @@ class Benchmark():
 
     @staticmethod
     def get_rl_gates(matrix:np.ndarray,qasm:str,draw=False,show_in_html=False):
-        circuit = CircutUtil.get_from_qasm(qasm)
+        circuit = CircuitUtil.get_from_qasm(qasm)
         G = nx.DiGraph()
         # 添加节点
         num_nodes = len(matrix)
@@ -161,7 +164,7 @@ class Benchmark():
         repeat = 20
         for i in range(repeat):
             try:
-                cnt = CircutUtil.count_gates(type='rl',circuit = circuit,adj=adj,gates=['cp','cx','swap'])
+                cnt = CircuitUtil.count_gates(type='rl',circuit = circuit,adj=adj,gates=['cp','cx','swap'])
                 gates_cnt += cnt
                 result.append(cnt)
             except Exception as e:
@@ -180,7 +183,7 @@ class Benchmark():
         result = []
         repeat = 20
         for i in range(repeat):
-            cnt = CircutUtil.count_gates(type='qiskit', circuit = circuit,adj=adj,gates=['cp','cx','swap'])
+            cnt = CircuitUtil.count_gates(type='qiskit', circuit = circuit,adj=adj,gates=['cp','cx','swap'])
             gates_cnt += cnt
             result.append(cnt)
         result.append(gates_cnt/repeat)
@@ -202,7 +205,7 @@ class Benchmark():
         #test rl and mix
         if matrix is None:
             matrix =gu.restore_from_1d_array(array)
-        res = CircutUtil.get_rl_depth(matrix,qasm)
+        res = CircuitUtil.get_rl_depth(matrix,qasm)
         print(res)
         mean = np.mean(res, axis=0)
         rl = mean[0]
@@ -222,7 +225,7 @@ class Benchmark():
 
     @staticmethod
     def get_fidelity(qasm:str,matrix):
-        circuit = CircutUtil.get_from_qasm(qasm)
+        circuit = CircuitUtil.get_from_qasm(qasm)
         G = nx.DiGraph()
         # 添加节点
         num_nodes = len(matrix)
@@ -353,13 +356,12 @@ def fidelity_benchmark(topologys :list, qasms :list):
 
 if __name__ == '__main__':
 
-    array = [1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1,
-             1, 0, 0, 1, 0, 0, 0, 0, 1]
+    array = [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
     matrix = gu.restore_from_1d_array(array)
-    qasm = 'amplitude_estimation/ae_indep_qiskit_10.qasm'
+    qasm = 'qnn/qnn_indep_qiskit_20.qasm'
 
-    Benchmark.depth_benchmark(file_path='',matrix=matrix,qasm = qasm,draw = True,show_in_html=True)
+    Benchmark.depth_benchmark(file_path='', matrix=matrix, qasm = qasm, draw = True, show_in_html=True)
 
     '''
     file_path: the csv file path, to save the result, set to empty = not save
